@@ -1,0 +1,175 @@
+\chapter{Naše výsledky}
+\label{chap:vysledky}
+
+\section[Vlastnosti a sila]{Vlastnosti a sila moderných regulárnych výrazov}
+\label{vsila}
+
+V bakaláskej práci sme zabudli ... \textbf{\textit{negatívny lookaround}} \todo
+
+\begin{lema}\label{nla+R}
+Trieda $\R$ je uzavretá na negatívny lookahead.
+\end{lema}
+\begin{proof}
+Nech $L_1,L_2,L_3 \in \R$. Ukážeme, že $L=L_1(?!L_2)L_3 \in \R$.
+
+Keďže $ L_{1},L_{2},L_{3} $ sú regulárne, existujú DKA $ A_{i} = (K_{i},\Sigma_{i},\delta_{i},q_{0i},F_{i}) $ také, že $ L(A_{i})=L_{i}, i \in \lbrace 1,2,3\rbrace $. Zostrojíme NKA $A$ pre $L$.
+
+Konštrukcia bude veľmi podobná ako pre pozitívny lookahead, keď si správne predpripravíme $A_2$. Negatívny lookahead sa snaží za každú cenu nájsť slovo z $L_2$ (t.j. uspieť s $A_2$) a ak sa mu to nepodarí, akceptuje. Preto musíme zaručiť, že sa $A_2$ buď zasekne alebo prejde až do konca slova\footnote{Ak sa zasekne, slovo z $L_2$ tam určite nebude, lebo neexistuje akceptačný výpočet. Ak sa nezasekne, nevieme povedať o tom slove nič, pokiaľ ho neprejdeme celé.}. Ak $A_2$ dosiahne akceptačný stav, negatívny lookahead musí zamietnuť. 
+
+Ďaľšie pozorovanie nám hovorí, že negatívny lookahead akceptuje vždy nejaké slovo z komplementu $L_2$. Ale komplement vzhľadom na akú abecedu? V skutočnosti nekonečnú - ľubovoľný znak, ktorý nepatrí do $\Sigma_2$, znamená zaseknutie $A_2$, t.j. akceptáciu. Ak sa na to pozrieme z väčšej ďiaľky, uvidíme $L_3$, s ktorým robíme prenik. $A_3$ musí dočítať slovo do konca a na úplne neznámom znaku sa zasekne, takže z pohľadu výslednej akceptácie slova nevadí, ak by kvôli tomu znaku zamietol už negatívny lookahead. Preto stačí urobiť komplement vzhľadom na $\Sigma_2 \cup \Sigma_3$. 
+
+Poďme upravovať $A_2$, začneme vytváraním komplementu. Ak $\Sigma_3 \setminus \Sigma_2 \neq\emptyset$\footnote{Inak $A_2'=A_2$.}, potom vytvoríme $A_2'= (K_2',\Sigma_2',\delta_2',q_{0},F_2')$ tak, že pridáme nové znaky $\Sigma_2'=\Sigma_2 \cup \Sigma_3$,  jeden nový stav\footnote{Pre každý nový stav predpokladáme, že je jedinečný - t.j. žiaden taký v množine stavov ešte nie je.} $K_2'=K_2 \cup \lbrace q_{ZLE} \rbrace$ a prechody na nové znaky z každého stavu: 
+\begin{eqnarray*}
+ \forall q \in K_2 ~ \forall a \in \Sigma_2 &:&  \delta_2'(q,a)=\delta_2(q,a) \\
+ \forall q \in K_2~ \forall a \in \Sigma_3 \setminus \Sigma_2 &:& \delta_2'(q,a)=q_{ZLE} \\
+ \forall a \in \Sigma_2' &:&  \delta_2'(q_{ZLE},a)=q_{ZLE}
+\end{eqnarray*}
+ $F_2'=F_2.$ Do všetkých stavov sme pridali prechody na nové znaky a $q_{ZLE}$ má 1 prechod na každý znak, takže $A_2'$ je stále deterministický. Zároveň nové znaky vedú do stavu, z ktorého sa nedá dostať do žiadneho akceptačného, z čoho vyplýva $L(A_2')=L_2$.
+
+Teraz $A_2'$ zmeníme na $A_2''$ tak, aby akceptoval práve vtedy, keď $(?!L_2)$. Najprv si skonštruujeme množinu stavov, z ktorých sa vieme dostať do akceptačného stavu: $H= \lbrace  q \in K_2'~|~ \exists w \in {\Sigma_2'}^* ~ \exists q_A \in F_2': ~ (q,w)\vdash_{A_2'}(q_A,\varepsilon) \rbrace $, nasledovným spôsobom: $$ H_0 = F_2' $$ 
+$$H_{i+1} = \lbrace q \in K_2'~|~ \exists p \in H_i~ \exists a \in \Sigma_2': ~ \delta(q,a)=p \rbrace$$
+Zrejme $\exists i \in \N: ~ H_{i+1}=H_i = H$. Nás zaujíma množina $K_2' \setminus H$, v ktorej sa nachádzajú všetky stavy, z ktorých sa na žiadne slovo nie je možné dostať do žiadneho akceptačného stavu.
+
+$A_2''= (K_2'',\Sigma_2'',\delta_2'',q_{0},F_2'')$: $K_2'' = K_2' \cup \lbrace q_A, q_Z \rbrace, ~\Sigma_2'' = \Sigma_2', ~F_2'' = (K_2'\setminus H) \cup \lbrace q_A \rbrace$
+\begin{eqnarray*}
+ \forall q \in K_2' \setminus F_2'  ~ \forall a \in \Sigma_2' &:&  \delta_2''(q,a)=\delta_2'(q,a) \\
+ \forall q \in K_2' \setminus F_2'  ~ \forall a \in \Sigma_2' &:&  \delta_2''(q,\varepsilon)=q_A \\
+ \forall q \in F_2' ~ \forall a \in \Sigma_2' &:& \delta_2''(q,a)=q \footnotemark \\
+ \forall a \in \Sigma_2' &:& \delta_2''(q_A,a)=q_Z 
+\end{eqnarray*}
+\footnotetext{Tento riadok v podstate netreba, $A_2''$ sa môže rovno zaseknúť, lebo $A_2'$ práve akceptoval.}
+Je dobré poznamenať, že $A_2''$ je takmer deterministický. Chýbajú mu prechody z $q_Z$ - môžeme ho nechať cykliť v tomto stave, ale nevadí nám ani keď sa zasekne. Nedeterministické rozhodnutie vykonáva iba jedno - pri prechode do stavu $q_A$. Vtedy háda, že už je na konci slova. Ak nie je, $\delta$-funkcia ho pošle do stavu $q_Z$. Podľa toho je zrejmé, že ak existuje akceptačný výpočet, je práve jeden\footnote{Zaujímavé je, že aj zamietací výpočet je pre každé slovo jednoznačný}.
+
+Tvrdíme $ L_1(?=L(A_2''))L_3 =L_1(?!~L_2)L_3= L $.
+Keďže $A_1$ a $A_3$ sa pri oboch výpočtoch budú chovať rovnako (sú nezávislé od lookaheadov), nebudeme sa nimi pri dôkaze zaoberať.
+
+$\subseteq :$ Máme akceptačný výpočet pre $A_2''$. Akceptačný stav mohol byť buď z množiny $K_2'\setminus H$, to znamená, že pôvodný automat $A_2'$ sa dostal do stavu, z ktorého už nemohol nijak akceptovať\footnote{Sem spadá aj prípad, keď $A_2$ prečítal neznámy znak a zasekol sa - $A_2'$ zostáva až do konca slova v stave $q_{ZLE}$.}. V takom prípade $(?!~L_2)$ akceptuje. V druhom prípade mohol $A_2''$ akceptovať pomocou $q_A$, čo znamená, že dočítal slovo do konca (pretože z $q_A$ sa na ľubovoľný znak dostaneme do $q_Z$, v ktorom sa $A_2''$ zasekne a nebude akceptovať) a ani raz sa nedostal do akceptačného stavu automatu $A_2'$. Teda aj $(?!~L_2)$ akceptuje.
+
+$\supseteq :$ Nech $(?!~L_2)$ akceptoval, t.j. na $A_2$ bol vykonaný nejaký neakceptujúci výpočet ($A_2$ je deterministický, takže existuje práve jeden pre každé slovo). Rovnakú postupnosť stavov bude mať aj výpočet na $A_2''$ (automat obsahuje všetky stavy aj $\delta$-funkciu z $A_2$, počiatočný stav je ten istý). Ak sa $A_2$ zasekol na neznámom znaku, v $A_2'$ na ten znak pridáme prechod do stavu $q_{ZLE}$ a v ňom zostaneme až do konca slova. Keďže $q_{ZLE}$ nie je v $A_2'$ akceptačný a nedá sa z neho na žiadne slovo dostať do ľubovoľného akceptačného stavu, $q_{ZLE} \in K_2' \setminus H$ a teda $q_{ZLE} \in F_2''$. Ak sa $A_2$ nezasekol, tak dočítal slovo do konca a v postupnosti stavov jeho výpočtu sa nenachádza žiaden z množiny $F_2$. V tom prípade $A_2''$ z posledného stavu prejde na $\varepsilon$ do $q_A$ (2.riadok definície $\delta_2''$) a akceptuje.
+
+Z práve dokázaného tvrdenia a vety \ref{lookahead+R} už vyplýva aj platnosť našej lemy.
+\end{proof}
+
+\begin{lema}
+Trieda $\R$ je uzavretá na negatívny lookbehind.
+\end{lema}
+\begin{proof}
+Nech $L_1,L_2,L_3 \in \R$. Ukážeme, že $L=L_1(?<!~L_2)L_3 \in \R$. Postup je podobný ako pri negatívnom lookaheade, skonštruujeme $A_2''$ také, že bude akceptovať práve vtedy, keď $(?<~!L_2)$.
+
+Máme $A_2$ pre $L_2$, vytvoríme $A_2'$ podľa dôkazu pre negatívny lookahead, tentokrát však pridávame znaky zo $\Sigma_1$. Pre $A_2''$ potrebujeme trocha inú $\delta$-funkciu:
+\begin{eqnarray*}
+ \forall q \in K_2'  ~ \forall a \in \Sigma_2' &:&  \delta_2''(q,a)=\delta_2'(q,a) \\
+ \forall q \in K_2' \setminus F_2'  ~ \forall a \in \Sigma_2' &:&  \delta_2''(q,\varepsilon)=q_A \\
+ \forall a \in \Sigma_2' &:& \delta_2''(q_A,a)=q_Z 
+\end{eqnarray*}
+
+Tvrdíme $ L_1(?<=L(A_2''))L_3 =L_1(?<!~L_2)L_3= L $. Opäť vynecháme výpočty $A_1$ a $A_3$.
+
+$\subseteq :$ Majme akceptačný výpočet $A_2''$ na podslove $w$ slova $uwv$. 
+
+$\supseteq :$
+
+Celý mechanizmus lookbehindu zabezpečuje automat pre $L$ - t.j. nedeterministicky si tipne, kde je začiatok slova a akceptačný stav skontroluje až tam, kde končí lookbehind (ak tam nie je, automat sa zasekne, inak výpočet pokračuje). Keďže výpočet $A_1$ a $A_2$ prebieha naraz, pracujeme s karteziánskym súčinom stavov. 
+\end{proof}
+
+\begin{veta}
+Trieda $\R$ je uzavretá na negatívny lookaround.
+\end{veta}
+
+\begin{lema}
+Nech $L_1,L_2,L_3,L_4 \in \R$, $\alpha = \left( L_1 \left( ?!~L_2\right) L_3 \right) * L_4$. Potom $L(\alpha) \in \R$.
+\end{lema} 
+\begin{proof}
+Podobne ako v dôkaze vety \ref{nla+R} pretransformujeme $( ?!~L_2)$ na akýsi $( ?=L(A_2''))$, kde $A_2''$ bude akceptovať práve vtedy, keď $( ?!~L_2)$. Potom $\beta = \left( L_1 \left( ?=L(A_2'')\right) L_3 \right) * L_4, ~ L(\beta) = L(\alpha) \in \R$ podľa vety \ref{lookaround+R}.
+\end{proof}
+
+\begin{lema}
+Nech $L_1,L_2,L_3,L_4 \in \R$, $\alpha = L_4 \left( L_1 \left( ?<!~L_2\right) L_3 \right) *$. Potom $L(\alpha)~\in~\R$.
+\end{lema} 
+\begin{proof}
+\todo
+\end{proof}
+
+\begin{veta}\label{nlookaround+R}
+Trieda nad regexami s negatívnym lookaroundom je $\R$.
+\end{veta}
+
+\begin{dosledok}
+Trieda nad regexami s pozitívnym a negatívnym lookaroundom je $\R$.
+\end{dosledok}
+
+\begin{veta}
+Trieda \le~je uzavretá na zreťazenie.
+\end{veta}
+\begin{proof}
+Nech sú le-regexy $\alpha, \beta$. Chceme ukázať, že jazyk $L(\alpha)L(\beta) \in \le$. Intuitívne nás to vedie k riešeniu $\alpha\beta$, čo ale nemusí byť vždy správne. Problémom sú operácie lookaround, presnejšie každý lookahead v $\alpha$ môže zasahovať do slova z $L(\beta)$ a takisto každý lookbehind z $\beta$ môže zasahovať do slova z $L(\alpha)$. Navyše, ak lookahead obsahuje $\$$ a lookbehind $\textasciicircum$, potom zasahujú do slova z iného jazyka určite. V takom prípade môže le-regex $\alpha\beta$ vynechať niektoré slová z $L_1L_2$ a tiež pridať nejaké nevhodné slová naviac. Preto treba nájsť spôsob, ako operácie lookaroundu vhodne 'skrotiť', predpokladajme, že $\alpha$ má $k$ označených zátvoriek:
+\begin{equation} \label{zretazenie}
+(?=\mathop(_1 \alpha \mathop)_1 \mathop(_{k+2}\beta \mathop)_{k+2} \mathdollar) \alpha ' \backslash k+2 (?<= \textasciicircum\backslash 1\beta ')
+\end{equation}
+V $\alpha,\beta$ treba vhodne prepísať označenie zátvoriek (po poradí). $\alpha '$ je $\alpha$ prepísaný tak, že pre každý lookahead:
+\begin{itemize}
+\item bez \$ - na koniec pridáme $.* \backslash k+2 \mathdollar $
+\item s \$ - pred \$ pridáme $\backslash k+2$
+\end{itemize}
+$\beta '$ je $\beta$ prepísaný tak, že pre každý lookbehind:
+\begin{itemize}
+\item bez $\textasciicircum$ - na začiatok pridáme $\textasciicircum \backslash 1.*$
+\item s $\textasciicircum$ - pred $\textasciicircum$ pridáme $\textasciicircum \backslash 1$
+\end{itemize}
+Čo teda robí le-regex ~\ref{zretazenie}? Nech $w$ je vstupné slovo, ktoré chceme matchovať. Lookahead na začiatku ho nejak rozdelí na $w_1$ a $w_2$, pričom $w=w_1w_2$, tak, že do $L(\alpha)$ pridelí $w_1$ a do $L(\beta)$ podslovo $w_2$. Ešte musíme overiť, či $\alpha$ matchuje $w_1$ samostatne.
+
+Preto sme v $\alpha$ prepísali všetky lookaheady. V $\alpha '$ každý z nich musí na konci slova $w$ matchovať $w_2$ (toto zabezpečí spätná referencia $\backslash k+2$ a \$) a teda matchovanie le-regexu $\alpha$ zostane výlučne na podslove $w_1$. Analogicky to platí pre lookbehindy v $\beta '$.
+\end{proof}
+
+\begin{veta}\label{lelcf}
+$\le$ je neporovnateľná s $ \L_{CF}$.
+\end{veta}
+\begin{proof}
+Majme jazyk $L=\lbrace ww^R~|~w \in \lbrace a,b \rbrace^* \rbrace \in \L_{CF}$, nech $ \alpha = ([ab]*)\backslash 1 $.
+Zrejme $ L(\alpha) = L $, teda $L\in \le$.
+
+Ukážeme, že jazyk $L=\lbrace a^nb^n~|~n \in \N \rbrace \notin \le$. Sporom, nech $L \in \le$. 
+
+Vieme, že $L \notin \e$, preto musí obsahovať nejaký lookaround. Zároveň z $L \notin \R$ a \ref{lookaround+R} vyplýva, že musí obsahovať aj spätné referencie.
+
+Kam sa môžu spätné referencie odkazovať a kam ich potom môžeme umiestniť?
+\begin{list}{$\bullet$}{Nech výraz, na ktorý ukazujú, vyrobí nejaké:}
+\item $a^i$, potom $\backslash k$ musí byť v prvej polovičke slova (medzi $a$, inak by pokazil štruktúru slova), takže nevplýva na časť s $b$ a teda sa zaobídeme bez nich.
+\item $a^ib^j$, potom $\backslash k$ by mohol byť len medzi $b$, ale tam by pokazil štruktúru slova $a^nb^n$
+\item $b^j$, potom $\backslash k$ môže byť len medzi $b$ a je tam zbytočný z rovnakých dôvodov, aké má prípad $a^i$
+\end{list}
+Vidíme, že so spätnými referenciami dosiahneme rovnaký výsledok ako bez nich, čo je spor s tým, že sa vo výraze musia nachádzať (bez nich vieme urobiť len regulárny jazyk).
+\end{proof}
+
+\begin{dosledok}
+$\le \subsetneq \L_{CS}$
+\end{dosledok}
+
+\begin{veta}
+$ nLEregex \subseteq \L_{CS} $
+\end{veta}
+\begin{proof}
+Vieme, že $ \le \in \L_{CS} $ (veta \ref{le+lcs}), teda ľubovoľný le-regex vieme simulovať pomocou LBA. Ukážeme, že ak pridáme operáciu negatívny lookahead/lookbehind, vieme to simulovať tiež.
+
+Nech $\alpha$ je nle-regex. Potom $A$ je LBA pre $\alpha$, ktorý ignoruje negatívny lookaround (t.j. vyrábame LBA pre le-regex). Teraz vytvoríme LBA $B$ pre le-regex vnútri negatívneho lookaroundu. Z nich vytvoríme LBA $C$ pre úplný nle-regex $\alpha$ tak, že bude simulovať $A$ a keď príde na rad negatívny lookaround zaznačí si, v akom stave je $A$ a na ktorom políčku skončil. Skopíruje slovo na ďalšiu stopu a na nej simuluje od/do toho miesta $B$ (podľa toho, či je to lookahead alebo lookbehind). 
+
+Teraz je to s akceptáciou náročnejšie ako pri pozitívnom lookarounde. Pokiaľ $B$ akceptoval, $C$ sa zasekne. Ak sa $B$ zasekol, $C$ sa vráti naspäť k zastavenému výpočtu $A$ a pokračuje v ňom. Keďže slovo je konečné a $B$ na ňom testuje le-regex, ktorý postupne vyjedá písmenká, určite raz príde na koniec slova. Môže sa stať, že bude skúšať viaceré možnosti - napr. skúsi pre $*$ zobrať menej znakov, teda príde na koniec slova viackrát. Ako určíme, že skončil výpočet? Bez újmy na všeobecnosti môžeme predpokladať, že sa $B$ nezacyklí, ale zamietne slovo na konci výpočtu. To preto, že všetkých možností na rozdelenie znakov medzi operácie $*,+,?,\lbrace n,m\rbrace$ je konečne veľa a keď ich systematicky skúša\footnote{Algoritmus pre $*$ je v praxi greedy. Ak slovo nesedí, tak sa vráti, odoberie posledný znak zožratý $*$ a opäť skúša zvyšok výrazu, či slovo sedí. Ak stále nie, algoritmus odoberá hviezdičke znaky dovtedy, dokým nenájde zhodu alebo odoberie všetky znaky - vtedy sa mu minuli všetky možnosti a môže slovo neakceptovať.}, raz sa mu musia minúť. To znamená, že ak nemá v $\delta$-funkcii umelo vsunuté zacyklenie, nezacyklí sa. Teda ak slovo neakceptuje, tak ho určite zamietne a vtedy $C$ môže prejsť na zastavený výpočet $A$ a pokračovať v ňom.
+
+Podobne ako pri lookarounde aj jeho negatívna verzia môže obsahovať nle-regex, t.j. vnorený (negatívny) lookaround. Tých však môže byť iba konečne veľa, keďže každý nle-regex musí mať konečný zápis. Čo znamená, že aj stôp bude konečne veľa a naznačeným postupom si vieme postupne vybudovať LBA, ktorý bude simulovať $\alpha$.
+\end{proof}
+
+\begin{veta}
+$\nle$ je neporovnateľná s $ \L_{CF}$.
+\end{veta}
+\begin{proof}
+Opäť použíjeme jazyk $L=\lbrace a^nb^n~|~n \in \N \rbrace$ a budeme dokazovať sporom. Nech $L \in \le$.
+
+Z vety \ref{lelcs} vieme, že výraz musí obsahovať negatívny lookaround. Z jej dôkazu vidíme, že spätné referencie nepomôžu nech sa ich pokúsime hocijako použiť. Z toho vyplýva, že ich nepoužijeme a z vety \ref{nlookaround+R} zistíme, že nám zostal model schopný vyrobiť iba regulárne jazyky. Spor.
+\end{proof}
+
+\begin{dosledok}
+$\nle \subsetneq \L_{CS}$
+\end{dosledok}
+
+\section[Popisná zložitosť]{Popisná zložitosť moderných regulárnych výrazov}
+\label{vzlozitost}

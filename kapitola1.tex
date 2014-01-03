@@ -1,0 +1,146 @@
+\chapter[Súčasný stav problematiky]{Úvod do súčasneho stavu problematiky}
+\label{chap:uvod}
+
+Myšlienka regulárnych výrazov bola prvýkrát spomenutá vo formálnych jazykoch a automatoch ako iný spôsob popisu regulárnych jazykov. Vtedy pozostávali z operácií zjednotenia, zreťazenia a Kleeneho uzáver. Pre ich jednoduchosť boli implementované ako nástroj na vyhľadávanie slov zo špecifikovaného jazyka. Postupom času a s inšpiráciou zo strany užívateľov k nim pribúdali ďalšie operácie. Niektoré boli len skratkou k tomu, čo sa už dalo zapísať - umožnili zapísať to isté menej znakmi - ostatné otvárali dvere k popisu úplne nových jazykov.
+
+Zmes týchto operácií nazývame moderné regulárne výrazy a zaujíma nás, kam sa až dostali v popisovaní jazykov v rámci Chomského hierarchie. Túto problematiku sme z väčšej časti rozobrali v bakalárskej práci \cite{mojaBak}. V tejto práci rozbor dokončíme a pozrieme sa na ne aj z hľadiska popisnej zložitosti.
+\todo
+
+\section{Základné definície}
+\label{definicie}
+
+Formálna definícia je uvedená v \cite{mojaBak}, tu si len neformálne uvedieme, s ktorými operáciami pracujeme a ako fungujú. Každý regulárny výraz sa skladá zo znakov a metaznakov. Znaky sú symboly, ktoré charakterizujú samé seba, teda $L(a) = \lbrace a \rbrace$. Metaznaky popisujú operáciu nad regulárnymi výrazmi. Ak potrebujeme v slove zhodu s nejakým metaznakom, stačí pred neho dať $\backslash$, teda $L(\backslash x) = \lbrace x \rbrace$. Ak metaznak vyžaduje vstup, je ním posledný znak/metaznak/uzátvorkovaný podvýraz pred ním. Metaznaky vyzerajú nasledovne:
+
+\begin{itemize}
+\item $()$ - okrúhle zátvorky slúžia na oddeľovanie podvýrazov
+\item $\lbrace \rbrace$ - kučeravé zátvorky - používané ako $\{n,m\}$ (opakuj aspoň $n$ a najviac $m$-krát) a $\{n\}=\{n,n\}$ (opakuj $n$-krát)
+\item $[~]$ - hranaté zátvorky - znaky vnútri tvoria množinu, z ktorej si vyberáme. Vieme použiť aj intervaly, napr. a-z, A-Z, 0-9, ... a kombinovať. Všetky metaznaky vnútri [~] sa považujú za normálne znaky.
+\item | - operácia zjednotenia
+\item $\backslash$ - robí z metaznakov obyčajné znaky
+\item . - ľubovoľný znak
+\item $*$ - Kleeneho uzáver, opakuj ľubovoľný počet krát
+\item $+$ - opakuj 1 alebo viackrát
+\item ? - ak samostatne: opakuj 0 alebo 1-krát, ak za operáciou: namiesto greedy implementácie použi minimalistickú, t.j. zober čo najmenej znakov (platí pre $*,+,?,\lbrace n,m \rbrace$)\footnote{všetky spomenuté operácie "žerú"~znaky a na ich implementáciu sa použil greedy algoritmus}
+\item $\textasciicircum$ - začiatok slova; špeciálnym prípadom je výraz $[\textasciicircum\alpha]$ (kde $\alpha$ je nejaká množina znakov), ktorý špecifikuje ľubovoľný znak, ktorý sa v množine $\alpha$ nenacháza
+\item \$ - koniec slova
+\end{itemize}
+
+Okrem operácií označených metaznakmi vznikli aj zložitejšie operácie, na ktorých popis treba dlhšie konštrukcie. V prvom rade sa zaviedlo číslovanie okrúhlych zátvoriek. Čísluje sa zľava doprava podľa poradia ľavej (otváracej) zátvorky. Toto číslovanie sa deje automaticky pri každom behu algoritmu, teda už pri písaní výrazu ho môžeme využívať. Popíšme si konečne spomínané zložitejšie operácie:
+
+\begin{itemize}
+\item \textbf{komentár} ozn. $(?\# \textit{text})$ - klasický komentár, určený čitateľom kódu; nemá vplyv na výraz, algoritmus ho ignoruje
+\item \textbf{spätné referencie} ozn. $\backslash k$ - môže sa nachádzať na ľubovoľnom mieste vo výraze ZA $k$-tou pravou (zatváracou) zátvorkou. Odkazuje sa na $k$-te zátvorky, presný význam sa určuje až pri hľadaní zhody na konkrétnom vstupe. Algoritmus si zapamätá aké podslovo zo vstupu matchoval výraz vnútri $k$-tych zátvoriek a presne toto podslovo čaká, keď vo výraze vidí $\backslash k$.
+\item \textbf{lookahead}
+\begin{itemize}
+\item \textbf{pozitívny} ozn. $(?=\alpha)$, kde $\alpha$ je nejaký moderný regulárny výraz - tzv. nazeranie dopredu pracuje tak, že si zapamätáme miesto, na ktorom lookahead začíname vykonávať, potom ho vykonáme. Ak vyhlásil zhodu, vrátime sa naspäť na zapamätané miesto a odtiaľ hľadáme zhodu akokeby tam lookahead nikdy nebol. Inak povedané lookahead nevyžiera písmenká a robí akýsi prienik. Ak neobsahuje znak pre koniec slova, môže končiť kdekoľvek - hneď ako zistil zhodu.
+\item \textbf{negatívny} ozn. $(?!~\alpha)$, kde $\alpha$ je nejaký moderný regulárny výraz - hľadá slovo z komplementu jazyka popísaného $\alpha$ popísaným spôsobom
+\end{itemize}
+\item \textbf{lookbehind}
+\begin{itemize}
+\item \textbf{pozitívny} ozn. $(?<=\alpha)$, kde $\alpha$ je nejaký moderný regulárny výraz - tzv. nazeranie dozadu, hľadá slovo z $L(\alpha)$ naľavo od aktuálneho miesta v slove (musí končiť hneď vedľa aktuálneho miesta). Opäť nie je určená hranica slova, môže začínať kdekoľvek, ak nie je vynútený začiatok slova znakom $\textasciicircum$. 
+
+Ak by sme chceli deterministický algoritmus, vyzeral by nasledovne: symbol v slove, na ktorom stojíme, bude teraz pre nás znak pre koniec slova - endmarker. Najprv vyskúšame symbol naľavo, či patrí do jazyka. Ak nie skúsime čítať o jeden znak viac (2 symboly naľavo), keď neuspejeme, opäť posunieme pomyselný začiatok slova doľava. Ak akceptujeme, môže to byť len na endmarkeri. Ak sme neakceptovali a začiatok slova nejde viac posunúť, zamietneme.
+\item \textbf{negatívny} ozn. $(?<!~\alpha)$, kde $\alpha$ je nejaký moderný regulárny výraz - hľadá slovo z komplementu $L(\alpha)$ popísaným spôsobom
+\end{itemize}
+\end{itemize}
+
+Pre lookahead a lookbehind používame spoločný názov \underline{lookaround}, takisto s prívlastkom pozitívny/negatívny myslíme iba ich pozitívne/negatívne verzie.
+
+Keďže sa týmito operáciami budeme zaoberať podrobnejšie, uvedieme pre upresnenie ich definície.
+
+\begin{df}[Pozitívny lookahead]
+$$ L_{1}(?=L_{2})L_{3} = \lbrace uvw ~|~ u \in L_{1} \land v \in L_{2} \land vw \in L_{3} \rbrace $$ Operáciu $(?=\dots)$ nazývame pozitívny lookahead alebo len \underline{lookahead}.
+\end{df}
+
+\begin{df}[Negatívny lookahead]
+$$ L_{1}(?!L_{2})L_{3} = \lbrace uv ~|~ u \in L_{1} \land v \in L_{3} \land neexistuje~také~x,y,~že~v=xy~a~x \in L_2 \rbrace $$ Operáciu $(?!\dots)$ nazývame \underline{negatívny lookahead}.
+\end{df}
+
+\begin{df}[Pozitívny lookbehind]
+$$ L_{1}(?<=L_{2})L_{3} = \lbrace uvw ~|~ uv \in L_{1} \land v \in L_{2} \land w \in L_{3} \rbrace $$ Operáciu $(?<=\dots)$ nazývame pozitívny lookbehind alebo len \underline{lookbehind}.
+\end{df}
+
+\begin{df}[Negatívny lookbehind]
+$$ L_{1}(?<!L_{2})L_{3} = \lbrace uv ~|~ u \in L_{1} \land v \in L_{3} \land neexituje~také~x,y,~že~u=xy~a~y \in L_2 \rbrace $$ Operáciu $(?<!\dots)$ nazývame \underline{negatívny lookbehind}.
+\end{df}
+
+Moderné regulárne výrazy sa skladajú z \textbf{konečného počtu} znakov, metaznakov a zložitejších operácií.
+
+Máme veľkú množinu operácií a budeme chcieť pracovať aj s jej podmnožinami, preto si zavedieme názvoslovie pre ich jednoznačnejšie a kratšie určenie.
+
+\begin{description}
+\item[regex] - množina operácií, pomocou ktorých vieme popísať iba regulárne jazyky; presnejšie všetky znaky a metaznaky (bez zložitejších operácií)
+\item[e-regex] - regexy so spätnými referenciami
+\item[le-regex] - e-regexy s pozitívnym lookaroundom
+\item[nle-regex] - le-regexy s negatívnym lookaroundom
+\item[\e] - trieda jazykov nad e-regexami
+\item[\le] - trieda jazykov nad le-regexami
+\item[\nle] - trieda jazykov nad nle-regexami
+\end{description}
+
+\section[Vlastnosti a sila]{Vlastnosti a sila moderných regulárnych výrazov}
+\label{usila}
+
+\todo opraviť referencie na vety z bakalárky
+
+Potrebné vety z bakalárskej práce:
+
+\begin{veta}[Veta 2.2.5.]\label{lookahead+R}
+Regulárne jazyky sú uzavreté na lookaround.
+\end{veta}
+
+\begin{veta}[Veta 2.2.10.]\label{lookaround+R}
+Trieda nad regexami s pozitívnym lookaroundom je $\R$.
+\end{veta} 
+
+\begin{veta}[Veta 2.2.14.]\label{le+lcs}
+$ LEregex \subseteq \L_{CS} $
+\end{veta}
+
+\section[Popisná zložitosť]{Popisná zložitosť moderných regulárnych výrazov}
+\label{uzlozitost}
+
+V čase, keď sme hľadali články týkajúce sa popisnej zložitosti moderných regulárnych výrazov, nenašli sme nič týkajúce sa danej problematiky. Známe boli len výsledky pre regulárne výrazy s operáciami zjednotenia, zreťazenia a Kleeneho $*$, prípadne ešte prieniku a komplementu. Navyše mali ešte znak pre prázdny jazyk $\emptyset$ a prázdne slovo $\varepsilon$.
+
+Spomeňme si najprv ako možno zadefinovať popisnú zložitosť \cite{newResults} \cite{compMeasures75}:
+
+\begin{list}{$\bullet$}{Nech E je regulárny výraz, potom}
+\item $|E|$ je jeho celková dĺžka
+\item $rpn(E)$ je jeho celková dĺžka v poľskej normálnej forme
+\item $|alpha(E)|= N(E)$ je počet alfabetických symbolov v E
+\item $H(E)$ je hĺbka vzhľadom na $*$, počet vnorení $*$
+\item $L(E)$ je dĺžka najdlhšej neopakujúcej sa cesty cez výraz
+\item $W(E)$ je maximum symbolov v zjednotení (duálne k L)
+\end{list}
+
+\begin{tabular}{|c||c|c|c|c|}
+\hline
+ ~ & Alphabetical Symbol & E $\cup$ F & E $\cdot$ F & E*
+\\ \hline\hline
+N & 1 & N(E)+N(F) & N(E)+N(F) & N(E)
+\\ \hline 
+H & 0 & max(N(E), N(F)) & max(N(E),N(F)) & N(E)+1
+\\ \hline
+L & 1 & max(N(E),N(F)) & N(E)+N(F) & N(E)
+\\ \hline
+W & 1 & N(E)+N(F) & max(N(E),N(F)) & N(E)
+\\ \hline
+\end{tabular}
+\\ \\
+
+
+Zaujímavý je aj vzťah medzi konečnými automatmi a regulárnymi výrazmi, kde sa skúma stavová zložitosť automatu ekvivalentného konkrétnemu výrazu alebo popisná zložitosť výrazu ekvivalentného konkrétnemu automatu.
+
+...vzťah popisnej zložitosti výrazu pre jazyk L a $L^c$
+
+...najkratšie slovo nešpecifikované regulárnym výrazom
+
+\begin{veta}[Proposition 6 \cite{newResults}]
+Nech L je neprázdny regulárny jazyk.
+
+(a) Ak dĺžka najkratšieho slova v L je $n$, potom $|alph(E)| \geq n$ pre ľubovoľný regulárny výraz E, kde L(E) = L.
+
+(b) Ak naviac L je konečný a dĺžka najdlhšieho slova v L je $n$, potom $|alph(E)| \geq n$ pre ľubovoľný regulárny výraz, kde L(E) = L.
+\end{veta}
+
+
