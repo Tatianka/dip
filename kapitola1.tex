@@ -100,7 +100,8 @@ $ LEregex \subseteq \L_{CS} $
 \section[Popisná zložitosť]{Popisná zložitosť moderných regulárnych výrazov}
 \label{uzlozitost}
 
-V čase, keď sme hľadali články týkajúce sa popisnej zložitosti moderných regulárnych výrazov, nenašli sme nič týkajúce sa danej problematiky. Známe boli len výsledky pre regulárne výrazy s operáciami zjednotenia, zreťazenia a Kleeneho $*$, prípadne ešte prieniku a komplementu. Navyše mali ešte znak pre prázdny jazyk $\emptyset$ a prázdne slovo $\varepsilon$.
+
+V čase, keď sme hľadali články týkajúce sa popisnej zložitosti moderných regulárnych výrazov, nenašli sme nič týkajúce sa danej problematiky. Známe boli len výsledky pre regulárne výrazy s operáciami zjednotenia, zreťazenia a Kleeneho $*$ (RE), prípadne ešte prieniku a komplementu (GRE). Navyše mali ešte znak pre prázdny jazyk $\emptyset$ a prázdne slovo $\varepsilon$.
 
 Spomeňme si najprv ako možno zadefinovať popisnú zložitosť \cite{newResults} \cite{compMeasures75}:
 
@@ -128,12 +129,32 @@ W & 1 & N(E)+N(F) & max(N(E),N(F)) & N(E)
 \end{tabular}
 \\ \\
 
+Ako pri mnohých iných modeloch, aj do regulárnych výrazov vieme zakomponovať časti, ktoré nič nerobia (okrem toho, že zaberajú miesto). V rámci skúmania najjednoduchších výrazov sa prišlo k nasledujúcim definíciám \cite{newResults}:
 
-Zaujímavý je aj vzťah medzi konečnými automatmi a regulárnymi výrazmi, kde sa skúma stavová zložitosť automatu ekvivalentného konkrétnemu výrazu alebo popisná zložitosť výrazu ekvivalentného konkrétnemu automatu.
+\begin{df}
+Nech E je regulárny výraz nad abecedou $\Sigma$ a nech L(E) je jazyk špecifikovaný výrazom E. Hovoríme, že E je \textbf{zmenšiteľný}, ak platí nejaká z nasledujúcich podmienok:
+\begin{enumerate}
+\item E obsahuje $\emptyset$ a $|E|>1$
+\item E obsahuje podvýraz tvaru FG alebo GF, kde L(F)={$\varepsilon$}
+\item E obsahuje podvýraz tvaru $F|G$ alebo $G|F$, kde $L(F)=\lbrace \varepsilon \rbrace$ a $\varepsilon \in L(G)$
+\end{enumerate}
+Inak, ak žiadna z nich neplatí, E nazývame \textbf{nezmenšiteľným}.
+\end{df}
 
-...vzťah popisnej zložitosti výrazu pre jazyk L a $L^c$
+V originále sa používajú výrazy \textit{collapsible} a \textit{uncollapsible}. Táto definícia neodhalí všetky zbytočne zopakované časti, napríklad $a|a$ je nezmenšiteľný, aj keď by sa dal zapísať jednoduchým $a$. Problém je, že identity výrazov nie sú konečne axiomatizovateľné (ani nad unárnou abecedou). Teda nie je reálne určiť také pravidlá, aby sme dosiahli konečné zjednodušenie. \cite{newResults}
 
-...najkratšie slovo nešpecifikované regulárnym výrazom
+\begin{df}
+Ak E je nezmenšiteľný regulárny výraz taký, že
+\begin{enumerate}
+\item E nemá nadbytočné (); a zároveň
+\item E neobsahuje podvýraz tvaru $F**$
+\end{enumerate}
+potom vravíme, že E je \textbf{nedeliteľný} (irreducible).
+\end{df}
+
+Môžeme vyvodiť, že minimálny regulárny výraz pre daný jazyk bude nezmenšiteľný a nedeliteľný, naopak to však nemusí platiť. S takýmto základom možno dokázať napríklad tvrdenie: Ak E je nedeliteľný a $|alph(E)| \geq 1$, potom $|E| \leq 11|alph(E)| - 4$.
+
+Iné spôsoby na ohraničenie regulárnych výrazov poskytujú nasledujúce pozorovanie a veta.
 
 \begin{veta}[Proposition 6 \cite{newResults}]
 Nech L je neprázdny regulárny jazyk.
@@ -143,4 +164,14 @@ Nech L je neprázdny regulárny jazyk.
 (b) Ak naviac L je konečný a dĺžka najdlhšieho slova v L je $n$, potom $|alph(E)| \geq n$ pre ľubovoľný regulárny výraz, kde L(E) = L.
 \end{veta}
 
+Definícia non-returning NKA hovorí, že sa nevracia do počiatočného stavu, t.j. žiadne prechody nevedú smerom do $q_0$.
 
+\begin{veta}[Theorem 10]
+Nech E je regulárny jazyk s $|alph(E)| = n$. Potom existuje non-returning NKA akceptujúci $L(E)$ s $\leq n+1$ stavmi a DKA akceptujúci L(E) s $\leq 2n+1$ stavmi.
+\end{veta}
+
+Rozbehnutých je viacero oblastí skúmania. Regulárne výrazy sú zaujímavé hlavne preto, že tvoria stručnejší popis jazyka a sú ekvivalentné automatom. S tým súvisí prvá oblasť. Skúma sa stavová zložitosť automatu ekvivalentného konkrétnemu výrazu a naopak tiež popisná zložitosť výrazu ekvivalentného konkrétnemu automatu. Dá sa to zhrnúť ako problémy konverzií medzi modelmi. Niektorí autori siahajú po väčšej abstrakcii a namiesto automatov uvažujú iba orientované grafy s hranami označenými symbolmi. Určia si parametre grafu a snažia sa napríklad čo najlepšie popísať cesty medzi vrcholmi.
+
+Ďalšia oblasť zahŕňa operácie nad regulárnymi výrazmi. Jeden z problémov je napríklad vzťah popisnej zložitosti výrazu pre jazyk $L$ a $L^c$. Pre automaty existuje konštrukcia pre vyrobenie komplementu jazyka. Avšak pre komplementárny regulárny výraz to nie je také jednoznačné.
+
+Ako poslednú by sme spomenuli problém najkratšieho slova nešpecifikovaného re\-gu\-lár\-nym výrazom. Predpokladajme regulárny výraz $E$, kde $|alph(E)|=n$ nad konečnou abecedou $\Sigma$, pričom $L(E)\neq \Sigma^*$. Aké dlhé môže byť najkratšie slovo NEšpecifikované výrazom $E$? Najzaujímavejší výsledok je pre výraz s $|alph(E)| = 75n + 361$, kde naj\-krat\-šie nešpecifikované slovo je dĺžky $3(2 n - 1)(n + 1) + 3$.
