@@ -174,6 +174,55 @@ Z vety \ref{lelcs} vieme, že výraz musí obsahovať negatívny lookaround. Z j
 $\nle \subsetneq \L_{CS}$
 \end{dosledok}
 
+\begin{veta}
+$\le \subseteq NSPACE(\log n)$, kde $n>1$ je veľkosť vstupu.
+\end{veta}
+\begin{proof}
+Ukážeme, že ľubovoľný $\alpha \in \le$ vieme simulovať nedeterministickým Turingovým strojom s jednou vstupnou read-only páskou a jednou pracovnou páskou, na ktorej použijeme maximálne logaritmický počet políčok.
+
+Celý regex si budeme uchovávať v stavoch a pridáme doňho špeciálny znak $ \blacktriangleright $, ktorým si budeme ukazovať, kam sme sa v regexe dopracovali -- bude to akýsi smerník na znak, ktorý práve spracovávame. Teda stav bude vyzerať takto: $q_{\beta\blacktriangleright\xi}$ (pre lepšiu čitateľnosť budeme uvádzať iba podstatný dolný index: $\beta\blacktriangleright\xi$), kde $\beta\xi = \alpha$, časť $\beta$ sme už namatchovali na vstup a práve sa chystáme pokračovať časťou $\xi$. Ak $\blacktriangleright$ ukazuje na znak, porovnáme ho s aktuálnym znakom na vstupnej páske. Pokiaľ sa nezhodujú, výpočet sa zasekne. Pri zhode pokračujeme až kým sa nám neminie vstup aj regex. Ak $\blacktriangleright$ ukazuje na metaznak, potom práve zisťujeme o akú operáciu ide (ak má viac znakov) alebo sa chystáme túto operáciu vykonať.
+
+Teraz skonštruujeme Turingov stroj $M = \left( K, \Sigma, \delta, \blacktriangleright\alpha, F \right)$ k regexu $\alpha$. 
+$$ K = \lbrace q_{\beta\blacktriangleright\xi} ~|~ \beta,\xi \textit{ sú podslová } \alpha \textit{ také, že } \beta\xi = \alpha \rbrace $$
+$$ \Sigma = \Sigma(\alpha)\footnote{T.j. všetky znaky použité v regexe $\alpha$. Síce sa abeceda v regexoch nedefinuje, ale je zrejmé, že znaky, ktoré v nich napísané nie sú, matchovanie zastavia so zamietacím výsledkom.}$$
+$$ F = \lbrace q_{\alpha\blacktriangleright} \rbrace $$
+$\delta:$ (v tvare: stav, znak čítaný na vstpunej páske, znak čítaný na pracovnej páske)
+
+$$\delta(\beta\blacktriangleright a \xi, a, b) = \lbrace (\beta a \blacktriangleright \xi, 1, prípad1) \rbrace$$
+$$\delta(\beta\blacktriangleright(\gamma)\xi, a, b) = \lbrace (\beta(\blacktriangleright\gamma)\xi, 0,0) \rbrace$$
+$$\delta(\beta(\gamma)\blacktriangleright * \xi, a, b) = \lbrace (\beta(\blacktriangleright\gamma)*\xi, 0, prípad2),(\beta(\gamma)*\blacktriangleright\xi, 0, 0) \rbrace$$
+$$\delta(\beta\blacktriangleright\backslash k \xi, a, b) = \lbrace (q_{najdi\_zaciatok(k)}, 0, pripad3) \rbrace$$
+$$\delta(\beta\blacktriangleright(?=\gamma)\xi) = \lbrace (\blacktriangleright\gamma, 0,0) \rbrace$$
+$$\delta(\gamma\blacktriangleright, a, b) = \lbrace (\beta(?=\gamma)\blacktriangleright\xi, 0,0) \rbrace $$
+$$\delta(\beta\blacktriangleright(?<=\gamma)\xi) = \lbrace (doľava\_ \gamma, 0,0) \rbrace$$
+$$\delta(doľava\_ \gamma, a, b) = \lbrace(doľava\_ \gamma,-1, 0), (\blacktriangleright\gamma, 0,0)\rbrace$$
+$$\delta(\gamma\blacktriangleright, a, b) = \textit{ overiť, či sme skončili na správnom mieste} $$
+$$\delta(\gamma\blacktriangleright\_overene, a, b) = \lbrace (\beta(?<=\gamma)\blacktriangleright\xi, 0,0) \rbrace $$
+
+V $\delta$ funkcii sme si uľahčili mnohé veci, ktoré teraz vysvetlíme. Začneme tým, čo sa deje s pracovnou páskou.
+
+Pracovná páska slúži ako úložisko smerníkov rôzne miesta vstupnej pásky, takže bude mať formát $A_1\#A_2\#\dots\#A_m$. Adresu nejakého políčka na vstupnej páske vieme zapísať v priestore $\log n$ a $m.\log n \in O(\log n)$, teda sa budeme snažiť ukázať, že $m$ je konštanta. Prečo a kedy si na pásku píšeme adresy?
+
+Najprv si rezervujeme prvý adresný slot na aktuálnu adresu hlavy, nech si ju máme odkiaľ okopírovať, keď treba. Adresy budeme využívať pri operáciách spätná referencia, lookahead a lookbehind.
+
+\textbf{Spätná referencia:} Po prečítaní ľavej/pravej $m$-tej zátvorky si zapamätáme pozíciu hlavy na vstupe. Pri nájdení symbolu $\backslash m$ začneme algoritmus porovnávania podslov podľa definície spätnej referencie -- aké podslovo matchujú $m$-té zátvorky, také isté musí ležať aj na aktuálnej pozícii. Algoritmus bude porovnávať vždy postupne po jednom znaku od začiatočnej pozície (ľavá zátvorka) po koniec (pravá zátvorka).
+
+\textbf{Lookahead:} Zapamätáme si adresu, kde sme začali (prvý symbol). Ak bol lookahead úspešný, vrátime hlavu na vstupnej páske na túto pozíciu a pokračujeme ďalej vo výpočte.
+
+\textbf{Lookbehind:} Keď naň narazíme, zapamätáme si pozíciu na vstupe, toto je zarážka pre lookbehind - svoje matchovanie musí skončiť na tejto pozícii s tým, že tento znak už neberie do úvahy. Nedeterministicky sa vrátime o niekoľko políčok doľava a skúsime matchovať regex v lookbehinde. Keď skončí úspešne, porovnáme aktuálnu pozíciu so zarážkou. Ak sú rôzne, Turingov stroj sa zasekne. Inak pokračuje vo výpočte ďalej od tejto pozície.
+
+Keďže celý regex vidíme pri konštrukcii Turingovho stroja, vieme si do stavov zakódovať význam a poradie adresných slotov. A celú pracovnú pásku si predpripraviť (napísať potrebný počet \#). 
+
+Pre \textbf{spätné referencie} potrebujeme vždy 2 adresy -- na začiatok a koniec. Ak náhodou budú $m$-té zátvorky opakovať výpočet z dôvodu Kleeneho $*$, v definícii stojí, že sa berie do úvahy posledná zhoda, teda v takomto prípade adresy iba prepíšeme. Takisto prípad, že sa nachádzajú vnútri lookaheadu/lookbehindu, máme pre ne rezervovaný slot. Ďalšie 2 adresy spotrebujeme pre algoritmus porovnávania -- pozície v oboch podslovách. Po jeho dokončení adresy môžeme vymazať (tzn. v ďalšom výpočte prepísať niečím iným).
+
+V prípade \textbf{lookaheadu a lookbehindu} spotrebujeme len 1 adresný slot a to tiež len dočasne -- dokým sa operácia celá nevykoná. Potom je nám tento údaj zbytočný. Tieto operácie však môžu byť vnorené a tak v najhoršom prípade zaberú $p.\log n$ priestoru, ak ich počet je $p$.
+
+Ak máme $s$ spätných referencií, $l_a$ lookaheadov a $l_b$ lookbehindov, najviac spotrebujeme $(2s+2+l_a+l_b)\log n$ priestoru. Celý regex $\alpha$ je konečne dlhý, teda počet operácií je konečný. Čo znamená, že $k=2s+2+l_a+l_b$ je konštanta a to sme chceli dokázať.
+
+\end{proof}
+
+
+
 \section[Popisná zložitosť]{Popisná zložitosť moderných regulárnych výrazov}
 \label{vzlozitost}
 
