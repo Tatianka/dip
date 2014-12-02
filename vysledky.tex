@@ -180,24 +180,26 @@ $\le \subseteq NSPACE(\log n)$, kde $n>1$ je veľkosť vstupu.
 \begin{proof}
 Ukážeme, že ľubovoľný $\alpha \in \le$ vieme simulovať nedeterministickým Turingovým strojom s jednou vstupnou read-only páskou a jednou pracovnou páskou, na ktorej použijeme maximálne logaritmický počet políčok.
 
-Celý regex si budeme uchovávať v stavoch a pridáme doňho špeciálny znak $ \blacktriangleright $, ktorým si budeme ukazovať, kam sme sa v regexe dopracovali -- bude to akýsi smerník na znak, ktorý práve spracovávame. Teda stav bude vyzerať takto: $q_{\beta\blacktriangleright\xi}$ (pre lepšiu čitateľnosť budeme uvádzať iba podstatný dolný index: $\beta\blacktriangleright\xi$), kde $\beta\xi = \alpha$, časť $\beta$ sme už namatchovali na vstup a práve sa chystáme pokračovať časťou $\xi$. Ak $\blacktriangleright$ ukazuje na znak, porovnáme ho s aktuálnym znakom na vstupnej páske. Pokiaľ sa nezhodujú, výpočet sa zasekne. Pri zhode pokračujeme až kým sa nám neminie vstup aj regex. Ak $\blacktriangleright$ ukazuje na metaznak, potom práve zisťujeme o akú operáciu ide (ak má viac znakov) alebo sa chystáme túto operáciu vykonať.
+Celý regex si budeme uchovávať v stavoch\footnote{Každý regex je z definície konečný, to znamená aj konečný počet stavov.} a pridáme doňho špeciálny znak $ \blacktriangleright $, ktorým si budeme ukazovať, kam sme sa v regexe dopracovali -- bude to akýsi smerník na znak, ktorý práve spracovávame. Teda stav bude vyzerať takto: $q_{\beta\blacktriangleright\xi}$ (pre lepšiu čitateľnosť budeme uvádzať namiesto stavu iba jeho dolný index: $\beta\blacktriangleright\xi$), kde $\beta\xi = \alpha$, časť $\beta$ sme už namatchovali na vstup a práve sa chystáme pokračovať časťou $\xi$. Ak $\blacktriangleright$ ukazuje na znak, porovnáme ho s aktuálnym znakom na vstupnej páske. Pokiaľ sa nezhodujú, výpočet sa zasekne. Pri zhode pokračujeme až kým sa nám neminie vstup aj regex. Ak $\blacktriangleright$ ukazuje na metaznak, potom zistíme o akú operáciu ide (ak má viac znakov, treba na to niekoľko stavov -- napr. lookahead) a začneme ju vykonávať.
+
+Pracovná páska bude obsahovať adresy (pozícia nejakého políčka na vstupnej páske) oddelené špeciálnym znakom \#, $\# \notin \Sigma$. Ako prvá bude záznam o aktuálnej pozícii hlavy na vstupe. Potom nasledujú v poradí, v akom sú v regexe, adresy potrebné k vykonaniu operácií. Operácie a počty adries sú nasledovné: $*:1$, $\backslash k:2$, lookahead:1, lookbehind:1.
 
 Teraz skonštruujeme Turingov stroj $M = \left( K, \Sigma, \delta, \blacktriangleright\alpha, F \right)$ k regexu $\alpha$. 
-$$ K = \lbrace q_{\beta\blacktriangleright\xi} ~|~ \beta,\xi \textit{ sú podslová } \alpha \textit{ také, že } \beta\xi = \alpha \rbrace $$
-$$ \Sigma = \Sigma(\alpha)\footnote{T.j. všetky znaky použité v regexe $\alpha$. Síce sa abeceda v regexoch nedefinuje, ale je zrejmé, že znaky, ktoré v nich napísané nie sú, matchovanie zastavia so zamietacím výsledkom.}$$
+$$ K = \lbrace \beta\blacktriangleright\xi ~|~ \beta,\xi \textit{ sú podslová } \alpha \textit{ také, že } \beta\xi = \alpha \rbrace $$
+$$ \Sigma = \Sigma(\alpha)\footnote{T.j. všetky znaky a metaznaky použité v regexe $\alpha$.}$$
 $$ F = \lbrace q_{\alpha\blacktriangleright} \rbrace $$
-$\delta:$ (v tvare: stav, znak čítaný na vstpunej páske, znak čítaný na pracovnej páske)
-
-$$\delta(\beta\blacktriangleright a \xi, a, b) = \lbrace (\beta a \blacktriangleright \xi, 1, prípad1) \rbrace$$
-$$\delta(\beta\blacktriangleright(\gamma)\xi, a, b) = \lbrace (\beta(\blacktriangleright\gamma)\xi, 0,0) \rbrace$$
-$$\delta(\beta(\gamma)\blacktriangleright * \xi, a, b) = \lbrace (\beta(\blacktriangleright\gamma)*\xi, 0, prípad2),(\beta(\gamma)*\blacktriangleright\xi, 0, 0) \rbrace$$
-$$\delta(\beta\blacktriangleright\backslash k \xi, a, b) = \lbrace (q_{najdi\_zaciatok(k)}, 0, pripad3) \rbrace$$
-$$\delta(\beta\blacktriangleright(?=\gamma)\xi) = \lbrace (\blacktriangleright\gamma, 0,0) \rbrace$$
-$$\delta(\gamma\blacktriangleright, a, b) = \lbrace (\beta(?=\gamma)\blacktriangleright\xi, 0,0) \rbrace $$
-$$\delta(\beta\blacktriangleright(?<=\gamma)\xi) = \lbrace (doľava\_ \gamma, 0,0) \rbrace$$
-$$\delta(doľava\_ \gamma, a, b) = \lbrace(doľava\_ \gamma,-1, 0), (\blacktriangleright\gamma, 0,0)\rbrace$$
-$$\delta(\gamma\blacktriangleright, a, b) = \textit{ overiť, či sme skončili na správnom mieste} $$
-$$\delta(\gamma\blacktriangleright\_overene, a, b) = \lbrace (\beta(?<=\gamma)\blacktriangleright\xi, 0,0) \rbrace $$
+\underline{$\delta:$ v tvare: (stav, znak čítaný na vstupnej páske)}
+$$\delta(\beta\blacktriangleright a \xi, a) = \lbrace (\beta a \blacktriangleright \xi, 1) \rbrace$$
+Po prečítaní znaku zo vstupnej pásky musíme inkrementovať počítadlo aktuálnej pozície hlavy na vstupe.
+$$\delta(\beta\blacktriangleright(\gamma)\xi, a) = \lbrace (\beta(\blacktriangleright\gamma)\xi, 1) \rbrace$$
+$$\delta(\beta(\gamma)\blacktriangleright * \xi, a) = \lbrace (\beta(\blacktriangleright\gamma)*\xi, 0),(\beta(\gamma)*\blacktriangleright\xi, 0) \rbrace$$
+$$\delta(\beta\blacktriangleright\backslash k \xi, a) = \lbrace (q_{najdi\_zaciatok(k)}, 0) \rbrace$$
+$$\delta(\beta\blacktriangleright(?=\gamma)\xi, a) = \lbrace (\blacktriangleright\gamma, 0) \rbrace$$
+$$\delta(\gamma\blacktriangleright, a) = \lbrace (\beta(?=\gamma)\blacktriangleright\xi, 0) \rbrace $$
+$$\delta(\beta\blacktriangleright(?<=\gamma)\xi, a) = \lbrace (doľava\_ \gamma, 0) \rbrace$$
+$$\delta(doľava\_ \gamma, a) = \lbrace(doľava\_ \gamma,-1), (\blacktriangleright\gamma, 0)\rbrace$$
+$$\delta(\gamma\blacktriangleright, a) = \textit{ overiť, či sme skončili na správnom mieste} $$
+$$\delta(\gamma\blacktriangleright\_overene, a) = \lbrace (\beta(?<=\gamma)\blacktriangleright\xi, 0) \rbrace $$
 
 V $\delta$ funkcii sme si uľahčili mnohé veci, ktoré teraz vysvetlíme. Začneme tým, čo sa deje s pracovnou páskou.
 
