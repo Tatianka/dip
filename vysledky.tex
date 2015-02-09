@@ -180,46 +180,52 @@ $\le \subseteq NSPACE(\log n)$, kde $n>1$ je veľkosť vstupu.
 \begin{proof}
 Ukážeme, že ľubovoľný $\alpha \in \le$ vieme simulovať nedeterministickým Turingovým strojom s jednou vstupnou read-only páskou a jednou pracovnou páskou, na ktorej použijeme maximálne logaritmický počet políčok.
 
-Celý regex si budeme uchovávať v stavoch\footnote{Každý regex je z definície konečný, to znamená aj konečný počet stavov.} a pridáme doňho špeciálny znak $ \blacktriangleright $, ktorým si budeme ukazovať, kam sme sa v regexe dopracovali -- bude to akýsi smerník na znak, ktorý práve spracovávame. Teda stav bude vyzerať takto: $q_{\beta\blacktriangleright\xi}$ (pre lepšiu čitateľnosť budeme uvádzať namiesto stavu iba jeho dolný index: $\beta\blacktriangleright\xi$), kde $\beta\xi = \alpha$, časť $\beta$ sme už namatchovali na vstup a práve sa chystáme pokračovať časťou $\xi$. Ak $\blacktriangleright$ ukazuje na znak, porovnáme ho s aktuálnym znakom na vstupnej páske. Pokiaľ sa nezhodujú, výpočet sa zasekne. Pri zhode pokračujeme až kým sa nám neminie vstup aj regex. Ak $\blacktriangleright$ ukazuje na metaznak, potom zistíme o akú operáciu ide (ak má viac znakov, treba na to niekoľko stavov -- napr. lookahead) a začneme ju vykonávať.
+Celý regex si budeme uchovávať v stavoch\footnote{Každý regex je má z definície konečnú dĺžku, to znamená aj konečný počet stavov.} a pridáme doňho špeciálny znak $ \blacktriangleright $, ktorým si budeme ukazovať, kam sme sa v regexe dopracovali -- bude to akýsi smerník na znak, ktorý práve spracovávame. Teda stav bude vyzerať takto: $q_{\beta\blacktriangleright\xi}$ (pre lepšiu čitateľnosť budeme uvádzať namiesto stavu iba jeho dolný index: $\beta\blacktriangleright\xi$), kde $\beta\xi = \alpha$, časť $\beta$ sme už namatchovali na vstup a práve sa chystáme pokračovať časťou $\xi$. Ak $\blacktriangleright$ ukazuje na znak, porovnáme ho s aktuálnym znakom na vstupnej páske. Pokiaľ sa nezhodujú, výpočet sa zasekne. Pri zhode pokračujeme až kým sa nám neminie vstup aj regex. Ak $\blacktriangleright$ ukazuje na metaznak, potom zistíme o akú operáciu ide (ak má viac znakov, treba na to niekoľko stavov -- napr. lookahead) a začneme ju vykonávať.
 
-Pracovná páska bude obsahovať adresy (pozícia nejakého políčka na vstupnej páske) oddelené špeciálnym znakom \#, $\# \notin \Sigma$. Ako prvá bude záznam o aktuálnej pozícii hlavy na vstupe. Potom nasledujú v poradí, v akom sú v regexe, adresy potrebné k vykonaniu operácií. Operácie a počty adries sú nasledovné: $*:1$, $\backslash k:2$, lookahead:1, lookbehind:1.
-
-Teraz skonštruujeme Turingov stroj $M = \left( K, \Sigma, \delta, \blacktriangleright\alpha, F \right)$ k regexu $\alpha$. 
-$$ K = \lbrace \beta\blacktriangleright\xi ~|~ \beta,\xi \textit{ sú podslová } \alpha \textit{ také, že } \beta\xi = \alpha \rbrace $$
-$$ \Sigma = \Sigma(\alpha)\footnote{T.j. všetky znaky a metaznaky použité v regexe $\alpha$.}$$
-$$ F = \lbrace q_{\alpha\blacktriangleright} \rbrace $$
-\underline{$\delta:$ v tvare: (stav, znak čítaný na vstupnej páske)}
-$$\delta(\beta\blacktriangleright a \xi, a) = \lbrace (\beta a \blacktriangleright \xi, 1) \rbrace$$
-Po prečítaní znaku zo vstupnej pásky musíme inkrementovať počítadlo aktuálnej pozície hlavy na vstupe.
-$$\delta(\beta\blacktriangleright(\gamma)\xi, a) = \lbrace (\beta(\blacktriangleright\gamma)\xi, 1) \rbrace$$
-$$\delta(\beta(\gamma)\blacktriangleright * \xi, a) = \lbrace (\beta(\blacktriangleright\gamma)*\xi, 0),(\beta(\gamma)*\blacktriangleright\xi, 0) \rbrace$$
-$$\delta(\beta\blacktriangleright\backslash k \xi, a) = \lbrace (q_{najdi\_zaciatok(k)}, 0) \rbrace$$
-$$\delta(\beta\blacktriangleright(?=\gamma)\xi, a) = \lbrace (\blacktriangleright\gamma, 0) \rbrace$$
-$$\delta(\gamma\blacktriangleright, a) = \lbrace (\beta(?=\gamma)\blacktriangleright\xi, 0) \rbrace $$
-$$\delta(\beta\blacktriangleright(?<=\gamma)\xi, a) = \lbrace (doľava\_ \gamma, 0) \rbrace$$
-$$\delta(doľava\_ \gamma, a) = \lbrace(doľava\_ \gamma,-1), (\blacktriangleright\gamma, 0)\rbrace$$
-$$\delta(\gamma\blacktriangleright, a) = \textit{ overiť, či sme skončili na správnom mieste} $$
-$$\delta(\gamma\blacktriangleright\_overene, a) = \lbrace (\beta(?<=\gamma)\blacktriangleright\xi, 0) \rbrace $$
-
-V $\delta$ funkcii sme si uľahčili mnohé veci, ktoré teraz vysvetlíme. Začneme tým, čo sa deje s pracovnou páskou.
-
-Pracovná páska slúži ako úložisko smerníkov rôzne miesta vstupnej pásky, takže bude mať formát $A_1\#A_2\#\dots\#A_m$. Adresu nejakého políčka na vstupnej páske vieme zapísať v priestore $\log n$ a $m.\log n \in O(\log n)$, teda sa budeme snažiť ukázať, že $m$ je konštanta. Prečo a kedy si na pásku píšeme adresy?
-
-Najprv si rezervujeme prvý adresný slot na aktuálnu adresu hlavy, nech si ju máme odkiaľ okopírovať, keď treba. Adresy budeme využívať pri operáciách spätná referencia, lookahead a lookbehind.
-
-\textbf{Spätná referencia:} Po prečítaní ľavej/pravej $m$-tej zátvorky si zapamätáme pozíciu hlavy na vstupe. Pri nájdení symbolu $\backslash m$ začneme algoritmus porovnávania podslov podľa definície spätnej referencie -- aké podslovo matchujú $m$-té zátvorky, také isté musí ležať aj na aktuálnej pozícii. Algoritmus bude porovnávať vždy postupne po jednom znaku od začiatočnej pozície (ľavá zátvorka) po koniec (pravá zátvorka).
-
-\textbf{Lookahead:} Zapamätáme si adresu, kde sme začali (prvý symbol). Ak bol lookahead úspešný, vrátime hlavu na vstupnej páske na túto pozíciu a pokračujeme ďalej vo výpočte.
-
-\textbf{Lookbehind:} Keď naň narazíme, zapamätáme si pozíciu na vstupe, toto je zarážka pre lookbehind - svoje matchovanie musí skončiť na tejto pozícii s tým, že tento znak už neberie do úvahy. Nedeterministicky sa vrátime o niekoľko políčok doľava a skúsime matchovať regex v lookbehinde. Keď skončí úspešne, porovnáme aktuálnu pozíciu so zarážkou. Ak sú rôzne, Turingov stroj sa zasekne. Inak pokračuje vo výpočte ďalej od tejto pozície.
+Pracovná páska bude slúžiť ako úložisko smerníkov na rôzne miesta vstupnej pásky. Bude mať formát $A_1\#A_2\#\dots\#A_m$. Adresu nejakého políčka na vstupnej páske vieme zapísať v priestore $\log n$. Ak ukážeme, že $m$ je konštanta, potom $m.\log n \in O(\log n)$. Adresa $A_1$ bude rezervovaná pre prvý adresný slot na aktuálnu pozíciu hlavy na vstupe, nech si ju máme odkiaľ okopírovať, keď treba. Adresy budeme využívať pri operáciách spätná referencia, lookahead a lookbehind.
 
 Keďže celý regex vidíme pri konštrukcii Turingovho stroja, vieme si do stavov zakódovať význam a poradie adresných slotov. A celú pracovnú pásku si predpripraviť (napísať potrebný počet \#). 
 
-Pre \textbf{spätné referencie} potrebujeme vždy 2 adresy -- na začiatok a koniec. Ak náhodou budú $m$-té zátvorky opakovať výpočet z dôvodu Kleeneho $*$, v definícii stojí, že sa berie do úvahy posledná zhoda, teda v takomto prípade adresy iba prepíšeme. Takisto prípad, že sa nachádzajú vnútri lookaheadu/lookbehindu, máme pre ne rezervovaný slot. Ďalšie 2 adresy spotrebujeme pre algoritmus porovnávania -- pozície v oboch podslovách. Po jeho dokončení adresy môžeme vymazať (tzn. v ďalšom výpočte prepísať niečím iným).
+Teraz skonštruujeme Turingov stroj $M = \left( K, \Sigma, \delta, q_0, F \right)$ k regexu $\alpha$. 
+$$ K = \lbrace \beta\blacktriangleright\xi ~|~ \beta,\xi \textit{ sú podslová } \alpha \textit{ také, že } \beta\xi = \alpha \rbrace $$
+$$ \Sigma = \Sigma(\alpha)\footnote{T.j. všetky znaky a metaznaky použité v regexe $\alpha$.}, ~
+q_0 = \blacktriangleright\alpha, ~
+F = \lbrace \alpha\blacktriangleright \rbrace $$
+\underline{$\delta:$ (v tvare: stav, znak čítaný na vstupnej páske)} 
+
+Kvôli prehľadnosti popíšeme len hlavné kroky algoritmu. 
+\begin{list}{}{}
+\item $\delta(\beta\blacktriangleright a \xi, a) = \lbrace (\beta a \blacktriangleright \xi, 1) \rbrace ~ \forall a \in \Sigma$ -- Ak je v regexe znak, matchujeme ho s tým na vstupe.
+\item $\delta(\beta\blacktriangleright(\gamma)\xi, a) = \lbrace (\beta(\blacktriangleright\gamma)\xi, 0) \rbrace$ -- Ak sú to $k$--te zátvorky a regex obsahuje $\backslash k$, zapíšeme aktuálnu adresu ako adresu začiatku pre $\backslash k$.
+\item $\delta(\beta(\gamma\blacktriangleright)\xi, a) = \lbrace (\beta(\gamma)\blacktriangleright\xi, 0) \rbrace$ -- Ak sú to $k$--te zátvorky a regex obsahuje $\backslash k$, zapíšeme aktuálnu adresu ako adresu konca pre $\backslash k$. Používame polootvorený interval -- znak na koncovej adrese do podslova nepatrí.
+\item $\delta(\beta(\gamma)\blacktriangleright * \xi, a) = \lbrace (\beta(\blacktriangleright\gamma)*\xi, 0),(\beta(\gamma)*\blacktriangleright\xi, 0) \rbrace$ -- Kleeneho $*$: buď opakujeme alebo pokračujeme ďalej.
+\item $\delta(\beta\blacktriangleright\backslash k \xi, a) = \lbrace (q_{najdi\_zaciatok(k)}, 0) \rbrace$ -- Najprv si zapamätáme aktuálnu pozíciu na vstupe (ďalej označovanú ako 'aktuálna pracovná pozícia'). Stav $q_{najdi\_zaciatok(k)}$ zodpovedá presunu hlavy na vstupnej páske na začiatočnú pozíciu podslova. Tu začneme algoritmus porovnávania podslov podľa definície spätnej referencie -- aké podslovo matchujú $k$-te zátvorky, také isté musí ležať aj na 'aktuálnej pracovnej pozícii'. Algoritmus bude porovnávať vždy postupne po jednom znaku od začiatočnej pozície (ľavá zátvorka) po (koniec - 1) (pravá zátvorka):
+
+\begin{verbatim}
+pokiaľ zaciatok != koniec: 
+    zapamätaj si znak 
+    začiatok++ 
+    presuň hlavu na pozíciu 'aktuálna pracovná pozícia' 
+    porovnaj znak (ak nesedí, zasekni sa) 
+    (aktuálna pracovná pozícia)++ 
+    presuň hlavu na pozíciu 'začiatok' 
+presuň hlavu na pozíciu 'aktuálna pracovná pozícia'
+\end{verbatim}
+Vidíme, že si dočasne potrebujeme zapamätať adresu 'aktuálna pracovná pozícia', ale po skončení tohto algoritmu ju môžeme zahodiť.
+
+Po úspešnom zbehutí algoritmu TS prejde do stavu $\beta\backslash k \blacktriangleright\xi$.
+\item $\delta(\beta\blacktriangleright(?=\gamma)\xi, a) = \lbrace (\blacktriangleright\gamma, 0) \rbrace$ -- Lookahead: zapamätáme si aktuálnu pozíciu na vstupe do zodpovedajúceho slotu na pracovnej páske a spracujeme regex vnútri lookaheadu. Ak uspejeme, presunieme hlavu na vstupnej páske naspäť na zapamätanú pozíciu a pokračujeme v regexe ďalej: $\delta(\gamma\blacktriangleright, a) = \lbrace (\beta(?=\gamma)\blacktriangleright\xi, 0) \rbrace $.
+\item $\delta(\beta\blacktriangleright(?<=\gamma)\xi, a) = \lbrace (doľava\_ \gamma, 0) \rbrace$
+-- Lookbehind: zapamätáme si aktuálnu pozíciu na vstupe do zodpovedajúceho slotu na pracovnej páske. Toto je zarážka pre lookbehind - svoje matchovanie musí skončiť na tejto pozícii tak, že tento znak už neberie do úvahy. Nedeterministicky sa vrátime o niekoľko políčok doľava ($\delta(doľava\_ \gamma, a) = \lbrace(doľava\_ \gamma,-1), (\blacktriangleright\gamma, 0)\rbrace$)  a skúsime matchovať regex v lookbehinde. Keď uspejeme, porovnáme aktuálnu pozíciu so zarážkou. Ak sú rôzne, Turingov stroj sa zasekne. Inak pokračuje vo výpočte ďalej, od tejto pozície: $\delta(\gamma\blacktriangleright\_overene, a) = \lbrace (\beta(?<=\gamma)\blacktriangleright\xi, 0) \rbrace $.
+\end{list}
+
+\textbf{\underline{Počet adries}}:
+
+Pre \textbf{spätné referencie} potrebujeme vždy 2 adresy -- na začiatok a koniec. Ak sa náhodou budú $k$-te zátvorky opakovať, napr. kvôli Kleeneho $*$, v definícii stojí, že sa vždy berie do úvahy posledný výskyt, takže adresy prepisujeme pri každom opakovaní. V prípade, že sa $k$-te zátvorky nachádzajú vnútri lookaheadu/lookbehindu, tiež máme pre ne rezervované 2 sloty. Algoritmus porovnávania potrebuje 1 ďalšiu adresu -- aktuálnu pracovnú pozíciu. Po jeho dokončení adresu môžeme vymazať (tzn. v ďalšom výpočte prepísať niečím iným).
 
 V prípade \textbf{lookaheadu a lookbehindu} spotrebujeme len 1 adresný slot a to tiež len dočasne -- dokým sa operácia celá nevykoná. Potom je nám tento údaj zbytočný. Tieto operácie však môžu byť vnorené a tak v najhoršom prípade zaberú $p.\log n$ priestoru, ak ich počet je $p$.
 
-Ak máme $s$ spätných referencií, $l_a$ lookaheadov a $l_b$ lookbehindov, najviac spotrebujeme $(2s+2+l_a+l_b)\log n$ priestoru. Celý regex $\alpha$ je konečne dlhý, teda počet operácií je konečný. Čo znamená, že $k=2s+2+l_a+l_b$ je konštanta a to sme chceli dokázať.
+Ak máme 1 rezervovaný slot pre aktuálnu adresu, $s$ spätných referencií, $l_a$ lookaheadov a $l_b$ lookbehindov, najviac spotrebujeme $(1+2s+1+l_a+l_b)\log n$ priestoru. Celý regex $\alpha$ je konečne dlhý, teda počet operácií je konečný. Čo znamená, že $m=1+2s+1+l_a+l_b$ je konštanta a to sme chceli dokázať.
 
 \end{proof}
 
