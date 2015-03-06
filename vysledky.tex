@@ -230,6 +230,125 @@ Ak máme 1 rezervovaný slot pre aktuálnu adresu, $s$ spätných referencií, $
 \end{proof}
 
 
+\begin{veta}[Savitch]
+Nech $S(n)\geq \log n$ je páskovo konštruovateľná, potom 
+$$ NSPACE(S(n)) \subseteq DSPACE(S^2(n)) $$
+\end{veta}
+
+\begin{dosledok}
+$\le \subseteq DSPACE(\log^2 n)$, kde $n>1$ je veľkosť vstupu.
+\end{dosledok}
+
+\begin{veta}
+$\nle \subseteq DSPACE(\log^2 n)$, kde $n>1$ je veľkosť vstupu.
+\end{veta}
+\begin{proof}
+\TODO
+\end{proof}
+
+\begin{df}
+$L(regex\#word)$ nazývame jazyk takých slov, kde $regex$ je validný regulárny výraz z $R$ a slovo $word \in L(R)$. Množina $R \in \lbrace \e, \le, \nle \rbrace$ musí byť špecifikovaná.
+\end{df}
+
+\begin{df}
+\textbf{Konfiguráciou} regexu $\alpha = r_1 \dots r_n$ nazývame dvojicu $(r, w)$, kde $r \in (\lceil\alpha)\cup(\alpha\lceil)\cup(r_1 \dots \lceil r_i \dots r_n)$ $w \in \Gamma^*\lceil~ \Gamma^*$ a sybmol $\lceil$ ukazuje, kde sa nachádzame vo výpočte v regexe a v slove.
+\end{df}
+
+\begin{df}
+Konfiguráciu $(r_1 \dots r_n \lceil, w_1\dots w_m \lceil)$ nazývame \textbf{akceptačná}.
+\end{df}
+
+\begin{df}
+Zátvorka $($ v regexe $\alpha$ je \textbf{indexovateľná}, ak sa bezprostredne za ňou nenachádza metaznak ? a zárorveň sa nenachádza vnútri negatívneho lookaroundu.
+\end{df}
+Je zakázané odkazovať sa spätnými referenciami na operácie formy $(?\dots )$, preto ich ani nechceme a nebudeme brať do úvahy v poradí zátvoriek. Z týchto operácií sa v našom modeli nachádza iba pozitívny a negatívny lookaround. Je povolené odkazovať sa na zátvorky vnútri lookaroundu, takže sa vieme odvolať na podslovo, čo sa zhoduje s pozitívnou formou (ak lookaround považujeme za neindexovateľné zátvorky, stačí ho prepísať do formy $(?=(\dots ))$ a vieme sa referencovať na jeho obsah). Problém nastáva pri jeho negatívnej verzii -- podľa definície nesmie nájsť žiadnu zhodu, inak sa výpočet zastaví. Potom po akceptácii nedefinuje žiadne podslovo, na ktoré by sme sa mohli odvolať. To isté platí o ľubovoľných zátvorkách v jeho vnútri.
+\TODO ale na samotné matchovanie vnútri potrebuje aj spätné referencie
+
+\begin{df}
+Zátvorka $)$ v regexe $\alpha$ je \textbf{indexovateľná}, ak k nej prislúchajúca otváracia zátvorka je indexovateľná.
+\end{df}
+
+\begin{df}
+Regex $\alpha$ je \textbf{alternovateľný}, ak zodpovedá jednému z týchto tvarov:
+\begin{itemize}
+\item prázdny regex
+\item $a\in\Sigma$ 
+\item $a*$, kde $a\in\Sigma$
+\item $(\beta)$, kde $\beta$ je ľubovoľný regex z rovnakej triedy ako $\alpha$
+\item $(\beta)*$, kde $\beta$ je ľubovoľný regex z rovnakej triedy ako $\alpha$
+\item $\backslash k$
+\item $\backslash k *$
+\end{itemize}
+\end{df}
+
+\begin{lema}
+Alternácia používa iba alternovateľné regexy.
+\end{lema}
+\begin{proof}
+Dokážeme sporom. Majme regex $\alpha = \beta | \gamma$, kde $\beta,\gamma$ sú všetky členy alternácie a nech $\beta$ nie je alternovateľná. Môžu nastať 3 prípady:
+
+1. $\beta$ má na konci $|$. Potom $\beta = \beta'|$ a členy alternácie v $\alpha$ sú $\beta', \gamma$ a prázdny regex. To je spor s predpokladom.
+
+2. $\beta$ končí lookaroundom, ale lookaround sa nedá alternovať.
+
+3. $\beta = \beta_1\beta_2$. Alternácia berie posledný ucelený regex, takže $\beta$ nemôže byť členom alternácie.
+\end{proof}
+
+\TODO: krok výpočtu/krok zhody/posun/...
+\begin{df}
+\textbf{Krok výpočtu} je relácia $\vdash$ na konfiguráciách definovaná nasledovne:
+\begin{itemize}
+\item $\forall a \in \Sigma: ~(r_1 \dots \lceil a \dots r_n, w_1 \dots \lceil a \dots w_m) \vdash (r_1 \dots a\lceil \dots r_n, w_1 \dots a \lceil \dots w_m)$
+\item Nech ( je indexovateľná, $k$-ta v poradí: $$ (r_1 \dots \lceil ( \dots r_n, w_1 \dots \lceil w_j \dots w_m) \vdash (r_1 \dots (\lceil \dots r_n, w_1 \dots \lceil \mathop{w_j}^k \dots w_m)$$
+Ak za jej uzatváracou zátvorkou nasleduje $*$, t.j. $\alpha$ je tvaru $r_1 \dots \lceil ( \dots ) * \dots r_n$, potom $$ \vdash (r_1 \dots (\dots )* \lceil \dots r_n, w_1 \dots \lceil \mathop{\mathop{w_j}^k}^{k'} \dots w_m ) $$
+\item Nech ) je indexovateľná, $k$-ta v poradí: $$ (r_1 \dots \lceil ) \dots r_n, w_1 \dots \lceil w_j \dots w_m) \vdash (r_1 \dots )\lceil \dots r_n, w_1 \dots \lceil \mathop{w_j}^{k'} \dots w_m)$$
+\item Nech podslová $\alpha_1, \alpha_2,\dots,\alpha_A$ regexu $\alpha$ sú všetkými členmi zobrazenej alternácie: $(r_1 \dots \lceil \alpha_1 | \alpha_2 | \dots | \alpha_A \dots r_n, w_1\dots \lceil w_j \dots w_m)$
+$$(1) \vdash \textit{ďalší prechod v }\alpha_1$$
+$$(2) \vdash (r_1 \dots \alpha_1 | \lceil \alpha_2 | \dots | \alpha_A \dots r_n, w_1\dots \lceil w_j \dots w_m)$$
+$$\dots$$
+$$(a) \vdash (r_1 \dots \alpha_1 | \alpha_2 | \dots | \lceil \alpha_A \dots r_n, w_1\dots \lceil w_j \dots w_m)$$
+\item $\displaystyle{(r_1 \dots \mathop{(}_kr_i \dots r_l\mathop{)}_k\lceil * \dots r_n, w_1 \dots \mathop{w_a}^k \dots \mathop{w_b}^{k'} \dots \lceil w_j \dots w_m)\footnotemark}$
+\footnotetext{Podľa definície spätných referencií platí podsledné podslovo nájdené regexom v $k$-tych zátvorkách. Pri tejto pracovnej pozícii v regexe je zrejmé, že nejde o prvý prechod cez tieto zátvorky a teda existuje také $a,b$, že $k$ je v slove nad $w_a$ a $k'$ nad $w_b$. Ak nastane prechod (2), pôvodné horné indexy $k, k'$ miznú a pridáva sa $k$ nad $w_j$.}
+$$(1) ~\vdash(r_1 \dots \mathop{(}_kr_i \dots r_l\mathop{)}_k *\lceil \dots r_n, w_1 \dots \mathop{w_a}^k \dots \mathop{w_b}^{k'} \dots \lceil w_j \dots w_m)$$
+$$(2) ~\vdash(r_1 \dots \mathop{(}_k\lceil r_i \dots r_l\mathop{)}_k * \dots r_n, w_1 \dots w_a \dots w_b \dots \lceil \mathop{w_j}^k \dots w_m)$$
+\item $\displaystyle{(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots\mathop{w_b}^{k'}\dots \lceil w_j\dots w_m)}$
+$$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\intercal\mathop{w_a}^k \dots \mathop{w_b}^{k'} \dots \lceil w_j\dots w_m)$$	
+\item $\displaystyle{(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\intercal\mathop{w_a}^k \dots \mathop{w_b}^{k'} \dots \lceil w_j\dots w_m)}$
+$$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\intercal \dots \mathop{w_b}^{k'} \dots w_j\lceil\dots w_m)$$
+\item $\displaystyle{(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots \intercal w_c \dots \mathop{w_b}^{k'} \dots \lceil w_j\dots w_m)}$ a zároveň $w_c = w_j$\footnote{$w_c$ a $w_j$ môžu byť poschodové symboly, avšak pri tejto rovnosti poschodia ignorujeme -- chceme porovnať iba písmenká v slove, prislúchajúce týmto pozíciám.}
+$$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots w_c\intercal \dots \mathop{w_b}^{k'} \dots  w_j\lceil\dots w_m)$$
+\item $\displaystyle{(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots \intercal  \mathop{w_b}^{k'} \dots \lceil w_j\dots w_m)}$ a zároveň $w_b = w_j$
+$$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots \mathop{w_b}^{k'} \dots  w_j\lceil\dots w_m)$$
+\item $\displaystyle{(r_1\dots \lceil (?=\dots) \dots r_n, w_1\dots\lceil w_j\dots w_m )}$, nech ukazuje na $k$-ty pozitívny lookahead v poradí
+$$ (r_1\dots (?=\lceil\dots) \dots r_n, w_1\dots\lceil \mathop{w_j}^{\mathop{k}^\rightarrow}\dots w_m ) $$
+\item $\displaystyle{(r_1\dots (?=\dots\lceil) \dots r_n, w_1\dots \mathop{w_l}^{\mathop{k}^\rightarrow}\dots\lceil w_j\dots w_m )}$, nech ukazuje na zatváraciu zátvorku $k$-teho pozitívneho lookaheadu v poradí
+$$ (r_1\dots (?=\dots)\lceil \dots r_n, w_1\dots \lceil w_l \dots w_j\dots w_m ) $$
+\item $\displaystyle{(r_1\dots \lceil (?<=\dots) \dots r_n, w_1\dots\lceil w_j\dots w_m )}$, nech ukazuje na $k$-ty pozitívny lookbehind v poradí, $\forall L\in\lbrace 0,\dots, j-1\rbrace$:
+$$ (r_1\dots (?<=\lceil\dots) \dots r_n, w_1\dots\lceil w_{j-L}\dots \mathop{w_j}^{\mathop{k}^\leftarrow} \dots w_m ) $$
+\item $\displaystyle{(r_1\dots (?<=\dots\lceil) \dots r_n, w_1\dots \lceil \mathop{w_j}^{\mathop{k}^\leftarrow} \dots w_m )}$, nech ukazuje na zatváraciu zátvorku $k$-teho pozitívneho lookbehindu v poradí
+$$ (r_1\dots (?<=\dots)\lceil \dots r_n, w_1 \dots \lceil w_j \dots w_m ) $$
+\end{itemize}
+
+\end{df}
+
+\begin{lema}
+Nech $\alpha \in \le$ a $w \in L(\alpha)$. Potom existuje akceptačný výpočet, ktorý má najviac $O(|\alpha|*|w|)$ krokov.
+\end{lema}
+
+\begin{veta}
+$L(regex\#word) \in NSPACE(r \log w)$, kde $r = |regex|,~w = |word|$ a $regex \in \le$.
+\end{veta}
+\begin{proof}
+\TODO
+\end{proof}
+
+\begin{veta}
+$L(regex\#word) \in DSPACE(n \log^2 n)$, kde $regex \in \le$ a $n$ je dĺžka vstupu.
+\end{veta}
+\begin{proof}
+\TODO
+\end{proof}
+
 
 \section[Popisná zložitosť]{Popisná zložitosť moderných regulárnych výrazov}
 \label{vzlozitost}
