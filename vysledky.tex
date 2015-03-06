@@ -320,20 +320,31 @@ $$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots w_c
 \item $\displaystyle{(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots \intercal  \mathop{w_b}^{k'} \dots \lceil w_j\dots w_m)}$ a zároveň $w_b = w_j$
 $$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots \mathop{w_b}^{k'} \dots  w_j\lceil\dots w_m)$$
 \item $\displaystyle{(r_1\dots \lceil (?=\dots) \dots r_n, w_1\dots\lceil w_j\dots w_m )}$, nech ukazuje na $k$-ty pozitívny lookahead v poradí
-$$ (r_1\dots (?=\lceil\dots) \dots r_n, w_1\dots\lceil \mathop{w_j}^{\mathop{k}^\rightarrow}\dots w_m ) $$
+$$ \vdash(r_1\dots (?=\lceil\dots) \dots r_n, w_1\dots\lceil \mathop{w_j}^{\mathop{k}^\rightarrow}\dots w_m ) $$
 \item $\displaystyle{(r_1\dots (?=\dots\lceil) \dots r_n, w_1\dots \mathop{w_l}^{\mathop{k}^\rightarrow}\dots\lceil w_j\dots w_m )}$, nech ukazuje na zatváraciu zátvorku $k$-teho pozitívneho lookaheadu v poradí
-$$ (r_1\dots (?=\dots)\lceil \dots r_n, w_1\dots \lceil w_l \dots w_j\dots w_m ) $$
+$$ \vdash(r_1\dots (?=\dots)\lceil \dots r_n, w_1\dots \lceil w_l \dots w_j\dots w_m ) $$
 \item $\displaystyle{(r_1\dots \lceil (?<=\dots) \dots r_n, w_1\dots\lceil w_j\dots w_m )}$, nech ukazuje na $k$-ty pozitívny lookbehind v poradí, $\forall L\in\lbrace 0,\dots, j-1\rbrace$:
-$$ (r_1\dots (?<=\lceil\dots) \dots r_n, w_1\dots\lceil w_{j-L}\dots \mathop{w_j}^{\mathop{k}^\leftarrow} \dots w_m ) $$
+$$ \vdash (r_1\dots (?<=\lceil\dots) \dots r_n, w_1\dots\lceil w_{j-L}\dots \mathop{w_j}^{\mathop{k}^\leftarrow} \dots w_m ) $$
 \item $\displaystyle{(r_1\dots (?<=\dots\lceil) \dots r_n, w_1\dots \lceil \mathop{w_j}^{\mathop{k}^\leftarrow} \dots w_m )}$, nech ukazuje na zatváraciu zátvorku $k$-teho pozitívneho lookbehindu v poradí
-$$ (r_1\dots (?<=\dots)\lceil \dots r_n, w_1 \dots \lceil w_j \dots w_m ) $$
+$$ \vdash(r_1\dots (?<=\dots)\lceil \dots r_n, w_1 \dots \lceil w_j \dots w_m ) $$
 \end{itemize}
 
+\end{df}
+
+\begin{df}
+\textbf{Jazyk} generovaný regexom $\alpha$ je množina $$L(\alpha) = \lbrace w~|~platí ~ (\lceil \alpha, \lceil w)\vdash^* (\alpha\lceil, w\lceil) \rbrace$$
+\end{df}
+
+\begin{df}
+Postupnosť konfigurácií $(\lceil \alpha, \lceil w)\vdash^* (\alpha\lceil, w\lceil) \rbrace$ pre daný regex $\alpha$ a slovo $w$ nazývame \textbf{akceptačný výpočet}.
 \end{df}
 
 \begin{lema}
 Nech $\alpha \in \le$ a $w \in L(\alpha)$. Potom existuje akceptačný výpočet, ktorý má najviac $O(|\alpha|*|w|)$ krokov.
 \end{lema}
+\begin{proof}
+
+\end{proof}
 
 \begin{veta}
 $L(regex\#word) \in NSPACE(r \log w)$, kde $r = |regex|,~w = |word|$ a $regex \in \le$.
