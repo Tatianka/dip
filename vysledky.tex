@@ -286,18 +286,20 @@ Alternácia používa iba alternovateľné regexy.
 \end{lema}
 \begin{proof}
 Dokážeme sporom. Majme regex $\alpha = \beta | \gamma$, kde $\beta,\gamma$ sú všetky členy alternácie a nech $\beta$ nie je alternovateľná. Môžu nastať 3 prípady:
-
-1. $\beta$ má na konci $|$. Potom $\beta = \beta'|$ a členy alternácie v $\alpha$ sú $\beta', \gamma$ a prázdny regex. To je spor s predpokladom.
-
-2. $\beta$ končí lookaroundom, ale lookaround sa nedá alternovať.
-
-3. $\beta = \beta_1\beta_2$. Alternácia berie posledný ucelený regex, takže $\beta$ nemôže byť členom alternácie.
+\begin{enumerate}
+\setlength{\itemsep}{0cm}%
+\setlength{\parskip}{0cm}%
+\item $\beta$ má na konci $|$. Potom $\beta = \beta'|$ a členy alternácie v $\alpha$ sú $\beta', \gamma$ a prázdny regex. To je spor s predpokladom.
+\item $\beta$ končí lookaroundom, ale lookaround sa nedá alternovať.
+\item $\beta = \beta_1\beta_2$. Alternácia berie posledný ucelený regex, takže $\beta$ nemôže byť členom alternácie.
+\end{enumerate}
 \end{proof}
 
 \TODO: krok výpočtu/krok zhody/posun/...
 \begin{df}
 \textbf{Krok výpočtu} je relácia $\vdash$ na konfiguráciách definovaná nasledovne:
-\begin{itemize}
+
+\begin{enumerate}[I.]
 \item $\forall a \in \Sigma: ~(r_1 \dots \lceil a \dots r_n, w_1 \dots \lceil a \dots w_m) \vdash (r_1 \dots a\lceil \dots r_n, w_1 \dots a \lceil \dots w_m)$
 \item Nech ( je indexovateľná, $k$-ta v poradí: $$ (r_1 \dots \lceil ( \dots r_n, w_1 \dots \lceil w_j \dots w_m) \vdash (r_1 \dots (\lceil \dots r_n, w_1 \dots \lceil \mathop{w_j}^k \dots w_m)$$
 Ak za jej uzatváracou zátvorkou nasleduje $*$, t.j. $\alpha$ je tvaru $r_1 \dots \lceil ( \dots ) * \dots r_n$, potom $$ \vdash (r_1 \dots (\dots )* \lceil \dots r_n, w_1 \dots \lceil \mathop{\mathop{w_j}^k}^{k'} \dots w_m ) $$
@@ -317,17 +319,27 @@ $$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\intercal\mathop{w_a}^k
 $$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\intercal \dots \mathop{w_b}^{k'} \dots w_j\lceil\dots w_m)$$
 \item $\displaystyle{(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots \intercal w_c \dots \mathop{w_b}^{k'} \dots \lceil w_j\dots w_m)}$ a zároveň $w_c = w_j$\footnote{$w_c$ a $w_j$ môžu byť poschodové symboly, avšak pri tejto rovnosti poschodia ignorujeme -- chceme porovnať iba písmenká v slove, prislúchajúce týmto pozíciám.}
 $$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots w_c\intercal \dots \mathop{w_b}^{k'} \dots  w_j\lceil\dots w_m)$$
-\item $\displaystyle{(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots \intercal  \mathop{w_b}^{k'} \dots \lceil w_j\dots w_m)}$ a zároveň $w_b = w_j$
+\item $\displaystyle{(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots \intercal  \mathop{w_b}^{k'} \dots \lceil w_j\dots w_m)}$
 $$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots \mathop{w_b}^{k'} \dots  w_j\lceil\dots w_m)$$
-\item $\displaystyle{(r_1\dots \lceil (?=\dots) \dots r_n, w_1\dots\lceil w_j\dots w_m )}$, nech ukazuje na $k$-ty pozitívny lookahead v poradí
+\item Nech $(?=\dots)$ je $k$-ty pozitívny lookahead v poradí: 
+\\$\displaystyle{(r_1\dots \lceil (?=\dots) \dots r_n, w_1\dots\lceil w_j\dots w_m )}$
 $$ \vdash(r_1\dots (?=\lceil\dots) \dots r_n, w_1\dots\lceil \mathop{w_j}^{\mathop{k}^\rightarrow}\dots w_m ) $$
-\item $\displaystyle{(r_1\dots (?=\dots\lceil) \dots r_n, w_1\dots \mathop{w_l}^{\mathop{k}^\rightarrow}\dots\lceil w_j\dots w_m )}$, nech ukazuje na zatváraciu zátvorku $k$-teho pozitívneho lookaheadu v poradí
+\item Nech ) patrí ku $k$-temu pozitívnemu lookaheadu v poradí: 
+\\$\displaystyle{(r_1\dots (?=\dots\lceil) \dots r_n, w_1\dots \mathop{w_l}^{\mathop{k}^\rightarrow}\dots\lceil w_j\dots w_m )} $
 $$ \vdash(r_1\dots (?=\dots)\lceil \dots r_n, w_1\dots \lceil w_l \dots w_j\dots w_m ) $$
-\item $\displaystyle{(r_1\dots \lceil (?<=\dots) \dots r_n, w_1\dots\lceil w_j\dots w_m )}$, nech ukazuje na $k$-ty pozitívny lookbehind v poradí, $\forall L\in\lbrace 0,\dots, j-1\rbrace$:
+\item Nech $(?<\dots)$ je $k$-ty pozitívny lookbehind v poradí, $\forall L\in\lbrace 0,\dots, j-1\rbrace$:
+$\displaystyle{(r_1\dots \lceil (?<=\dots) \dots r_n, w_1\dots\lceil w_j\dots w_m )}$
 $$ \vdash (r_1\dots (?<=\lceil\dots) \dots r_n, w_1\dots\lceil w_{j-L}\dots \mathop{w_j}^{\mathop{k}^\leftarrow} \dots w_m ) $$
-\item $\displaystyle{(r_1\dots (?<=\dots\lceil) \dots r_n, w_1\dots \lceil \mathop{w_j}^{\mathop{k}^\leftarrow} \dots w_m )}$, nech ukazuje na zatváraciu zátvorku $k$-teho pozitívneho lookbehindu v poradí
+\item Nech ) patrí ku $k$-temu pozitívnemu lookbehindu v poradí:
+\\ $\displaystyle{(r_1\dots (?<=\dots\lceil) \dots r_n, w_1\dots \lceil \mathop{w_j}^{\mathop{k}^\leftarrow} \dots w_m )}$
 $$ \vdash(r_1\dots (?<=\dots)\lceil \dots r_n, w_1 \dots \lceil w_j \dots w_m ) $$
-\end{itemize}
+\item Ak $\nexists p \in \lbrace j,\dots,m\rbrace: (\lceil r_k\dots r_l,\lceil w_j\dots w_p) \vdash^* (r_k\dots r_l\lceil, w_j\dots w_p \lceil)$, potom:
+\\$\displaystyle{(r_1\dots\lceil (?!~r_{k}\dots r_{l} ) \dots r_n, w_1\dots \lceil w_j \dots w_m)}$
+$$\vdash (r_1\dots (?!~r_{k}\dots r_{l} ) \lceil\dots r_n, w_1\dots \lceil w_j \dots w_m)$$
+\item Ak $\nexists p \in \lbrace 1,\dots,j-1\rbrace: (\lceil r_k\dots r_l,\lceil w_p\dots w_{j-1}) \vdash^* (r_k\dots r_l\lceil, w_p \dots w_{j-1} \lceil)$, potom:
+\\$\displaystyle{(r_1\dots\lceil (?<!~r_{k}\dots r_{l} ) \dots r_n, w_1\dots \lceil w_j \dots w_m)}$
+$$\vdash (r_1\dots (?<!~r_{k}\dots r_{l} ) \lceil\dots r_n, w_1\dots \lceil w_j \dots w_m)$$
+\end{enumerate}
 
 \end{df}
 
@@ -335,16 +347,28 @@ $$ \vdash(r_1\dots (?<=\dots)\lceil \dots r_n, w_1 \dots \lceil w_j \dots w_m ) 
 \textbf{Jazyk} generovaný regexom $\alpha$ je množina $$L(\alpha) = \lbrace w~|~platí ~ (\lceil \alpha, \lceil w)\vdash^* (\alpha\lceil, w\lceil) \rbrace$$
 \end{df}
 
-\begin{df}
-Postupnosť konfigurácií $(\lceil \alpha, \lceil w)\vdash^* (\alpha\lceil, w\lceil) \rbrace$ pre daný regex $\alpha$ a slovo $w$ nazývame \textbf{akceptačný výpočet}.
-\end{df}
+\textbf{Poznámka.}
+Postupnosť konfigurácií $(\lceil \alpha, \lceil w)\vdash^* (\alpha\lceil, w\lceil)$ pre daný regex $\alpha$ a slovo $w$ nazývame \textbf{akceptačný výpočet}.
 
 \begin{lema}
-Nech $\alpha \in \le$ a $w \in L(\alpha)$. Potom existuje akceptačný výpočet, ktorý má najviac $O(|\alpha|*|w|)$ krokov.
+Nech $\alpha \in \le$ a $w \in L(\alpha)$. Potom existuje akceptačný výpočet, ktorý má najviac $5*|\alpha|*|w|$ konfigurácií.
 \end{lema}
 \begin{proof}
+Pri prechodoch medzi konfiguráciami I., II., III., IV., V.(1), VII., VIII., X., XIII., XIV. a XV. sa ukazovateľ posúva vždy vpred buď v slove alebo v regexe alebo v oboch. Keby sme využívali iba tieto prechody, akceptačný výpočet má najviac $\left\vert{\alpha}\right\vert+|w|$ konfigurácií.
+
+Existujú prechody, pri ktorých sa žiaden ukazovateľ nepohne: VI. a IX. Tieto prechody nastávajú pri spätných referenciách a jedná sa o objavenie sa alebo zmiznutie pomocného ukazovateľa. Pri každej spätnej referencii nastávajú oba javy práve jedenkrát. Zároveň počet spätných referencií je najviac $|\alpha|$, teda tieto 2 konfigurácie sa objavia dokopy najviac $(2\left\vert{\alpha}\right\vert)$-krát.
+
+Zostali konfigurácie, v ktorých ukazovateľ skáče dozadu, rozoberme si ich postupne:
+
+V.(2) -- v prípade Kleeneho $*$ nastáva ďalšie opakovanie. Keďže $w\in L(\alpha)$, existuje akceptačný výpočet. Takýchto výpočtov môže byť viac, napríklad ak sa v $\alpha$ vyskytuje regex $(\beta)*$ taký, že $\varepsilon \in \beta$. Potom existuje nekonečne veľa výpočtov, ktoré sa líšia v počte prechodov týmto regexom. Preto si vyberieme najkratší akceptačný výpočet. To znamená, že v každom prechode cez regex opakovaný operáciou $*$ musíme nájsť zhodu aspoň s jedným písmenkom z $w$ (t.j. ukazovateľ v slove $w$ sa pohne aspoň o 1 pozíciu doprava). Regex opakovaný Kleeneho $*$ je dlhý najviac $|\alpha|$-1 znakov a opakujeme ho najviac $w$-krát. Z toho vidíme, že existuje akceptačný výpočet, ktorý má najviac $|\alpha|*|w|$ konfigurácií.
+
+XI., XII. -- ukončenie operácie lookahead, začiatok operácie lookbehind. V tomto prípade ukazovateľ skáče dozadu v slove. Podstatné však je, že v regexe sa posúva dopredu. Takýchto prechodov vieme spraviť najviac $|\alpha|$.
+
+Spolu je to najviac $|\alpha|+|w|+2|\alpha|+|\alpha|*|w|+|\alpha| \leq 5*|\alpha|*|w|$ konfigurácií.
 
 \end{proof}
+
+Príkladom toho, že táto lema poskytuje tesný odhad, je jazyk $(a*b*c*d*e*)$ a slovo $edcba$. V najkratšom akceptačnom výpočte v každom opakovaní $*$ naozaj nájdeme zhodu práve s jedným písmenkom.
 
 \begin{veta}
 $L(regex\#word) \in NSPACE(r \log w)$, kde $r = |regex|,~w = |word|$ a $regex \in \le$.
