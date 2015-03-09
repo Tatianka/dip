@@ -370,6 +370,8 @@ Spolu je to najviac $|\alpha|+|w|+2|\alpha|+|\alpha|*|w|+|\alpha| \leq 5*|\alpha
 
 Príkladom toho, že táto lema poskytuje tesný odhad, je jazyk $(a*b*c*d*e*)$ a slovo $edcba$. V najkratšom akceptačnom výpočte v každom opakovaní $*$ naozaj nájdeme zhodu práve s jedným písmenkom.
 
+V nasledujúcej časti sa budeme zaujímať akú zložitosť dostaneme, ak dostaneme na vstup aj regex aj slovo, o ktorom chceme zistiť, či patrí do jazyka daného regexu. Údaje budú oddelené oddeľovačom \#, o ktorom budeme predpokladať, že sa nenachádza ani v slove ani v regexe.
+
 \begin{veta}
 $L(regex\#word) \in NSPACE(r \log w)$, kde $r = |regex|,~w = |word|$ a $regex \in \le$.
 \end{veta}
@@ -382,6 +384,12 @@ $L(regex\#word) \in DSPACE(n \log^2 n)$, kde $regex \in \le$ a $n$ je dĺžka vs
 \end{veta}
 \begin{proof}
 \TODO
+
+Pre účely dôkazu budeme označovať $w = |word|$ a $r = |regex|$
+
+Zostrojíme Turingov stroj, ktorý bude akceptovať jazyk $L(regex\#word)$ a na každej pracovnej páske použije najviac $O(n\log^2 n)$ políčok. TS bude mať vstupnú read-only pásku a 3 pracovné pásky.
+
+Na prvej páske budú postupne enumerované všetky možné pozície, kam sa môžu odkazovať spätné referencie a kde môžu začínať operácie lookahead a lookbehind. Keďže regex zistíme až zo vstupu, počet adries si bude musieť TS najprv zistiť -- hneď na začiatku výpočtu prejde celý regex a umiestni na pásku potrebný počet oddelovačov \# (pre každé zátvorky 2, pre lookahead 1, pre lookbehind 2). Potom pred každý oddeľovač umiestni 0, čo je počiatočný stav na tejto páske. Pre každé nastavenie adries spustí procedúru, ktorú si popíšeme neskôr. Cez adresy bude iterovať ako cez $a$-ciferné číslo ($a$ je počet oddeľovačov = počet potrebných adries) z ciframi z $\lbrace 0,\dots, \log w$. Keďže vie rozlíšiť, kde začína slovo, stačí adresovať od tohto miesta a adresy vieme písať v logaritmickej dĺžke od dĺžky slova.
 \end{proof}
 
 
