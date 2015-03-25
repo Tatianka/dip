@@ -10,7 +10,7 @@ V bakaláskej práci sme zabudli ... \textbf{\textit{negatívny lookaround}} \to
 Trieda $\R$ je uzavretá na negatívny lookahead.
 \end{lema}
 \begin{proof}
-Nech $L_1,L_2,L_3 \in \R$. Ukážeme, že $L=L_1(?!L_2)L_3 \in \R$.
+Nech $L_1,L_2,L_3 \in \R$. Ukážeme, že $L=L_1\nlookahead L_2)L_3 \in \R$.
 
 Keďže $ L_{1},L_{2},L_{3} $ sú regulárne, existujú DKA $ A_{i} = (K_{i},\Sigma_{i},\delta_{i},q_{0i},F_{i}) $ také, že $ L(A_{i})=L_{i}, i \in \lbrace 1,2,3\rbrace $. Zostrojíme NKA $A$ pre $L$.
 
@@ -26,7 +26,7 @@ Poďme upravovať $A_2$, začneme vytváraním komplementu. Ak $\Sigma_3 \setmin
 \end{eqnarray*}
  $F_2'=F_2.$ Do všetkých stavov sme pridali prechody na nové znaky a $q_{ZLE}$ má 1 prechod na každý znak, takže $A_2'$ je stále deterministický. Zároveň nové znaky vedú do stavu, z ktorého sa nedá dostať do žiadneho akceptačného, z čoho vyplýva $L(A_2')=L_2$.
 
-Teraz $A_2'$ zmeníme na $A_2''$ tak, aby akceptoval práve vtedy, keď $(?!L_2)$. Najprv si skonštruujeme množinu stavov, z ktorých sa vieme dostať do akceptačného stavu: $H= \lbrace  q \in K_2'~|~ \exists w \in {\Sigma_2'}^* ~ \exists q_A \in F_2': ~ (q,w)\vdash_{A_2'}(q_A,\varepsilon) \rbrace $, nasledovným spôsobom: $$ H_0 = F_2' $$ 
+Teraz $A_2'$ zmeníme na $A_2''$ tak, aby akceptoval práve vtedy, keď $\nlookahead L_2)$. Najprv si skonštruujeme množinu stavov, z ktorých sa vieme dostať do akceptačného stavu: $H= \lbrace  q \in K_2'~|~ \exists w \in {\Sigma_2'}^* ~ \exists q_A \in F_2': ~ (q,w)\vdash_{A_2'}(q_A,\varepsilon) \rbrace $, nasledovným spôsobom: $$ H_0 = F_2' $$ 
 $$H_{i+1} = \lbrace q \in K_2'~|~ \exists p \in H_i~ \exists a \in \Sigma_2': ~ \delta(q,a)=p \rbrace$$
 Zrejme $\exists i \in \N: ~ H_{i+1}=H_i = H$. Nás zaujíma množina $K_2' \setminus H$, v ktorej sa nachádzajú všetky stavy, z ktorých sa na žiadne slovo nie je možné dostať do žiadneho akceptačného stavu.
 
@@ -40,12 +40,12 @@ $A_2''= (K_2'',\Sigma_2'',\delta_2'',q_{0},F_2'')$: $K_2'' = K_2' \cup \lbrace q
 \footnotetext{Tento riadok v podstate netreba, $A_2''$ sa môže rovno zaseknúť, lebo $A_2'$ práve akceptoval.}
 Je dobré poznamenať, že $A_2''$ je takmer deterministický. Chýbajú mu prechody z $q_Z$ -- môžeme ho nechať cykliť v tomto stave, ale nevadí nám ani keď sa zasekne. Nedeterministické rozhodnutie vykonáva iba jedno -- pri prechode do stavu $q_A$. Vtedy háda, že už je na konci slova. Ak nie je, $\delta$-funkcia ho pošle do stavu $q_Z$. Podľa toho je zrejmé, že ak existuje akceptačný výpočet a dočítal slovo do konca, je práve jeden\footnote{Okrem prípadu, kedy dočíta slovo a je v stave z $(K_2'\setminus H)$ -- vieme ho predĺžiť o krok na $\varepsilon$ a skončiť v $q_A$. Jadro výpočtu ale zostáva rovnaké -- jednoznačné.} \footnote{Zaujímavé je, že aj zamietací výpočet je pre každé slovo jednoznačný}.
 
-Tvrdíme $ L_1(?=L(A_2''))L_3 =L_1(?!~L_2)L_3= L $.
+Tvrdíme $ L_1\lookahead L(A_2''))L_3 =L_1\nlookahead L_2)L_3= L $.
 Keďže $A_1$ a $A_3$ sa pri oboch výpočtoch budú chovať rovnako (sú nezávislé od lookaheadov), nebudeme sa nimi pri dôkaze zaoberať.
 
-$\subseteq :$ Máme akceptačný výpočet pre $A_2''$ na nejakom vstupe. Akceptačný stav mohol byť buď z množiny $K_2'\setminus H$, to znamená, že pôvodný automat $A_2'$ sa dostal do stavu, z ktorého už nemohol nijak akceptovať\footnote{Sem spadá aj prípad, keď $A_2$ prečítal neznámy znak a zasekol sa -- $A_2'$ zostáva až do konca slova v stave $q_{ZLE}$.}. V takom prípade $(?!~L_2)$ akceptuje. V druhom prípade mohol $A_2''$ akceptovať pomocou $q_A$, čo znamená, že dočítal slovo do konca (pretože z $q_A$ sa na ľubovoľný znak dostaneme do $q_Z$, v ktorom sa $A_2''$ zasekne a nebude akceptovať) a ani raz sa nedostal do akceptačného stavu automatu $A_2'$. Teda aj $(?!~L_2)$ akceptuje.
+$\subseteq :$ Máme akceptačný výpočet pre $A_2''$ na nejakom vstupe. Akceptačný stav mohol byť buď z množiny $K_2'\setminus H$, to znamená, že pôvodný automat $A_2'$ sa dostal do stavu, z ktorého už nemohol nijak akceptovať\footnote{Sem spadá aj prípad, keď $A_2$ prečítal neznámy znak a zasekol sa -- $A_2'$ zostáva až do konca slova v stave $q_{ZLE}$.}. V takom prípade $\nlookahead L_2)$ akceptuje. V druhom prípade mohol $A_2''$ akceptovať pomocou $q_A$, čo znamená, že dočítal slovo do konca (pretože z $q_A$ sa na ľubovoľný znak dostaneme do $q_Z$, v ktorom sa $A_2''$ zasekne a nebude akceptovať) a ani raz sa nedostal do akceptačného stavu automatu $A_2'$. Teda aj $\nlookahead L_2)$ akceptuje.
 
-$\supseteq :$ Nech $(?!~L_2)$ akceptoval, t.j. na $A_2$ bol vykonaný nejaký neakceptujúci výpočet ($A_2$ je deterministický, takže existuje práve jeden pre každé slovo). Rovnakú postupnosť stavov bude mať aj výpočet na $A_2''$ (automat obsahuje všetky stavy aj $\delta$-funkciu z $A_2$, počiatočný stav je ten istý). Ak sa $A_2$ zasekol na neznámom znaku, v $A_2'$ na ten znak pridáme prechod do stavu $q_{ZLE}$ a v ňom zostaneme až do konca slova. Keďže $q_{ZLE}$ nie je v $A_2'$ akceptačný a nedá sa z neho na žiadne slovo dostať do ľubovoľného akceptačného stavu, $q_{ZLE} \in K_2' \setminus H$ a teda $q_{ZLE} \in F_2''$. Ak sa $A_2$ nezasekol, tak dočítal slovo do konca a v postupnosti stavov jeho výpočtu sa nenachádza žiaden z množiny $F_2$. V tom prípade $A_2''$ z posledného stavu prejde na $\varepsilon$ do $q_A$ (2.riadok definície $\delta_2''$) a akceptuje.
+$\supseteq :$ Nech $\nlookahead L_2)$ akceptoval, t.j. na $A_2$ bol vykonaný nejaký neakceptujúci výpočet ($A_2$ je deterministický, takže existuje práve jeden pre každé slovo). Rovnakú postupnosť stavov bude mať aj výpočet na $A_2''$ (automat obsahuje všetky stavy aj $\delta$-funkciu z $A_2$, počiatočný stav je ten istý). Ak sa $A_2$ zasekol na neznámom znaku, v $A_2'$ na ten znak pridáme prechod do stavu $q_{ZLE}$ a v ňom zostaneme až do konca slova. Keďže $q_{ZLE}$ nie je v $A_2'$ akceptačný a nedá sa z neho na žiadne slovo dostať do ľubovoľného akceptačného stavu, $q_{ZLE} \in K_2' \setminus H$ a teda $q_{ZLE} \in F_2''$. Ak sa $A_2$ nezasekol, tak dočítal slovo do konca a v postupnosti stavov jeho výpočtu sa nenachádza žiaden z množiny $F_2$. V tom prípade $A_2''$ z posledného stavu prejde na $\varepsilon$ do $q_A$ (2.riadok definície $\delta_2''$) a akceptuje.
 
 Z práve dokázaného tvrdenia a vety \ref{lookahead+R} už vyplýva aj platnosť našej lemy.
 \end{proof}
@@ -54,9 +54,9 @@ Z práve dokázaného tvrdenia a vety \ref{lookahead+R} už vyplýva aj platnos�
 Trieda $\R$ je uzavretá na negatívny lookbehind.
 \end{lema}
 \begin{proof}
-Nech $L_1,L_2,L_3 \in \R$, existujú DKA $ A_{i} = (K_{i},\Sigma_{i},\delta_{i},q_{0i},F_{i}) $ také, že $ L(A_{i})=L_{i}, i \in \lbrace 1,2,3\rbrace $.. Ukážeme, že $L=L_1(?<!~L_2)L_3 \in \R$.
+Nech $L_1,L_2,L_3 \in \R$, existujú DKA $ A_{i} = (K_{i},\Sigma_{i},\delta_{i},q_{0i},F_{i}) $ také, že $ L(A_{i})=L_{i}, i \in \lbrace 1,2,3\rbrace $.. Ukážeme, že $L=L_1\nlookbehind L_2)L_3 \in \R$.
 
-Nemôžme skonštruovať $A_2''$ také, že bude akceptovať práve vte\-dy, keď $(?<~!L_2)$, pretože nevieme čítať doľava. Tzn. zaručiť, že miesto, kde začína $A_2''$ výpočet je skutočný začiatok slova. Mechanizmus lookbehindu musí byť riadený zvonku, automatom pre $L$. Skonštruujeme ho. $C=(K,\Sigma, \delta,q_0,F):$ 
+Nemôžme skonštruovať $A_2''$ také, že bude akceptovať práve vte\-dy, keď $\nlookbehind L_2)$, pretože nevieme čítať doľava. Tzn. zaručiť, že miesto, kde začína $A_2''$ výpočet je skutočný začiatok slova. Mechanizmus lookbehindu musí byť riadený zvonku, automatom pre $L$. Skonštruujeme ho. $C=(K,\Sigma, \delta,q_0,F):$ 
 $$K=K_3\cup \lbrace (q,A) ~|~ q \in K_1 \wedge A \subseteq K_2 \rbrace,~\Sigma = \Sigma_1\cup\Sigma_2\cup\Sigma_3,~q_0=(q_{01},\lbrace q_{02}\rbrace),F=F_3~ \delta:$$
 \begin{eqnarray*}
 \forall q \in K_3~ \forall a \in \Sigma_3 &:& \delta(q,a) \ni \delta_3(q,a) \\
@@ -80,14 +80,14 @@ Trieda $\R$ je uzavretá na negatívny lookaround.
 \end{veta}
 
 \begin{lema}
-Nech $L_1,L_2,L_3,L_4 \in \R$, $\alpha = \left( L_1 \left( ?!~L_2\right) L_3 \right) * L_4$. Potom $L(\alpha) \in \R$.
+Nech $L_1,L_2,L_3,L_4 \in \R$, $\alpha = \left( L_1 \left( ?= L_2\right) L_3 \right) * L_4$. Potom $L(\alpha) \in \R$.
 \end{lema} 
 \begin{proof}
-Podobne ako v dôkaze vety \ref{nla+R} pretransformujeme $( ?!~L_2)$ na akýsi $( ?=L(A_2''))$, kde $A_2''$ bude akceptovať práve vtedy, keď $( ?!~L_2)$. Potom $\beta = \left( L_1 \left( ?=L(A_2'')\right) L_3 \right) * L_4, ~ L(\beta) = L(\alpha) \in \R$ podľa vety \ref{lookaround+R}.
+Podobne ako v dôkaze vety \ref{nla+R} pretransformujeme $\nlookahead L_2)$ na akýsi $\lookahead L(A_2''))$, kde $A_2''$ bude akceptovať práve vtedy, keď $\nlookahead L_2)$. Potom $\beta = \left( L_1 \lookahead L(A_2'') ) L_3 \right) * L_4, ~ L(\beta) = L(\alpha) \in \R$ podľa vety \ref{lookaround+R}.
 \end{proof}
 
 \begin{lema}
-Nech $L_1,L_2,L_3,L_4 \in \R$, $\alpha = L_4 \left( L_1 \left( ?<!~L_2\right) L_3 \right) *$. Potom $L(\alpha)~\in~\R$.
+Nech $L_1,L_2,L_3,L_4 \in \R$, $\alpha = L_4 \left( L_1 \left(?<!~ L_2\right) L_3 \right) *$. Potom $L(\alpha)~\in~\R$.
 \end{lema} 
 \begin{proof}
 \todo
@@ -107,7 +107,7 @@ Trieda \le~je uzavretá na zreťazenie.
 \begin{proof}
 Nech sú le-regexy $\alpha, \beta$. Chceme ukázať, že jazyk $L(\alpha)L(\beta) \in \le$. Intuitívne nás to vedie k riešeniu $\alpha\beta$, čo ale nemusí byť vždy správne. Problémom sú operácie lookaround, presnejšie každý lookahead v $\alpha$ môže zasahovať do slova z $L(\beta)$ a takisto každý lookbehind z $\beta$ môže zasahovať do slova z $L(\alpha)$. Navyše, ak lookahead obsahuje $\$$ a lookbehind $\textasciicircum$, potom zasahujú do slova z iného jazyka určite. V takom prípade môže le-regex $\alpha\beta$ vynechať niektoré slová z $L_1L_2$ a tiež pridať nejaké nevhodné slová naviac. Preto treba nájsť spôsob, ako operácie lookaroundu vhodne 'skrotiť', predpokladajme, že $\alpha$ má $k$ označených zátvoriek:
 \begin{equation} \label{zretazenie}
-(?=\mathop(_1 \alpha \mathop)_1 \mathop(_{k+2}\beta \mathop)_{k+2} \mathdollar) \alpha ' \backslash k+2 (?<= \textasciicircum\backslash 1\beta ')
+\lookahead \mathop(_1 \alpha \mathop)_1 \mathop(_{k+2}\beta \mathop)_{k+2} \mathdollar) \alpha ' \backslash k+2 \lookbehind \textasciicircum\backslash 1\beta ')
 \end{equation}
 V $\alpha,\beta$ treba vhodne prepísať označenie zátvoriek (po poradí). $\alpha '$ je $\alpha$ prepísaný tak, že pre každý lookahead:
 \begin{itemize}
@@ -128,7 +128,7 @@ Preto sme v $\alpha$ prepísali všetky lookaheady. V $\alpha '$ každý z nich 
 $\le$ je neporovnateľná s $ \L_{CF}$.
 \end{veta}
 \begin{proof}
-Majme jazyk $L=\lbrace ww^R~|~w \in \lbrace a,b \rbrace^* \rbrace \in \L_{CF}$, nech $ \alpha = ([ab]*)\backslash 1 $.
+Majme jazyk $L=\lbrace ww~|~w \in \lbrace a,b \rbrace^* \rbrace \in \L_{CF}$, nech $ \alpha = ([ab]*)\backslash 1 $.
 Zrejme $ L(\alpha) = L $, teda $L\in \le$.
 
 Ukážeme, že jazyk $L=\lbrace a^nb^n~|~n \in \N \rbrace \notin \le$. Sporom, nech $L \in \le$. 
@@ -214,9 +214,9 @@ presuň hlavu na pozíciu 'aktuálna pracovná pozícia'
 Vidíme, že si dočasne potrebujeme zapamätať adresu 'aktuálna pracovná pozícia', ale po skončení tohto algoritmu ju môžeme zahodiť.
 
 Po úspešnom zbehutí algoritmu TS prejde do stavu $\beta\backslash k \blacktriangleright\xi$.
-\item $\delta(\beta\blacktriangleright(?=\gamma)\xi, a) = \lbrace (\blacktriangleright\gamma, 0) \rbrace$ -- Lookahead: zapamätáme si aktuálnu pozíciu na vstupe do zodpovedajúceho slotu na pracovnej páske a spracujeme regex vnútri lookaheadu. Ak uspejeme, presunieme hlavu na vstupnej páske naspäť na zapamätanú pozíciu a pokračujeme v regexe ďalej: $\delta(\gamma\blacktriangleright, a) = \lbrace (\beta(?=\gamma)\blacktriangleright\xi, 0) \rbrace $.
-\item $\delta(\beta\blacktriangleright(?<=\gamma)\xi, a) = \lbrace (doľava\_ \gamma, 0) \rbrace$
--- Lookbehind: zapamätáme si aktuálnu pozíciu na vstupe do zodpovedajúceho slotu na pracovnej páske. Toto je zarážka pre lookbehind -- svoje matchovanie musí skončiť na tejto pozícii tak, že tento znak už neberie do úvahy. Nedeterministicky sa vrátime o niekoľko políčok doľava ($\delta(doľava\_ \gamma, a) = \lbrace(doľava\_ \gamma,-1), (\blacktriangleright\gamma, 0)\rbrace$)  a skúsime matchovať regex v lookbehinde. Keď uspejeme, porovnáme aktuálnu pozíciu so zarážkou. Ak sú rôzne, Turingov stroj sa zasekne. Inak pokračuje vo výpočte ďalej, od tejto pozície: $\delta(\gamma\blacktriangleright\_overene, a) = \lbrace (\beta(?<=\gamma)\blacktriangleright\xi, 0) \rbrace $.
+\item $\delta(\beta\blacktriangleright\lookahead\gamma)\xi, a) = \lbrace (\blacktriangleright\gamma, 0) \rbrace$ -- Lookahead: zapamätáme si aktuálnu pozíciu na vstupe do zodpovedajúceho slotu na pracovnej páske a spracujeme regex vnútri lookaheadu. Ak uspejeme, presunieme hlavu na vstupnej páske naspäť na zapamätanú pozíciu a pokračujeme v regexe ďalej: $\delta(\gamma\blacktriangleright, a) = \lbrace (\beta\lookahead\gamma)\blacktriangleright\xi, 0) \rbrace $.
+\item $\delta(\beta\blacktriangleright\lookbehind\gamma)\xi, a) = \lbrace (doľava\_ \gamma, 0) \rbrace$
+-- Lookbehind: zapamätáme si aktuálnu pozíciu na vstupe do zodpovedajúceho slotu na pracovnej páske. Toto je zarážka pre lookbehind -- svoje matchovanie musí skončiť na tejto pozícii tak, že tento znak už neberie do úvahy. Nedeterministicky sa vrátime o niekoľko políčok doľava ($\delta(doľava\_ \gamma, a) = \lbrace(doľava\_ \gamma,-1), (\blacktriangleright\gamma, 0)\rbrace$)  a skúsime matchovať regex v lookbehinde. Keď uspejeme, porovnáme aktuálnu pozíciu so zarážkou. Ak sú rôzne, Turingov stroj sa zasekne. Inak pokračuje vo výpočte ďalej, od tejto pozície: $\delta(\gamma\blacktriangleright\_overene, a) = \lbrace (\beta\lookbehind \gamma)\blacktriangleright\xi, 0) \rbrace $.
 \end{list}
 
 \textbf{\underline{Počet adries}}:
@@ -261,7 +261,7 @@ Konfiguráciu $(r_1 \dots r_n \lceil, w_1\dots w_m \lceil)$ nazývame \textbf{ak
 \begin{df}
 Zátvorka $($ v regexe $\alpha$ je \textbf{indexovateľná}, ak sa bezprostredne za ňou nenachádza metaznak ? a zároveň sa nenachádza vnútri negatívneho lookaroundu.
 \end{df}
-Je zakázané odkazovať sa spätnými referenciami na operácie formy $(?\dots )$, preto ich ani nechceme a nebudeme brať do úvahy v poradí zátvoriek. Z týchto operácií sa v našom modeli nachádza iba pozitívny a negatívny lookaround. Je povolené odkazovať sa na zátvorky vnútri lookaroundu, takže sa vieme odvolať na podslovo, čo sa zhoduje s pozitívnou formou (ak lookaround považujeme za neindexovateľné zátvorky, stačí ho prepísať do formy $(?=(\dots ))$ a vieme sa referencovať na jeho obsah). Problém nastáva pri jeho negatívnej verzii -- podľa definície nesmie nájsť žiadnu zhodu, inak sa výpočet zastaví. Potom po akceptácii nedefinuje žiadne podslovo, na ktoré by sme sa mohli odvolať. To isté platí o ľubovoľných zátvorkách v jeho vnútri.
+Je zakázané odkazovať sa spätnými referenciami na operácie formy $(?\dots )$, preto ich ani nechceme a nebudeme brať do úvahy v poradí zátvoriek. Z týchto operácií sa v našom modeli nachádza iba pozitívny a negatívny lookaround. Je povolené odkazovať sa na zátvorky vnútri lookaroundu, takže sa vieme odvolať na podslovo, čo sa zhoduje s pozitívnou formou (ak lookaround považujeme za neindexovateľné zátvorky, stačí ho prepísať do formy $\lookahead (\dots ))$ a vieme sa referencovať na jeho obsah). Problém nastáva pri jeho negatívnej verzii -- podľa definície nesmie nájsť žiadnu zhodu, inak sa výpočet zastaví. Potom po akceptácii nedefinuje žiadne podslovo, na ktoré by sme sa mohli odvolať. To isté platí o ľubovoľných zátvorkách v jeho vnútri.
 \TODO ale na samotné matchovanie vnútri potrebuje aj spätné referencie
 
 \begin{df}
@@ -320,24 +320,24 @@ $$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\ldots\intercal\mathop{w_a}^
 $$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots w_c\intercal \dots \mathop{w_b}^{k'} \dots  w_j\lceil\dots w_m)$$
 \item $\displaystyle{(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\ldots \intercal  \mathop{w_b}^{k'} \dots \lceil w_j\dots w_m)}$
 $$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots \mathop{w_b}^{k'} \dots  w_j\lceil\dots w_m)$$
-\item Nech $(?=\dots)$ je $k$-ty pozitívny lookahead v poradí: 
-\\$\displaystyle{(r_1\dots \lceil (?=\dots) \dots r_n, w_1\dots\lceil w_j\dots w_m )}$
-$$ \vdash(r_1\dots (?=\lceil\dots) \dots r_n, w_1\dots\lceil \mathop{w_j}^{\mathop{k}^\rightarrow}\dots w_m ) $$
+\item Nech $\lookahead \dots)$ je $k$-ty pozitívny lookahead v poradí: 
+\\$\displaystyle{(r_1\dots \lceil \lookahead \dots) \dots r_n, w_1\dots\lceil w_j\dots w_m )}$
+$$ \vdash(r_1\dots \lookahead\lceil\dots) \dots r_n, w_1\dots\lceil \mathop{w_j}^{\mathop{k}^\rightarrow}\dots w_m ) $$
 \item Nech ) patrí ku $k$-temu pozitívnemu lookaheadu v poradí: 
-\\$\displaystyle{(r_1\dots (?=\dots\lceil) \dots r_n, w_1\dots \mathop{w_l}^{\mathop{k}^\rightarrow}\dots\lceil w_j\dots w_m )} $
-$$ \vdash(r_1\dots (?=\dots)\lceil \dots r_n, w_1\dots \lceil w_l \dots w_j\dots w_m ) $$
-\item Nech $(?<=\dots)$ je $k$-ty pozitívny lookbehind v poradí, $\forall L\in\lbrace 0,\dots, j-1\rbrace$:
-$\displaystyle{(r_1\dots \lceil (?<=\dots) \dots r_n, w_1\dots\lceil w_j\dots w_m )}$
-$$ \vdash (r_1\dots (?<=\lceil\dots) \dots r_n, w_1\dots\lceil w_{j-L}\dots \mathop{w_j}^{\mathop{k}^\leftarrow} \dots w_m ) $$
+\\$\displaystyle{(r_1\dots \lookahead\dots\lceil) \dots r_n, w_1\dots \mathop{w_l}^{\mathop{k}^\rightarrow}\dots\lceil w_j\dots w_m )} $
+$$ \vdash(r_1\dots \lookahead\dots)\lceil \dots r_n, w_1\dots \lceil w_l \dots w_j\dots w_m ) $$
+\item Nech $\lookbehind\dots)$ je $k$-ty pozitívny lookbehind v poradí, $\forall L\in\lbrace 0,\dots, j-1\rbrace$:
+$\displaystyle{(r_1\dots \lceil \lookbehind\dots) \dots r_n, w_1\dots\lceil w_j\dots w_m )}$
+$$ \vdash (r_1\dots \lookbehind\lceil\dots) \dots r_n, w_1\dots\lceil w_{j-L}\dots \mathop{w_j}^{\mathop{k}^\leftarrow} \dots w_m ) $$
 \item Nech ) patrí ku $k$-temu pozitívnemu lookbehindu v poradí:
-\\ $\displaystyle{(r_1\dots (?<=\dots\lceil) \dots r_n, w_1\dots \lceil \mathop{w_j}^{\mathop{k}^\leftarrow} \dots w_m )}$
-$$ \vdash(r_1\dots (?<=\dots)\lceil \dots r_n, w_1 \dots \lceil w_j \dots w_m ) $$
+\\ $\displaystyle{(r_1\dots \lookbehind\dots\lceil) \dots r_n, w_1\dots \lceil \mathop{w_j}^{\mathop{k}^\leftarrow} \dots w_m )}$
+$$ \vdash(r_1\dots \lookbehind\dots)\lceil \dots r_n, w_1 \dots \lceil w_j \dots w_m ) $$
 \item Ak $\nexists p \in \lbrace j,\dots,m\rbrace: (\lceil r_k\dots r_l,\lceil w_j\dots w_p) \vdash^* (r_k\dots r_l\lceil, w_j\dots w_p \lceil)$, potom:
-\\$\displaystyle{(r_1\dots\lceil (?!~r_{k}\dots r_{l} ) \dots r_n, w_1\dots \lceil w_j \dots w_m)}$
-$$\vdash (r_1\dots (?!~r_{k}\dots r_{l} ) \lceil\dots r_n, w_1\dots \lceil w_j \dots w_m)$$
+\\$\displaystyle{(r_1\dots\lceil \nlookahead r_{k}\dots r_{l} ) \dots r_n, w_1\dots \lceil w_j \dots w_m)}$
+$$\vdash (r_1\dots \nlookahead r_{k}\dots r_{l} ) \lceil\dots r_n, w_1\dots \lceil w_j \dots w_m)$$
 \item Ak $\nexists p \in \lbrace 1,\dots,j-1\rbrace: (\lceil r_k\dots r_l,\lceil w_p\dots w_{j-1}) \vdash^* (r_k\dots r_l\lceil, w_p \dots w_{j-1} \lceil)$, potom:
-\\$\displaystyle{(r_1\dots\lceil (?<!~r_{k}\dots r_{l} ) \dots r_n, w_1\dots \lceil w_j \dots w_m)}$
-$$\vdash (r_1\dots (?<!~r_{k}\dots r_{l} ) \lceil\dots r_n, w_1\dots \lceil w_j \dots w_m)$$
+\\$\displaystyle{(r_1\dots\lceil \nlookbehind r_{k}\dots r_{l} ) \dots r_n, w_1\dots \lceil w_j \dots w_m)}$
+$$\vdash (r_1\dots \nlookbehind r_{k}\dots r_{l} ) \lceil\dots r_n, w_1\dots \lceil w_j \dots w_m)$$
 \end{enumerate}
 
 \end{df}
@@ -359,15 +359,15 @@ Existujú prechody, pri ktorých sa žiaden ukazovateľ nepohne: VI. a VIII. Tie
 
 Zostali konfigurácie, v ktorých ukazovateľ skáče dozadu, rozoberme si ich postupne:
 
-V.(2) -- v prípade Kleeneho $*$ nastáva ďalšie opakovanie. Keďže $w\in L(\alpha)$, existuje akceptačný výpočet. Takýchto výpočtov môže byť viac, napríklad ak sa v $\alpha$ vyskytuje regex $(\beta)*$ taký, že $\varepsilon \in \beta$. Potom existuje nekonečne veľa výpočtov, ktoré sa líšia v počte prechodov týmto regexom. Preto si vyberieme najkratší akceptačný výpočet. To znamená, že v každom prechode cez regex opakovaný operáciou $*$ musíme nájsť zhodu aspoň s jedným písmenkom z $w$ (t.j. ukazovateľ v slove $w$ sa pohne aspoň o 1 pozíciu doprava). Regex opakovaný Kleeneho $*$ je dlhý najviac $|\alpha|$-1 znakov a opakujeme ho najviac $w$-krát. Z toho vidíme, že existuje akceptačný výpočet, ktorý má najviac $|\alpha|*|w|$ konfigurácií.
+V.(2) -- v prípade Kleeneho $*$ nastáva ďalšie opakovanie. Keďže $w\in L(\alpha)$, existuje akceptačný výpočet. Takýchto výpočtov môže byť viac, napríklad ak sa v $\alpha$ vyskytuje regex $(\beta)*$ taký, že $\varepsilon \in \beta$. Potom existuje nekonečne veľa výpočtov, ktoré sa líšia v počte prechodov týmto regexom. Preto si vyberieme najkratší akceptačný výpočet. To znamená, že v každom prechode cez regex opakovaný operáciou $*$ musíme nájsť zhodu aspoň s jedným písmenkom z $w$ (t.j. ukazovateľ v slove $w$ sa pohne aspoň o 1 pozíciu doprava). Regex opakovaný Kleeneho $*$ je dlhý najviac $|\alpha|$-1 znakov a opakujeme ho najviac $w$-krát. Z toho vidíme, že existuje akceptačný výpočet, ktorý má najviac $|\alpha|\cdot|w|$ konfigurácií.
 
 X., XI. -- ukončenie operácie lookahead, začiatok operácie lookbehind. V tomto prípade ukazovateľ skáče dozadu v slove. Podstatné však je, že v regexe sa posúva dopredu. Takýchto prechodov vieme spraviť najviac $|\alpha|$.
 
-Spolu je to najviac $|\alpha|+|w|+2|\alpha|+|\alpha|*|w|+|\alpha| \leq 5\cdot|\alpha|\cdot|w|$ konfigurácií.
+Spolu je to najviac $|\alpha|+|w|+2|\alpha|+|\alpha|\cdot|w|+|\alpha| \leq 5\cdot|\alpha|\cdot|w|$ konfigurácií.
 
 \end{proof}
 
-Príkladom toho, že táto lema poskytuje tesný odhad, je jazyk $(a*b*c*d*e*)$ a slovo $edcba$. V najkratšom akceptačnom výpočte v každom opakovaní $*$ naozaj nájdeme zhodu práve s jedným písmenkom.
+Príkladom toho, že táto lema poskytuje tesný odhad, je jazyk $(a*b*c*d*e*)*$ a slovo $edcba$. V najkratšom akceptačnom výpočte v každom opakovaní $*$ naozaj nájdeme zhodu práve s jedným písmenkom.
 
 V praxi často regex dopredu nepoznáme. Vstupným údajom je text na vyhľadávanie a rovnako aj regex, ktorý znázorňuje požiadavku na vyhľadávanie. Tento problém predstavuje jazyk $$L(regex\#word) = \lbrace word~|~word \in L(regex) \wedge regex \in \cal U \rbrace$$
 kde ${\cal U} \in \lbrace \re ,\e ,\le ,\nle \rbrace$.
@@ -425,7 +425,7 @@ Popis pseudokódu:
 \item na pozícii $d_1$ je podslovo '$\backslash k$' pre nejaké $k\in\N, ~0\leq k \leq$ (počet indexovateľných zátvoriek) \\ $\wedge ~ (e_1,\dots,e_m)= (d_1,d_2,d_{k+3},d_4,\dots,d_m)$ ($d_{k+3}$ je adresa začiatku podslova prislúchajúca ku $k$-tym zátvorkám)
 \item podobne ako I.-- musí platiť $d_3<d_{k+3}$ a správne sa posunú adresy $d_2,d_3$
 \item na pozícii $d_1$ je podslovo '$\backslash k$' \\ $\wedge ~ d_3=d_{k+3} \\ \wedge ~(e_1,\dots, e_m)=(d_1,d_2,nedef,d_4,\dots,d_m)$
-\item na pozícii $d_1$ je podslovo '(?=' \\ $\wedge$ nech $d_l$ adresa prislúchajúca k tomuto lookaheadu: $e_l=d_2$, teda $(e_1,\dots,e_m)=(d_1+3,d_2,nedef,d_4,\dots,d_{l-1},d_2,d_{l+1},\dots,d_m)$
+\item na pozícii $d_1$ je podslovo '$\lookahead$' \\ $\wedge$ nech $d_l$ adresa prislúchajúca k tomuto lookaheadu: $e_l=d_2$, teda $(e_1,\dots,e_m)=(d_1+3,d_2,nedef,d_4,\dots,d_{l-1},d_2,d_{l+1},\dots,d_m)$
 \item $regex[d_1]=$')' a prislúcha lookaheadu, ktorému patrí adresa $d_l$ \\ $\wedge ~(e_1,\dots,e_m)=(d_1+1,d_l,nedef,d_4,\dots,d_{l-1},nedef,d_{l+1},\dots,d_m)$
 \item podobne ako IX. -- zapíšeme si aktuálnu adresu v slove
 \item $regex[d_1]=$')' a prislúcha lookbeindu, ktorému patrí adresa $d_l$ \\ $\wedge ~ d_2=d_l \\ \wedge ~(e_1,\dots,e_m)=(d_1+1,d_2,nedef,d_4,\dots,d_{l-1},nedef,d_{l+1},\dots,d_m)$
@@ -462,7 +462,7 @@ Celkovo M na zásobníkovej páske zapíše $O(\log n)\cdot O(n\log n) = O(n\log
 V tejto kapitole rozoberieme moderné regulárne výrazy z dvoch hľadísk. Najprv nás bude zaujímať, ako pomohli nové konštrukcie pri popise regulárnych jazykov a potom prejdeme na analýzu dĺžky výrazov pre zložitejšie jazyky.
 
 Lookaround môže výrazne pomôcť pri definovaní konečných jazykov, napríklad le-regex z \cite[Poznámka 1.]{mojaBak}
-$\beta = ((?=(a^m)*\mathdollar )a^{m+1})*a \lbrace 1,m-1 \rbrace \mathdollar$. Aké slová obsahuje?
+$\beta = (\lookahead (a^m)*\mathdollar )a^{m+1})*a \lbrace 1,m-1 \rbrace \mathdollar$. Aké slová obsahuje?
 \begin{itemize}
 \item $a^{m+1+(m-1)}$
 \item $a^{2m+2+(m-2)}$ \\
