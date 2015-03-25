@@ -96,7 +96,7 @@ Trieda nad regexami s pozitívnym lookaroundom je $\R$.
 \end{veta} 
 
 \begin{veta}[Veta 2.2.14.]\label{le+lcs}
-$ LEregex \subseteq \L_{CS} $
+$ \lel \subseteq \L_{CS} $
 \end{veta}
 
 \section[Popisná zložitosť]{Popisná zložitosť moderných regulárnych výrazov}
@@ -109,7 +109,7 @@ Spomeňme si najprv ako možno zadefinovať popisnú zložitosť \cite{newResult
 \begin{list}{$\bullet$}{Nech E je regulárny výraz, potom}
 \item $|E|$ je jeho celková dĺžka
 \item $rpn(E)$ je jeho celková dĺžka v poľskej normálnej forme
-\item $|alpha(E)|= N(E)$ je počet alfabetických symbolov v E
+\item $|alph(E)|= N(E)$ je počet alfabetických symbolov v E
 \item $H(E)$ je hĺbka vzhľadom na $*$, počet vnorení $*$
 \item $L(E)$ je dĺžka najdlhšej neopakujúcej sa cesty cez výraz
 \item $W(E)$ je maximum symbolov v zjednotení (duálne k L)
@@ -119,13 +119,13 @@ Spomeňme si najprv ako možno zadefinovať popisnú zložitosť \cite{newResult
 \hline
  ~ & Alphabetical Symbol & E $\cup$ F & E $\cdot$ F & E*
 \\ \hline\hline
-N & 1 & N(E)+N(F) & N(E)+N(F) & N(E)
+N & 1 & $N(E)+N(F)$ & $N(E)+N(F)$ & $N(E)$
 \\ \hline 
-H & 0 & max(N(E), N(F)) & max(N(E),N(F)) & N(E)+1
+H & 0 & $max(H(E),H(F))$ & $max(H(E),H(F))$ & $H(E)+1$
 \\ \hline
-L & 1 & max(N(E),N(F)) & N(E)+N(F) & N(E)
+L & 1 & $max(L(E),L(F))$ & $L(E)+L(F)$ & $L(E)$
 \\ \hline
-W & 1 & N(E)+N(F) & max(N(E),N(F)) & N(E)
+W & 1 & $W(E)+W(F)$ & $max(W(E),W(F))$ & $W(E)$
 \\ \hline
 \end{tabular}
 \\ \\
@@ -150,10 +150,10 @@ Ak E je nezmenšiteľný regulárny výraz taký, že
 \item E nemá nadbytočné (); a zároveň
 \item E neobsahuje podvýraz tvaru $F**$
 \end{enumerate}
-potom vravíme, že E je \textbf{nedeliteľný} (irreducible).
+potom vravíme, že E je \textbf{neredukovateľný} (irreducible).
 \end{df}
 
-Môžeme vyvodiť, že minimálny regulárny výraz pre daný jazyk bude nezmenšiteľný a nedeliteľný, naopak to však nemusí platiť. S takýmto základom možno dokázať napríklad tvrdenie: Ak E je nedeliteľný a $|alph(E)| \geq 1$, potom $|E| \leq 11|alph(E)| - 4$.
+Môžeme vyvodiť, že minimálny regulárny výraz pre daný jazyk bude nezmenšiteľný a neredukovateľný, naopak to však nemusí platiť. S takýmto základom možno dokázať napríklad tvrdenie: Ak E je neredukovateľný a $|alph(E)| \geq 1$, potom $|E| \leq 11|alph(E)| - 4$.
 
 Iné spôsoby na ohraničenie regulárnych výrazov poskytujú nasledujúce pozorovanie a veta.
 
