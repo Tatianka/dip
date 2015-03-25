@@ -16,9 +16,9 @@ Keďže $ L_{1},L_{2},L_{3} $ sú regulárne, existujú DKA $ A_{i} = (K_{i},\Si
 
 Konštrukcia bude veľmi podobná ako pre pozitívny lookahead, keď si správne predpripravíme $A_2$. Negatívny lookahead sa snaží za každú cenu nájsť slovo z $L_2$ (t.j. uspieť s $A_2$) a ak sa mu to nepodarí, akceptuje. Preto musíme zaručiť, že sa $A_2$ buď zasekne alebo prejde až do konca slova\footnote{Ak sa zasekne, slovo z $L_2$ tam určite nebude, lebo neexistuje akceptačný výpočet. Ak sa nezasekne, nevieme povedať o tom slove nič, pokiaľ ho neprejdeme celé.}. Ak $A_2$ dosiahne akceptačný stav, negatívny lookahead musí zamietnuť. 
 
-Ďaľšie pozorovanie nám hovorí, že negatívny lookahead akceptuje vždy nejaké slovo z komplementu $L_2$. Ale komplement vzhľadom na akú abecedu? V skutočnosti nekonečnú - ľubovoľný znak, ktorý nepatrí do $\Sigma_2$, znamená zaseknutie $A_2$, t.j. akceptáciu. Ak sa na to pozrieme z väčšej ďiaľky, uvidíme $L_3$, s ktorým robíme prenik. $A_3$ musí dočítať slovo do konca a na úplne neznámom znaku sa zasekne, takže z pohľadu výslednej akceptácie slova nevadí, ak by kvôli tomu znaku zamietol už negatívny lookahead. Preto stačí urobiť komplement vzhľadom na $\Sigma_2 \cup \Sigma_3$. 
+Ďaľšie pozorovanie nám hovorí, že negatívny lookahead akceptuje vždy nejaké slovo z komplementu $L_2$. Ale komplement vzhľadom na akú abecedu? V skutočnosti nekonečnú -- ľubovoľný znak, ktorý nepatrí do $\Sigma_2$, znamená zaseknutie $A_2$, t.j. akceptáciu. Ak sa na to pozrieme z väčšej ďiaľky, uvidíme $L_3$, s ktorým robíme prenik. $A_3$ musí dočítať slovo do konca a na úplne neznámom znaku sa zasekne, takže z pohľadu výslednej akceptácie slova nevadí, ak by kvôli tomu znaku zamietol už negatívny lookahead. Preto stačí urobiť komplement vzhľadom na $\Sigma_2 \cup \Sigma_3$. 
 
-Poďme upravovať $A_2$, začneme vytváraním komplementu. Ak $\Sigma_3 \setminus \Sigma_2 \neq\emptyset$\footnote{Inak $A_2'=A_2$.}, potom vytvoríme $A_2'= (K_2',\Sigma_2',\delta_2',q_{0},F_2')$ tak, že pridáme nové znaky $\Sigma_2'=\Sigma_2 \cup \Sigma_3$,  jeden nový stav\footnote{Pre každý nový stav predpokladáme, že je jedinečný - t.j. žiaden taký v množine stavov ešte nie je.} $K_2'=K_2 \cup \lbrace q_{ZLE} \rbrace$ a prechody na nové znaky z každého stavu: 
+Poďme upravovať $A_2$, začneme vytváraním komplementu. Ak $\Sigma_3 \setminus \Sigma_2 \neq\emptyset$\footnote{Inak $A_2'=A_2$.}, potom vytvoríme $A_2'= (K_2',\Sigma_2',\delta_2',q_{0},F_2')$ tak, že pridáme nové znaky $\Sigma_2'=\Sigma_2 \cup \Sigma_3$,  jeden nový stav\footnote{Pre každý nový stav predpokladáme, že je jedinečný -- t.j. žiaden taký v množine stavov ešte nie je.} $K_2'=K_2 \cup \lbrace q_{ZLE} \rbrace$ a prechody na nové znaky z každého stavu: 
 \begin{eqnarray*}
  \forall q \in K_2 ~ \forall a \in \Sigma_2 &:&  \delta_2'(q,a)=\delta_2(q,a) \\
  \forall q \in K_2~ \forall a \in \Sigma_3 \setminus \Sigma_2 &:& \delta_2'(q,a)=q_{ZLE} \\
@@ -38,12 +38,12 @@ $A_2''= (K_2'',\Sigma_2'',\delta_2'',q_{0},F_2'')$: $K_2'' = K_2' \cup \lbrace q
  \forall a \in \Sigma_2' &:& \delta_2''(q_A,a)=q_Z 
 \end{eqnarray*}
 \footnotetext{Tento riadok v podstate netreba, $A_2''$ sa môže rovno zaseknúť, lebo $A_2'$ práve akceptoval.}
-Je dobré poznamenať, že $A_2''$ je takmer deterministický. Chýbajú mu prechody z $q_Z$ - môžeme ho nechať cykliť v tomto stave, ale nevadí nám ani keď sa zasekne. Nedeterministické rozhodnutie vykonáva iba jedno - pri prechode do stavu $q_A$. Vtedy háda, že už je na konci slova. Ak nie je, $\delta$-funkcia ho pošle do stavu $q_Z$. Podľa toho je zrejmé, že ak existuje akceptačný výpočet a dočítal slovo do konca, je práve jeden\footnote{Okrem prípadu, kedy dočíta slovo a je v stave z $(K_2'\setminus H)$ - vieme ho predĺžiť o krok na $\varepsilon$ a skončiť v $q_A$. Jadro výpočtu ale zostáva rovnaké - jednoznačné.} \footnote{Zaujímavé je, že aj zamietací výpočet je pre každé slovo jednoznačný}.
+Je dobré poznamenať, že $A_2''$ je takmer deterministický. Chýbajú mu prechody z $q_Z$ -- môžeme ho nechať cykliť v tomto stave, ale nevadí nám ani keď sa zasekne. Nedeterministické rozhodnutie vykonáva iba jedno -- pri prechode do stavu $q_A$. Vtedy háda, že už je na konci slova. Ak nie je, $\delta$-funkcia ho pošle do stavu $q_Z$. Podľa toho je zrejmé, že ak existuje akceptačný výpočet a dočítal slovo do konca, je práve jeden\footnote{Okrem prípadu, kedy dočíta slovo a je v stave z $(K_2'\setminus H)$ -- vieme ho predĺžiť o krok na $\varepsilon$ a skončiť v $q_A$. Jadro výpočtu ale zostáva rovnaké -- jednoznačné.} \footnote{Zaujímavé je, že aj zamietací výpočet je pre každé slovo jednoznačný}.
 
 Tvrdíme $ L_1(?=L(A_2''))L_3 =L_1(?!~L_2)L_3= L $.
 Keďže $A_1$ a $A_3$ sa pri oboch výpočtoch budú chovať rovnako (sú nezávislé od lookaheadov), nebudeme sa nimi pri dôkaze zaoberať.
 
-$\subseteq :$ Máme akceptačný výpočet pre $A_2''$ na nejakom vstupe. Akceptačný stav mohol byť buď z množiny $K_2'\setminus H$, to znamená, že pôvodný automat $A_2'$ sa dostal do stavu, z ktorého už nemohol nijak akceptovať\footnote{Sem spadá aj prípad, keď $A_2$ prečítal neznámy znak a zasekol sa - $A_2'$ zostáva až do konca slova v stave $q_{ZLE}$.}. V takom prípade $(?!~L_2)$ akceptuje. V druhom prípade mohol $A_2''$ akceptovať pomocou $q_A$, čo znamená, že dočítal slovo do konca (pretože z $q_A$ sa na ľubovoľný znak dostaneme do $q_Z$, v ktorom sa $A_2''$ zasekne a nebude akceptovať) a ani raz sa nedostal do akceptačného stavu automatu $A_2'$. Teda aj $(?!~L_2)$ akceptuje.
+$\subseteq :$ Máme akceptačný výpočet pre $A_2''$ na nejakom vstupe. Akceptačný stav mohol byť buď z množiny $K_2'\setminus H$, to znamená, že pôvodný automat $A_2'$ sa dostal do stavu, z ktorého už nemohol nijak akceptovať\footnote{Sem spadá aj prípad, keď $A_2$ prečítal neznámy znak a zasekol sa -- $A_2'$ zostáva až do konca slova v stave $q_{ZLE}$.}. V takom prípade $(?!~L_2)$ akceptuje. V druhom prípade mohol $A_2''$ akceptovať pomocou $q_A$, čo znamená, že dočítal slovo do konca (pretože z $q_A$ sa na ľubovoľný znak dostaneme do $q_Z$, v ktorom sa $A_2''$ zasekne a nebude akceptovať) a ani raz sa nedostal do akceptačného stavu automatu $A_2'$. Teda aj $(?!~L_2)$ akceptuje.
 
 $\supseteq :$ Nech $(?!~L_2)$ akceptoval, t.j. na $A_2$ bol vykonaný nejaký neakceptujúci výpočet ($A_2$ je deterministický, takže existuje práve jeden pre každé slovo). Rovnakú postupnosť stavov bude mať aj výpočet na $A_2''$ (automat obsahuje všetky stavy aj $\delta$-funkciu z $A_2$, počiatočný stav je ten istý). Ak sa $A_2$ zasekol na neznámom znaku, v $A_2'$ na ten znak pridáme prechod do stavu $q_{ZLE}$ a v ňom zostaneme až do konca slova. Keďže $q_{ZLE}$ nie je v $A_2'$ akceptačný a nedá sa z neho na žiadne slovo dostať do ľubovoľného akceptačného stavu, $q_{ZLE} \in K_2' \setminus H$ a teda $q_{ZLE} \in F_2''$. Ak sa $A_2$ nezasekol, tak dočítal slovo do konca a v postupnosti stavov jeho výpočtu sa nenachádza žiaden z množiny $F_2$. V tom prípade $A_2''$ z posledného stavu prejde na $\varepsilon$ do $q_A$ (2.riadok definície $\delta_2''$) a akceptuje.
 
@@ -111,13 +111,13 @@ Nech sú le-regexy $\alpha, \beta$. Chceme ukázať, že jazyk $L(\alpha)L(\beta
 \end{equation}
 V $\alpha,\beta$ treba vhodne prepísať označenie zátvoriek (po poradí). $\alpha '$ je $\alpha$ prepísaný tak, že pre každý lookahead:
 \begin{itemize}
-\item bez \$ - na koniec pridáme $.* \backslash k+2 \mathdollar $
-\item s \$ - pred \$ pridáme $\backslash k+2$
+\item bez \$ -- na koniec pridáme $.* \backslash k+2 \mathdollar $
+\item s \$ -- pred \$ pridáme $\backslash k+2$
 \end{itemize}
 $\beta '$ je $\beta$ prepísaný tak, že pre každý lookbehind:
 \begin{itemize}
-\item bez $\textasciicircum$ - na začiatok pridáme $\textasciicircum \backslash 1.*$
-\item s $\textasciicircum$ - pred $\textasciicircum$ pridáme $\textasciicircum \backslash 1$
+\item bez $\textasciicircum$ -- na začiatok pridáme $\textasciicircum \backslash 1.*$
+\item s $\textasciicircum$ -- pred $\textasciicircum$ pridáme $\textasciicircum \backslash 1$
 \end{itemize}
 Čo teda robí le-regex ~\ref{zretazenie}? Nech $w$ je vstupné slovo, ktoré chceme matchovať. Lookahead na začiatku ho nejak rozdelí na $w_1$ a $w_2$, pričom $w=w_1w_2$, tak, že do $L(\alpha)$ pridelí $w_1$ a do $L(\beta)$ podslovo $w_2$. Ešte musíme overiť, či $\alpha$ matchuje $w_1$ samostatne.
 
@@ -156,7 +156,7 @@ Vieme, že $ \le \in \L_{CS} $ (veta \ref{le+lcs}), teda ľubovoľný le-regex v
 
 Nech $\alpha$ je nle-regex. Potom $A$ je LBA pre $\alpha$, ktorý ignoruje negatívny lookaround (t.j. vyrábame LBA pre le-regex). Teraz vytvoríme LBA $B$ pre le-regex vnútri negatívneho lookaroundu. Z nich vytvoríme LBA $C$ pre úplný nle-regex $\alpha$ tak, že bude simulovať $A$ a keď príde na rad negatívny lookaround zaznačí si, v akom stave je $A$ a na ktorom políčku skončil. Skopíruje slovo na ďalšiu stopu a na nej simuluje od/do toho miesta $B$ (podľa toho, či je to lookahead alebo lookbehind). 
 
-Teraz je to s akceptáciou náročnejšie ako pri pozitívnom lookarounde. Pokiaľ $B$ akceptoval, $C$ sa zasekne. Ak sa $B$ zasekol, $C$ sa vráti naspäť k zastavenému výpočtu $A$ a pokračuje v ňom. Keďže slovo je konečné a $B$ na ňom testuje le-regex, ktorý postupne vyjedá písmenká, určite raz príde na koniec slova. Môže sa stať, že bude skúšať viaceré možnosti - napr. skúsi pre $*$ zobrať menej znakov, teda príde na koniec slova viackrát. Ako určíme, že skončil výpočet? Bez újmy na všeobecnosti môžeme predpokladať, že sa $B$ nezacyklí, ale zamietne slovo na konci výpočtu. To preto, že všetkých možností na rozdelenie znakov medzi operácie $*,+,?,\lbrace n,m\rbrace$ je konečne veľa a keď ich systematicky skúša\footnote{Algoritmus pre $*$ je v praxi greedy. Ak slovo nesedí, tak sa vráti, odoberie posledný znak zožratý $*$ a opäť skúša zvyšok výrazu, či slovo sedí. Ak stále nie, algoritmus odoberá hviezdičke znaky dovtedy, dokým nenájde zhodu alebo odoberie všetky znaky - vtedy sa mu minuli všetky možnosti a môže slovo neakceptovať.}, raz sa mu musia minúť. To znamená, že ak nemá v $\delta$-funkcii umelo vsunuté zacyklenie, nezacyklí sa. Teda ak slovo neakceptuje, tak ho určite zamietne a vtedy $C$ môže prejsť na zastavený výpočet $A$ a pokračovať v ňom.
+Teraz je to s akceptáciou náročnejšie ako pri pozitívnom lookarounde. Pokiaľ $B$ akceptoval, $C$ sa zasekne. Ak sa $B$ zasekol, $C$ sa vráti naspäť k zastavenému výpočtu $A$ a pokračuje v ňom. Keďže slovo je konečné a $B$ na ňom testuje le-regex, ktorý postupne vyjedá písmenká, určite raz príde na koniec slova. Môže sa stať, že bude skúšať viaceré možnosti -- napr. skúsi pre $*$ zobrať menej znakov, teda príde na koniec slova viackrát. Ako určíme, že skončil výpočet? Bez újmy na všeobecnosti môžeme predpokladať, že sa $B$ nezacyklí, ale zamietne slovo na konci výpočtu. To preto, že všetkých možností na rozdelenie znakov medzi operácie $*,+,?,\lbrace n,m\rbrace$ je konečne veľa a keď ich systematicky skúša\footnote{Algoritmus pre $*$ je v praxi greedy. Ak slovo nesedí, tak sa vráti, odoberie posledný znak zožratý $*$ a opäť skúša zvyšok výrazu, či slovo sedí. Ak stále nie, algoritmus odoberá hviezdičke znaky dovtedy, dokým nenájde zhodu alebo odoberie všetky znaky -- vtedy sa mu minuli všetky možnosti a môže slovo neakceptovať.}, raz sa mu musia minúť. To znamená, že ak nemá v $\delta$-funkcii umelo vsunuté zacyklenie, nezacyklí sa. Teda ak slovo neakceptuje, tak ho určite zamietne a vtedy $C$ môže prejsť na zastavený výpočet $A$ a pokračovať v ňom.
 
 Podobne ako pri lookarounde aj jeho negatívna verzia môže obsahovať nle-regex, t.j. vnorený (negatívny) lookaround. Tých však môže byť iba konečne veľa, keďže každý nle-regex musí mať konečný zápis. Čo znamená, že aj stôp bude konečne veľa a naznačeným postupom si vieme postupne vybudovať LBA, ktorý bude simulovať $\alpha$.
 \end{proof}
@@ -196,8 +196,8 @@ F = \lbrace \alpha\blacktriangleright \rbrace $$
 Kvôli prehľadnosti popíšeme len hlavné kroky algoritmu. 
 \begin{list}{}{}
 \item $\delta(\beta\blacktriangleright a \xi, a) = \lbrace (\beta a \blacktriangleright \xi, 1) \rbrace ~ \forall a \in \Sigma$ -- Ak je v regexe znak, matchujeme ho s tým na vstupe.
-\item $\delta(\beta\blacktriangleright(\gamma)\xi, a) = \lbrace (\beta(\blacktriangleright\gamma)\xi, 0) \rbrace$ -- Ak sú to $k$--te zátvorky a regex obsahuje $\backslash k$, zapíšeme aktuálnu adresu ako adresu začiatku pre $\backslash k$.
-\item $\delta(\beta(\gamma\blacktriangleright)\xi, a) = \lbrace (\beta(\gamma)\blacktriangleright\xi, 0) \rbrace$ -- Ak sú to $k$--te zátvorky a regex obsahuje $\backslash k$, zapíšeme aktuálnu adresu ako adresu konca pre $\backslash k$. Používame polootvorený interval -- znak na koncovej adrese do podslova nepatrí.
+\item $\delta(\beta\blacktriangleright(\gamma)\xi, a) = \lbrace (\beta(\blacktriangleright\gamma)\xi, 0) \rbrace$ -- Ak sú to $k$-te zátvorky a regex obsahuje $\backslash k$, zapíšeme aktuálnu adresu ako adresu začiatku pre $\backslash k$.
+\item $\delta(\beta(\gamma\blacktriangleright)\xi, a) = \lbrace (\beta(\gamma)\blacktriangleright\xi, 0) \rbrace$ -- Ak sú to $k$-te zátvorky a regex obsahuje $\backslash k$, zapíšeme aktuálnu adresu ako adresu konca pre $\backslash k$. Používame polootvorený interval -- znak na koncovej adrese do podslova nepatrí.
 \item $\delta(\beta(\gamma)\blacktriangleright * \xi, a) = \lbrace (\beta(\blacktriangleright\gamma)*\xi, 0),(\beta(\gamma)*\blacktriangleright\xi, 0) \rbrace$ -- Kleeneho $*$: buď opakujeme alebo pokračujeme ďalej.
 \item $\delta(\beta\blacktriangleright\backslash k \xi, a) = \lbrace (q_{najdi\_zaciatok(k)}, 0) \rbrace$ -- Najprv si zapamätáme aktuálnu pozíciu na vstupe (ďalej označovanú ako 'aktuálna pracovná pozícia'). Stav $q_{najdi\_zaciatok(k)}$ zodpovedá presunu hlavy na vstupnej páske na začiatočnú pozíciu podslova. Tu začneme algoritmus porovnávania podslov podľa definície spätnej referencie -- aké podslovo matchujú $k$-te zátvorky, také isté musí ležať aj na 'aktuálnej pracovnej pozícii'. Algoritmus bude porovnávať vždy postupne po jednom znaku od začiatočnej pozície (ľavá zátvorka) po (koniec - 1) (pravá zátvorka):
 
@@ -216,7 +216,7 @@ Vidíme, že si dočasne potrebujeme zapamätať adresu 'aktuálna pracovná poz
 Po úspešnom zbehutí algoritmu TS prejde do stavu $\beta\backslash k \blacktriangleright\xi$.
 \item $\delta(\beta\blacktriangleright(?=\gamma)\xi, a) = \lbrace (\blacktriangleright\gamma, 0) \rbrace$ -- Lookahead: zapamätáme si aktuálnu pozíciu na vstupe do zodpovedajúceho slotu na pracovnej páske a spracujeme regex vnútri lookaheadu. Ak uspejeme, presunieme hlavu na vstupnej páske naspäť na zapamätanú pozíciu a pokračujeme v regexe ďalej: $\delta(\gamma\blacktriangleright, a) = \lbrace (\beta(?=\gamma)\blacktriangleright\xi, 0) \rbrace $.
 \item $\delta(\beta\blacktriangleright(?<=\gamma)\xi, a) = \lbrace (doľava\_ \gamma, 0) \rbrace$
--- Lookbehind: zapamätáme si aktuálnu pozíciu na vstupe do zodpovedajúceho slotu na pracovnej páske. Toto je zarážka pre lookbehind - svoje matchovanie musí skončiť na tejto pozícii tak, že tento znak už neberie do úvahy. Nedeterministicky sa vrátime o niekoľko políčok doľava ($\delta(doľava\_ \gamma, a) = \lbrace(doľava\_ \gamma,-1), (\blacktriangleright\gamma, 0)\rbrace$)  a skúsime matchovať regex v lookbehinde. Keď uspejeme, porovnáme aktuálnu pozíciu so zarážkou. Ak sú rôzne, Turingov stroj sa zasekne. Inak pokračuje vo výpočte ďalej, od tejto pozície: $\delta(\gamma\blacktriangleright\_overene, a) = \lbrace (\beta(?<=\gamma)\blacktriangleright\xi, 0) \rbrace $.
+-- Lookbehind: zapamätáme si aktuálnu pozíciu na vstupe do zodpovedajúceho slotu na pracovnej páske. Toto je zarážka pre lookbehind -- svoje matchovanie musí skončiť na tejto pozícii tak, že tento znak už neberie do úvahy. Nedeterministicky sa vrátime o niekoľko políčok doľava ($\delta(doľava\_ \gamma, a) = \lbrace(doľava\_ \gamma,-1), (\blacktriangleright\gamma, 0)\rbrace$)  a skúsime matchovať regex v lookbehinde. Keď uspejeme, porovnáme aktuálnu pozíciu so zarážkou. Ak sú rôzne, Turingov stroj sa zasekne. Inak pokračuje vo výpočte ďalej, od tejto pozície: $\delta(\gamma\blacktriangleright\_overene, a) = \lbrace (\beta(?<=\gamma)\blacktriangleright\xi, 0) \rbrace $.
 \end{list}
 
 \textbf{\underline{Počet adries}}:
@@ -377,14 +377,15 @@ $L(regex\#word) \in NSPACE(r \log w)$, kde $r = |regex|,~w = |word|$ a $regex \i
 \end{veta}
 \begin{proof}
 \TODO
+Zostrojíme nedeterministický Turingov stroj M, ktorý bude akceptovať jazyk $L(regex\#word)$ a na pracovných páskach zapíše najviac $O(r\log w)$ políčok.
+
+Na pracovnej páske 
 \end{proof}
 
 \begin{veta}
 $L(regex\#word) \in DSPACE(n \log^2 n)$, kde $regex \in \le$ a $n$ je dĺžka vstupu.
 \end{veta}
 \begin{proof}
-\TODO
-
 Pre účely dôkazu budeme označovať $w = |word|$ a $r = |regex|$.
 
 Zostrojíme deterministický Turingov stroj M, ktorý bude akceptovať jazyk $L(regex\#word)$ a na každej pracovnej páske použije najviac $O(n\log^2 n)$ políčok. M bude mať vstupnú read-only pásku a 2 pracovné pásky.
@@ -468,4 +469,4 @@ $\beta = ((?=(a^m)*\mathdollar )a^{m+1})*a \lbrace 1,m-1 \rbrace \mathdollar$. A
 	  ~~~~~~~\vdots
 \item $a^{(m-1)(m+1)+1}$
 \end{itemize}
-avšak $a^{m(m+1)} \notin L(\beta )$, lebo nám chýba zvyšok $0$. Zaujímavé je, že le-regex využíva iteráciu $(m-1)$--krát a napriek tomu je konečný.
+avšak $a^{m(m+1)} \notin L(\beta )$, lebo nám chýba zvyšok $0$. Zaujímavé je, že le-regex využíva iteráciu $(m-1)$-krát a napriek tomu je konečný.
