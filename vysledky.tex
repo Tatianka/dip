@@ -50,7 +50,7 @@ $\supseteq :$ Nech $\nlookahead L_2)$ akceptoval, t.j. na $A_2$ bol vykonaný ne
 Z práve dokázaného tvrdenia a vety \ref{lookahead+R} už vyplýva aj platnosť našej lemy.
 \end{proof}
 
-\begin{lema}
+\begin{lema}\label{nlb+R}
 Trieda $\R$ je uzavretá na negatívny lookbehind.
 \end{lema}
 \begin{proof}
@@ -80,7 +80,7 @@ Trieda $\R$ je uzavretá na negatívny lookaround.
 \end{veta}
 
 \begin{lema}
-Nech $L_1,L_2,L_3,L_4 \in \R$, $\alpha = \left( L_1 \left( ?= L_2\right) L_3 \right) * L_4$. Potom $L(\alpha) \in \R$.
+Nech $L_1,L_2,L_3,L_4 \in \R$, $\alpha = \left( L_1 \left( ?!~ L_2\right) L_3 \right) * L_4$. Potom $L(\alpha) \in \R$.
 \end{lema} 
 \begin{proof}
 Podobne ako v dôkaze vety \ref{nla+R} pretransformujeme $\nlookahead L_2)$ na akýsi $\lookahead L(A_2''))$, kde $A_2''$ bude akceptovať práve vtedy, keď $\nlookahead L_2)$. Potom $\beta = \left( L_1 \lookahead L(A_2'') ) L_3 \right) * L_4, ~ L(\beta) = L(\alpha) \in \R$ podľa vety \ref{lookaround+R}.
@@ -90,7 +90,7 @@ Podobne ako v dôkaze vety \ref{nla+R} pretransformujeme $\nlookahead L_2)$ na a
 Nech $L_1,L_2,L_3,L_4 \in \R$, $\alpha = L_4 \left( L_1 \left(?<!~ L_2\right) L_3 \right) *$. Potom $L(\alpha)~\in~\R$.
 \end{lema} 
 \begin{proof}
-\todo
+Použijeme konštrukciu ako v dôkaze vety \ref{nlb+R}, kde pretransformujeme $\nlookbehind L_2)$ na $\lookbehind L(A_2''))$, kde $A_2''$ bude akceptovať práve vtedy, keď $\nlookbehind L_2$. Z toho vznikne $\beta = L_4 \left( L_1 \left(?<=~ L(A_2'')\right) L_3 \right) * = L(\alpha) \in \R$ podľa vety \ref{lookaround+R}.
 \end{proof}
 
 \begin{veta}\label{nlookaround+R}
@@ -102,10 +102,10 @@ Trieda nad regexami s pozitívnym a negatívnym lookaroundom je $\R$.
 \end{dosledok}
 
 \begin{veta}
-Trieda \le~je uzavretá na zreťazenie.
+Trieda $\lel$ je uzavretá na zreťazenie.
 \end{veta}
 \begin{proof}
-Nech sú le-regexy $\alpha, \beta$. Chceme ukázať, že jazyk $L(\alpha)L(\beta) \in \le$. Intuitívne nás to vedie k riešeniu $\alpha\beta$, čo ale nemusí byť vždy správne. Problémom sú operácie lookaround, presnejšie každý lookahead v $\alpha$ môže zasahovať do slova z $L(\beta)$ a takisto každý lookbehind z $\beta$ môže zasahovať do slova z $L(\alpha)$. Navyše, ak lookahead obsahuje $\$$ a lookbehind $\textasciicircum$, potom zasahujú do slova z iného jazyka určite. V takom prípade môže le-regex $\alpha\beta$ vynechať niektoré slová z $L_1L_2$ a tiež pridať nejaké nevhodné slová naviac. Preto treba nájsť spôsob, ako operácie lookaroundu vhodne 'skrotiť', predpokladajme, že $\alpha$ má $k$ označených zátvoriek:
+Nech sú le-regexy $\alpha, \beta$. Chceme ukázať, že jazyk $L(\alpha)L(\beta) \in \lel$. Intuitívne nás to vedie k riešeniu $\alpha\beta$, čo ale nemusí byť vždy správne. Problémom sú operácie lookaround, presnejšie každý lookahead v $\alpha$ môže zasahovať do slova z $L(\beta)$ a takisto každý lookbehind z $\beta$ môže zasahovať do slova z $L(\alpha)$. Navyše, ak lookahead obsahuje $\$$ a lookbehind $\textasciicircum$, potom zasahujú do slova z iného jazyka určite. V takom prípade môže regex $\alpha\beta$ vynechať niektoré slová z $L_1L_2$ a tiež pridať nejaké nevhodné slová naviac. Preto treba nájsť spôsob, ako operácie lookaroundu vhodne 'skrotiť'. Predpokladajme, že $\alpha$ má $k$ označených zátvoriek, potom regex pre jazyk $L(\alpha)L(\beta)$ vyzerá nasledovne:
 \begin{equation} \label{zretazenie}
 \lookahead \mathop(_1 \alpha \mathop)_1 \mathop(_{k+2}\beta \mathop)_{k+2} \mathdollar) \alpha ' \backslash k+2 \lookbehind \textasciicircum\backslash 1\beta ')
 \end{equation}
@@ -119,21 +119,21 @@ $\beta '$ je $\beta$ prepísaný tak, že pre každý lookbehind:
 \item bez $\textasciicircum$ -- na začiatok pridáme $\textasciicircum \backslash 1.*$
 \item s $\textasciicircum$ -- pred $\textasciicircum$ pridáme $\textasciicircum \backslash 1$
 \end{itemize}
-Čo teda robí le-regex ~\ref{zretazenie}? Nech $w$ je vstupné slovo, ktoré chceme matchovať. Lookahead na začiatku ho nejak rozdelí na $w_1$ a $w_2$, pričom $w=w_1w_2$, tak, že do $L(\alpha)$ pridelí $w_1$ a do $L(\beta)$ podslovo $w_2$. Ešte musíme overiť, či $\alpha$ matchuje $w_1$ samostatne.
+Čo presne robí regex ~\ref{zretazenie}? Nech $w$ je vstupné slovo, ktoré chceme matchovať. Lookahead na začiatku ho nejako rozdelí na $w_1$ a $w_2$, pričom $w=w_1w_2$, tak, že $w_1$ bude patriť do $L(\alpha)$ a podslovo $w_2$ do $L(\beta)$. Ešte musíme overiť, či $\alpha$ matchuje $w_1$ samostatne.
 
-Preto sme v $\alpha$ prepísali všetky lookaheady. V $\alpha '$ každý z nich musí na konci slova $w$ matchovať $w_2$ (toto zabezpečí spätná referencia $\backslash k+2$ a \$) a teda matchovanie le-regexu $\alpha$ zostane výlučne na podslove $w_1$. Analogicky to platí pre lookbehindy v $\beta '$.
+Preto sme v $\alpha$ prepísali všetky lookaheady. V $\alpha '$ každý z nich musí na konci slova $w$ matchovať $w_2$ (toto zabezpečí spätná referencia $\backslash k+2$ a \$) a teda matchovanie regexu $\alpha$ zostane výlučne na podslove $w_1$. Analogicky to platí pre upravené lookbehindy v $\beta '$.
 \end{proof}
 
 \begin{veta}\label{lelcf}
-$\le$ je neporovnateľná s $ \L_{CF}$.
+$\lel$ je neporovnateľná s $ \L_{CF}$.
 \end{veta}
 \begin{proof}
 Majme jazyk $L=\lbrace ww~|~w \in \lbrace a,b \rbrace^* \rbrace \in \L_{CF}$, nech $ \alpha = ([ab]*)\backslash 1 $.
-Zrejme $ L(\alpha) = L $, teda $L\in \le$.
+Zrejme $ L(\alpha) = L $, teda $L\in \lel$.
 
-Ukážeme, že jazyk $L=\lbrace a^nb^n~|~n \in \N \rbrace \notin \le$. Sporom, nech $L \in \le$. 
+Ukážeme, že jazyk $L=\lbrace a^nb^n~|~n \in \N \rbrace \notin \lel$. Sporom, nech $L \in \lel$. 
 
-Vieme, že $L \notin \e$, preto musí obsahovať nejaký lookaround. Zároveň z $L \notin \R$ a \ref{lookaround+R} vyplýva, že musí obsahovať aj spätné referencie.
+Vieme, že $L \notin \el$, preto musí obsahovať nejaký lookaround. Zároveň z $L \notin \R$ a vety \ref{lookaround+R} vyplýva, že musí obsahovať aj spätné referencie.
 
 Kam sa môžu spätné referencie odkazovať a kam ich potom môžeme umiestniť?
 \begin{list}{$\bullet$}{Nech výraz, na ktorý ukazujú, vyrobí nejaké:}
@@ -145,37 +145,38 @@ Vidíme, že so spätnými referenciami dosiahneme rovnaký výsledok ako bez ni
 \end{proof}
 
 \begin{dosledok}
-$\le \subsetneq \L_{CS}$
+$\lel \subsetneq \L_{CS}$
 \end{dosledok}
 
 \begin{veta}
-$ nLEregex \subseteq \L_{CS} $
+$ \nlel \subseteq \L_{CS} $
 \end{veta}
 \begin{proof}
-Vieme, že $ \le \in \L_{CS} $ (veta \ref{le+lcs}), teda ľubovoľný le-regex vieme simulovať pomocou LBA. Ukážeme, že ak pridáme operáciu negatívny lookahead/lookbehind, vieme to simulovať tiež.
+Vieme, že $ \lel \in \L_{CS} $ (veta \ref{le+lcs}), teda ľubovoľný regex z $\le$ vieme simulovať pomocou LBA. Ukážeme, že ak pridáme operáciu negatívny lookahead/lookbehind, vieme to simulovať tiež.
 
-Nech $\alpha$ je nle-regex. Potom $A$ je LBA pre $\alpha$, ktorý ignoruje negatívny lookaround (t.j. vyrábame LBA pre le-regex). Teraz vytvoríme LBA $B$ pre le-regex vnútri negatívneho lookaroundu. Z nich vytvoríme LBA $C$ pre úplný nle-regex $\alpha$ tak, že bude simulovať $A$ a keď príde na rad negatívny lookaround zaznačí si, v akom stave je $A$ a na ktorom políčku skončil. Skopíruje slovo na ďalšiu stopu a na nej simuluje od/do toho miesta $B$ (podľa toho, či je to lookahead alebo lookbehind). 
+Nech $\alpha \in \nle$. Potom nech $A$ je LBA pre $\alpha$, ktorý ignoruje negatívny lookaround (t.j. vyrábame LBA pre regex z $\le$). Teraz vytvoríme LBA $B$ pre regex vnútri negatívneho lookaroundu. Z nich vytvoríme LBA $C$ pre úplný regex $\alpha$ tak, že $C$ bude simulovať $A$ a keď príde na rad negatívny lookaround zaznačí si, v akom stave je $A$ a na ktorom políčku skončil. Skopíruje slovo na ďalšiu stopu a na nej simuluje od/do toho miesta $B$ (podľa toho, či je to lookahead alebo lookbehind). 
 
-Teraz je to s akceptáciou náročnejšie ako pri pozitívnom lookarounde. Pokiaľ $B$ akceptoval, $C$ sa zasekne. Ak sa $B$ zasekol, $C$ sa vráti naspäť k zastavenému výpočtu $A$ a pokračuje v ňom. Keďže slovo je konečné a $B$ na ňom testuje le-regex, ktorý postupne vyjedá písmenká, určite raz príde na koniec slova. Môže sa stať, že bude skúšať viaceré možnosti -- napr. skúsi pre $*$ zobrať menej znakov, teda príde na koniec slova viackrát. Ako určíme, že skončil výpočet? Bez újmy na všeobecnosti môžeme predpokladať, že sa $B$ nezacyklí, ale zamietne slovo na konci výpočtu. To preto, že všetkých možností na rozdelenie znakov medzi operácie $*,+,?,\lbrace n,m\rbrace$ je konečne veľa a keď ich systematicky skúša\footnote{Algoritmus pre $*$ je v praxi greedy. Ak slovo nesedí, tak sa vráti, odoberie posledný znak zožratý $*$ a opäť skúša zvyšok výrazu, či slovo sedí. Ak stále nie, algoritmus odoberá hviezdičke znaky dovtedy, dokým nenájde zhodu alebo odoberie všetky znaky -- vtedy sa mu minuli všetky možnosti a môže slovo neakceptovať.}, raz sa mu musia minúť. To znamená, že ak nemá v $\delta$-funkcii umelo vsunuté zacyklenie, nezacyklí sa. Teda ak slovo neakceptuje, tak ho určite zamietne a vtedy $C$ môže prejsť na zastavený výpočet $A$ a pokračovať v ňom.
+Teraz je to s akceptáciou náročnejšie ako pri pozitívnom lookarounde. Pokiaľ $B$ akceptoval, $C$ sa zasekne. Ak sa $B$ zasekol, $C$ sa vráti naspäť k zastavenému výpočtu $A$ a pokračuje v ňom. Keďže slovo je konečné a $B$ na ňom testuje regex, ktorý postupne vyjedá písmenká, určite raz príde na koniec slova. Môže sa stať, že bude skúšať viaceré možnosti -- napr. skúsi pre $*$ zobrať menej znakov, teda príde na koniec slova viackrát. Ako určíme, že skončil výpočet? Bez újmy na všeobecnosti môžeme predpokladať, že sa $B$ nezacyklí, ale zamietne slovo na konci výpočtu. To preto, že všetkých možností na rozdelenie znakov medzi operácie $*,+,?,\lbrace n,m\rbrace$ je konečne veľa a keď ich systematicky skúša\footnote{Algoritmus pre $*$ je v praxi greedy. Ak slovo nesedí, tak sa vráti, odoberie posledný znak zožratý $*$ a opäť skúša zvyšok výrazu, či slovo sedí. Ak stále nevyhovuje, algoritmus odoberá hviezdičke znaky dovtedy, dokým nenájde zhodu alebo odoberie všetky znaky -- vtedy sa mu minuli všetky možnosti a môže slovo zamietnuť.}, raz sa mu musia minúť. To znamená, že ak nemá v $\delta$-funkcii umelo vsunuté zacyklenie, nezacyklí sa. Teda ak slovo neakceptuje, tak ho určite zamietne a vtedy $C$ môže prejsť na zastavený výpočet $A$ a pokračovať v ňom.
 
-Podobne ako pri lookarounde aj jeho negatívna verzia môže obsahovať nle-regex, t.j. vnorený (negatívny) lookaround. Tých však môže byť iba konečne veľa, keďže každý nle-regex musí mať konečný zápis. Čo znamená, že aj stôp bude konečne veľa a naznačeným postupom si vieme postupne vybudovať LBA, ktorý bude simulovať $\alpha$.
+Podobne ako pri lookarounde aj jeho negatívna verzia môže obsahovať vnorený negatívny lookaround. Tých však môže byť iba konečne veľa, keďže každý regex musí mať konečný zápis. Čo znamená, že aj stôp bude konečne veľa a naznačeným postupom si vieme postupne vybudovať LBA, ktorý bude simulovať $\alpha$.
 \end{proof}
 
+\TODO check \& rewrite
 \begin{veta}
-$\nle$ je neporovnateľná s $ \L_{CF}$.
+$\nlel$ je neporovnateľná s $ \L_{CF}$.
 \end{veta}
 \begin{proof}
-Opäť použíjeme jazyk $L=\lbrace a^nb^n~|~n \in \N \rbrace$ a budeme dokazovať sporom. Nech $L \in \le$.
+Opäť použíjeme jazyk $L=\lbrace a^nb^n~|~n \in \N \rbrace$ a budeme dokazovať sporom. Nech $L \in \lel$.
 
-Z vety \ref{lelcs} vieme, že výraz musí obsahovať negatívny lookaround. Z jej dôkazu vidíme, že spätné referencie nepomôžu nech sa ich pokúsime hocijako použiť. Z toho vyplýva, že ich nepoužijeme a z vety \ref{nlookaround+R} zistíme, že nám zostal model schopný vyrobiť iba regulárne jazyky. Spor.
+Z vety \ref{lelcf} vidíme, že výraz musí obsahovať negatívny lookaround. Z jej dôkazu vidíme, že spätné referencie nepomôžu, nech sa ich pokúsime hocijako použiť. Z toho vyplýva, že ich nepoužijeme a z vety \ref{nlookaround+R} zistíme, že nám zostal model schopný vyrobiť iba regulárne jazyky. Spor.
 \end{proof}
 
 \begin{dosledok}
-$\nle \subsetneq \L_{CS}$
+$\nlel \subsetneq \L_{CS}$
 \end{dosledok}
 
 \begin{veta}
-$\le \subseteq NSPACE(\log n)$, kde $n>1$ je veľkosť vstupu.
+$\lel \subseteq NSPACE(\log n)$, kde $n>1$ je veľkosť vstupu.
 \end{veta}
 \begin{proof}
 Ukážeme, že ľubovoľný $\alpha \in \le$ vieme simulovať nedeterministickým Turingovým strojom s jednou vstupnou read-only páskou a jednou pracovnou páskou, na ktorej použijeme maximálne logaritmický počet políčok.
@@ -236,19 +237,15 @@ $$ NSPACE(S(n)) \subseteq DSPACE(S^2(n)) $$
 \end{veta}
 
 \begin{dosledok}
-$\le \subseteq DSPACE(\log^2 n)$, kde $n>1$ je veľkosť vstupu.
+$\lel \subseteq DSPACE(\log^2 n)$, kde $n>1$ je veľkosť vstupu.
 \end{dosledok}
 
 \begin{veta}
-$\nle \subseteq DSPACE(\log^2 n)$, kde $n>1$ je veľkosť vstupu.
+$\nlel \subseteq DSPACE(\log^2 n)$, kde $n>1$ je veľkosť vstupu.
 \end{veta}
 \begin{proof}
 \TODO
 \end{proof}
-
-\begin{df}
-$L(regex\#word)$ nazývame jazyk takých slov, kde $regex$ je validný regulárny výraz z $R$ a slovo $word \in L(R)$. Množina $R \in \lbrace \e, \le, \nle \rbrace$ musí byť špecifikovaná.
-\end{df}
 
 \begin{df}
 \textbf{Konfiguráciou} regexu $\alpha = r_1 \dots r_n$ nazývame dvojicu $(r, w)$, kde $r \in (\lceil\alpha)\cup(\alpha\lceil)\cup(r_1 \dots \lceil r_i \dots r_n)$ $w \in \Gamma^*\lceil~ \Gamma^*$ a sybmol $\lceil$ ukazuje, kde sa nachádzame vo výpočte v regexe a v slove.
@@ -321,13 +318,13 @@ $$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots w_c
 \item $\displaystyle{(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\ldots \intercal  \mathop{w_b}^{k'} \dots \lceil w_j\dots w_m)}$
 $$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots \mathop{w_b}^{k'} \dots  w_j\lceil\dots w_m)$$
 \item Nech $\lookahead \dots)$ je $k$-ty pozitívny lookahead v poradí: 
-\\$\displaystyle{(r_1\dots \lceil \lookahead \dots) \dots r_n, w_1\dots\lceil w_j\dots w_m )}$
+\\ $\displaystyle{(r_1\dots \lceil \lookahead \dots) \dots r_n, w_1\dots\lceil w_j\dots w_m )}$
 $$ \vdash(r_1\dots \lookahead\lceil\dots) \dots r_n, w_1\dots\lceil \mathop{w_j}^{\mathop{k}^\rightarrow}\dots w_m ) $$
 \item Nech ) patrí ku $k$-temu pozitívnemu lookaheadu v poradí: 
-\\$\displaystyle{(r_1\dots \lookahead\dots\lceil) \dots r_n, w_1\dots \mathop{w_l}^{\mathop{k}^\rightarrow}\dots\lceil w_j\dots w_m )} $
+\\ $\displaystyle{(r_1\dots \lookahead\dots\lceil) \dots r_n, w_1\dots \mathop{w_l}^{\mathop{k}^\rightarrow}\dots\lceil w_j\dots w_m )} $
 $$ \vdash(r_1\dots \lookahead\dots)\lceil \dots r_n, w_1\dots \lceil w_l \dots w_j\dots w_m ) $$
 \item Nech $\lookbehind\dots)$ je $k$-ty pozitívny lookbehind v poradí, $\forall L\in\lbrace 0,\dots, j-1\rbrace$:
-$\displaystyle{(r_1\dots \lceil \lookbehind\dots) \dots r_n, w_1\dots\lceil w_j\dots w_m )}$
+\\ $\displaystyle{(r_1\dots \lceil \lookbehind\dots) \dots r_n, w_1\dots\lceil w_j\dots w_m )}$
 $$ \vdash (r_1\dots \lookbehind\lceil\dots) \dots r_n, w_1\dots\lceil w_{j-L}\dots \mathop{w_j}^{\mathop{k}^\leftarrow} \dots w_m ) $$
 \item Nech ) patrí ku $k$-temu pozitívnemu lookbehindu v poradí:
 \\ $\displaystyle{(r_1\dots \lookbehind\dots\lceil) \dots r_n, w_1\dots \lceil \mathop{w_j}^{\mathop{k}^\leftarrow} \dots w_m )}$
@@ -350,12 +347,12 @@ $$\vdash (r_1\dots \nlookbehind r_{k}\dots r_{l} ) \lceil\dots r_n, w_1\dots \lc
 Postupnosť konfigurácií $(\lceil \alpha, \lceil w)\vdash^* (\alpha\lceil, w\lceil)$ pre daný regex $\alpha$ a slovo $w$ nazývame \textbf{akceptačný výpočet}.
 
 \begin{lema}\label{dlzka_vypoctu_rw}
-Nech $\alpha \in \le$ a $w \in L(\alpha)$. Potom existuje akceptačný výpočet, ktorý má najviac $5\cdot|\alpha|\cdot|w|$ konfigurácií.
+Nech $\alpha \in \lel$ a $w \in L(\alpha)$. Potom existuje akceptačný výpočet, ktorý má najviac $5\cdot|\alpha|\cdot|w|$ konfigurácií.
 \end{lema}
 \begin{proof}
 Pri prechodoch medzi konfiguráciami I., II., III., IV., V.(1), VII., IX., XII., XIII. a XIV. sa ukazovateľ posúva vždy vpred buď v slove alebo v regexe alebo v oboch. Keby sme využívali iba tieto prechody, akceptačný výpočet má najviac $\left\vert{\alpha}\right\vert+|w|$ konfigurácií.
 
-Existujú prechody, pri ktorých sa žiaden ukazovateľ nepohne: VI. a VIII. Tieto prechody nastávajú pri spätných referenciách a jedná sa o objavenie sa alebo zmiznutie pomocného ukazovateľa. Pri každej spätnej referencii nastávajú oba javy práve jedenkrát. Zároveň počet spätných referencií je najviac $|\alpha|$, teda tieto 2 konfigurácie sa objavia dokopy najviac $(2\left\vert{\alpha}\right\vert)$-krát.
+Existujú prechody, pri ktorých sa žiaden ukazovateľ nepohne: VI. a VIII. Tieto prechody nastávajú pri spätných referenciách a jedná sa o objavenie sa alebo zmiznutie pomocného ukazovateľa. Pri každej spätnej referencii nastávajú oba javy práve jedenkrát. Zároveň počet spätných referencií je najviac $|\alpha|$, teda tieto 2 konfigurácie sa objavia dokopy najviac $(2\cdot\left\vert{\alpha}\right\vert)$-krát.
 
 Zostali konfigurácie, v ktorých ukazovateľ skáče dozadu, rozoberme si ich postupne:
 
@@ -363,7 +360,7 @@ V.(2) -- v prípade Kleeneho $*$ nastáva ďalšie opakovanie. Keďže $w\in L(\
 
 X., XI. -- ukončenie operácie lookahead, začiatok operácie lookbehind. V tomto prípade ukazovateľ skáče dozadu v slove. Podstatné však je, že v regexe sa posúva dopredu. Takýchto prechodov vieme spraviť najviac $|\alpha|$.
 
-Spolu je to najviac $|\alpha|+|w|+2|\alpha|+|\alpha|\cdot|w|+|\alpha| \leq 5\cdot|\alpha|\cdot|w|$ konfigurácií.
+Spolu je to najviac $|\alpha|+|w|+2\cdot|\alpha|+|\alpha|\cdot|w|+|\alpha| \leq 5\cdot|\alpha|\cdot|w|$ konfigurácií.
 
 \end{proof}
 
