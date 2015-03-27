@@ -68,13 +68,13 @@ $$ L_{1}(?<!L_{2})L_{3} = \lbrace uv ~|~ u \in L_{1} \land v \in L_{3} \land nee
 
 Moderné regulárne výrazy sa skladajú z \textbf{konečného počtu} znakov, metaznakov a zložitejších operácií.
 
-Pre korektné matchovanie regulárnym výrazom potrebujeme vedieť priority operácií. Niektoré sa správajú ako znak: [], ., \textasciicircum, \$, $\backslash k$, pozitívny a negatívny lookaround. Ostatné kombinujú znaky s nasledovnými prioritami:
+Pre korektné matchovanie regulárnym výrazom potrebujeme vedieť priority operácií. Niektoré sa správajú ako znak: $\left[~\right]$, ., \textasciicircum, \$, $\backslash k$, pozitívny a negatívny lookaround. Ostatné kombinujú znaky s nasledovnými prioritami:
 
 \begin{tabular}{|c||c|c|c|c|}
 \hline
 priorita &3&2&1& 0  \\
 \hline
-operácia & () & $*$ + ? $\lbrace \rbrace$ & | & zreťazenie \\ \hline
+operácia & () & $*$ + ? $\lbrace \rbrace$ & zreťazenie & | \\ \hline
 \end{tabular}
 \\ \par
 Máme veľkú množinu operácií a budeme chcieť pracovať aj s jej podmnožinami, preto si zavedieme názvoslovie pre ich jednoznačnejšie a kratšie určenie.
@@ -118,12 +118,16 @@ Spomeňme si najprv ako možno zadefinovať popisnú zložitosť \cite{newResult
 
 \begin{list}{$\bullet$}{Nech E je regulárny výraz, potom}
 \item $|E|$ je jeho celková dĺžka
-\item $rpn(E)$ je jeho celková dĺžka v poľskej normálnej forme
+\item $rpn(E)$ je jeho celková dĺžka v reverznej poľskej notácii. Táto notácia oproti klasickej neobsahuje okrúhle zátvorky a používa explicitný metaznak pre zreťazenie~$\bullet$. Napríklad regulárny výraz $(a|ab)*(c|d)$ má 12 znakov a v reverznej poľskej notácii $aab\bullet |*cd|\bullet$ má 10 znakov.
+
+Uvedomme si, že dĺžka reverznej poľkej notácie je rovnaká ako počet vrcholov v syntaktickom strome pre daný výraz. Preto možno vernejšie popisuje skutočnú zložitosť regulárneho výrazu (žiadne pomocné symboly, len znaky a operácie). Nakoľko však nie je veľmi prehľadná a ťažko sa v nej hľadajú chyby, nie je tak často používaná.
 \item $|alph(E)|= N(E)$ je počet alfabetických symbolov v E
 \item $H(E)$ je hĺbka vzhľadom na $*$, počet vnorení $*$
 \item $L(E)$ je dĺžka najdlhšej neopakujúcej sa cesty cez výraz
-\item $W(E)$ je maximum symbolov v zjednotení (duálne k L)
+\item $W(E)$ je šírka, počet zjednotených symbolov. Za touto mierou zložitosti nie je žiadna intuitívna predstava. Ako vidieť neskôr v definícii, dôvodom jej vzniku bola duálnosť k L.
 \end{list}
+
+V nasledujúcej tabuľke sú uvedené induktívne definície jednotlivých mier zložitosti. Zložitosť regulárneho jazyka vzhľadom na ľubovoľnú z týchto mier zložitosti je minimálna miera cez všetky regulárne výrazy pre daný regulárny jazyk.
 
 \begin{tabular}{|c||c|c|c|c|}
 \hline
@@ -152,7 +156,7 @@ Nech E je regulárny výraz nad abecedou $\Sigma$ a nech L(E) je jazyk špecifik
 Inak, ak žiadna z nich neplatí, E nazývame \textbf{nezmenšiteľným}.
 \end{df}
 
-V originále sa používajú výrazy \textit{collapsible} a \textit{uncollapsible}. Táto definícia neodhalí všetky zbytočne zopakované časti, napríklad $a|a$ je nezmenšiteľný, aj keď by sa dal zapísať jednoduchým $a$. Problém je, že identity výrazov nie sú konečne axiomatizovateľné (ani nad unárnou abecedou). Teda nie je reálne určiť také pravidlá, aby sme dosiahli konečné zjednodušenie. \cite{newResults}
+V originále sa používajú výrazy \textit{collapsible} a \textit{uncollapsible}. Táto definícia neodhalí všetky zbytočne zopakované časti, napríklad $a|a$ je nezmenšiteľný, aj keď by sa dal zapísať jednoduchým $a$. Problém je, že identity výrazov nie sú konečne axiomatizovateľné (ani nad unárnou abecedou)\cite{newResults}. Teda nie je reálne určiť také pravidlá, aby sme dosiahli konečné zjednodušenie. 
 
 \begin{df}
 Ak E je nezmenšiteľný regulárny výraz taký, že
