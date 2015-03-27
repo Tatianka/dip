@@ -29,7 +29,8 @@ Okrem operácií označených metaznakmi vznikli aj zložitejšie operácie, na 
 
 \begin{itemize}
 \item \textbf{komentár} ozn. (?\#text komentáru) -- klasický komentár, určený čitateľom kódu; nemá vplyv na výraz, algoritmus ho ignoruje
-\item \textbf{spätné referencie} ozn. $\backslash k$ -- môže sa nachádzať na ľubovoľnom mieste vo výraze ZA $k$-tou pravou (zatváracou) zátvorkou. Odkazuje sa na $k$-te zátvorky a presný význam sa určuje až pri hľadaní zhody na konkrétnom vstupe. Algoritmus si zapamätá aké podslovo zo vstupu matchoval výraz vnútri $k$-tych zátvoriek a presne toto podslovo hľadá, keď ďalej vo výraze narazí na $\backslash k$.
+\item \textbf{spätné referencie} ozn. $\backslash k$, $k \in\N$ -- môže sa nachádzať na ľubovoľnom mieste vo výraze ZA $k$-tou pravou (zatváracou) zátvorkou. Odkazuje sa na $k$-te zátvorky a presný význam sa určuje až pri hľadaní zhody na konkrétnom vstupe. Algoritmus si zapamätá aké podslovo zo vstupu matchoval výraz vnútri $k$-tych zátvoriek a presne toto podslovo hľadá, keď ďalej vo výraze narazí na $\backslash k$.
+\\ Predpokladáme, že číslo $k$ je zapísané znakmi z inej abecedy ako zvyšok regexu -- t.j. je jednoznačne určiteľné, kde končí zápis $k$.\footnote{V implementovaných regexoch vieme deterministicky určiť, kde končí číslo $k$ -- sú povolené maximálne trojciferné čísla. My chceme všeobecnejší model, bez obmedzení na veľkosť $k$, a práve preto je tento predpoklad oprávnený. Zároveň si to môžeme dovoliť, lebo ak máme $k$ zapísané ako číslo v desiatkovej sústave, v teórii je jednoduché zasubstituovať hľadaný jazyk tak, aby neobsahoval znaky 0,\dots,9.}
 \item \textbf{lookahead} -- tzv. nazeranie dopredu. Keďže anglický výraz je kratší a zvučnejší, rozhodli sme sa ho používať.
 \begin{itemize}
 \item \textbf{pozitívny} ozn. $\lookahead\alpha)$, kde $\alpha$ je nejaký moderný regulárny výraz 
@@ -67,6 +68,15 @@ $$ L_{1}(?<!L_{2})L_{3} = \lbrace uv ~|~ u \in L_{1} \land v \in L_{3} \land nee
 
 Moderné regulárne výrazy sa skladajú z \textbf{konečného počtu} znakov, metaznakov a zložitejších operácií.
 
+Pre korektné matchovanie regulárnym výrazom potrebujeme vedieť priority operácií. Niektoré sa správajú ako znak: [], ., \textasciicircum, \$, $\backslash k$, pozitívny a negatívny lookaround. Ostatné kombinujú znaky s nasledovnými prioritami:
+
+\begin{tabular}{|c||c|c|c|c|}
+\hline
+priorita &3&2&1& 0  \\
+\hline
+operácia & () & $*$ + ? $\lbrace \rbrace$ & | & zreťazenie \\ \hline
+\end{tabular}
+\\ \par
 Máme veľkú množinu operácií a budeme chcieť pracovať aj s jej podmnožinami, preto si zavedieme názvoslovie pre ich jednoznačnejšie a kratšie určenie.
 
 \begin{description}
