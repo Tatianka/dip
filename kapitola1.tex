@@ -69,14 +69,15 @@ $$ L_{1}(?<!L_{2})L_{3} = \lbrace uv ~|~ u \in L_{1} \land v \in L_{3} \land nee
 Moderné regulárne výrazy sa skladajú z \textbf{konečného počtu} znakov, metaznakov a zložitejších operácií.
 
 Pre korektné matchovanie regulárnym výrazom potrebujeme vedieť priority operácií. Niektoré sa správajú ako znak: $\left[~\right]$, ., \textasciicircum, \$, $\backslash k$, pozitívny a negatívny lookaround. Ostatné kombinujú znaky s nasledovnými prioritami:
-
+\begin{center}
 \begin{tabular}{|c||c|c|c|c|}
 \hline
 priorita &3&2&1& 0  \\
 \hline
 operácia & () & $*$ + ? $\lbrace \rbrace$ & zreťazenie & | \\ \hline
 \end{tabular}
-\\ \par
+\end{center}
+
 Máme veľkú množinu operácií a budeme chcieť pracovať aj s jej podmnožinami, preto si zavedieme názvoslovie pre ich jednoznačnejšie a kratšie určenie.
 
 \begin{description}
@@ -128,6 +129,7 @@ Uvedomme si, že dĺžka reverznej poľkej notácie je rovnaká ako počet vrcho
 \end{list}
 
 V nasledujúcej tabuľke sú uvedené induktívne definície jednotlivých mier zložitosti. Zložitosť regulárneho jazyka vzhľadom na ľubovoľnú z týchto mier zložitosti je minimálna miera cez všetky regulárne výrazy pre daný regulárny jazyk.
+\begin{center}
 
 \begin{tabular}{|c||c|c|c|c|}
 \hline
@@ -142,7 +144,7 @@ L & 1 & $max(L(E),L(F))$ & $L(E)+L(F)$ & $L(E)$
 W & 1 & $W(E)+W(F)$ & $max(W(E),W(F))$ & $W(E)$
 \\ \hline
 \end{tabular}
-\\ \\
+\end{center}
 
 Ako pri mnohých iných modeloch, aj do regulárnych výrazov vieme zakomponovať časti, ktoré nič nerobia (okrem toho, že zaberajú miesto). V rámci skúmania najjednoduchších výrazov sa prišlo k nasledujúcim definíciám \cite{newResults}:
 

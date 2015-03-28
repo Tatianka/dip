@@ -265,32 +265,31 @@ Je zakázané odkazovať sa spätnými referenciami na operácie formy $(?\dots 
 Zátvorka $)$ v regexe $\alpha$ je \textbf{indexovateľná}, ak k nej prislúchajúca otváracia zátvorka je indexovateľná.
 \end{df}
 
-\TODO TOTO JE BULLSHIT, PREPÍSAŤ!!!!!!!!!!!!
 \begin{df}
-Regex $\alpha$ je \textbf{alternovateľný}, ak zodpovedá jednému z týchto tvarov:
-\begin{itemize}
-\item prázdny regex
-\item $a\in\Sigma$ 
-\item $a*$, kde $a\in\Sigma$
-\item $(\beta)$, kde $\beta$ je ľubovoľný regex z rovnakej triedy ako $\alpha$
-\item $(\beta)*$, kde $\beta$ je ľubovoľný regex z rovnakej triedy ako $\alpha$
-\item $\backslash k$
-\item $\backslash k *$
-\end{itemize}
+Nech regex $\alpha \in \nle$ obsahuje alternáciu. Potom jeho podslovo $\beta$ nazývame \textbf{alternovateľným}, ak je validným regexom z $nle$ a zároveň zodpovedá jednej z týchto podmienok:
+\begin{enumerate}[(i)]
+\item \textbf{prvá} \\ $\beta$ je prefix $\alpha$ alebo znak pred $\beta$ je ( \footnote{Z podmienky hovoriacej, že $\beta$ musí byť validný regex, vyplýva, že prislúchajúca ) sa bude nachádzať až za metaznakom |} 
+\\ $\wedge$ za $\beta$ nasleduje metaznak |
+\item \textbf{stredná} \\ znak pred $\beta$ je | \\ $\wedge$ $\beta$ je dobre uzátvorkovaný výraz \\ $\wedge$ za $\beta$ nasleduje |
+\item \textbf{posledná} \\ znak pred $\beta$ je | \\
+$\wedge$ $\beta$ je sufix $\alpha$ alebo za $\beta$ nasleduje ) \footnote{To isté ako pri podmienke $(i)$ -- prislúchajúca ( sa musí nachádzať pred metaznakom | (susediacim s $\beta$)}
+\end{enumerate}
 \end{df}
 
 \begin{lema}
 Alternácia používa iba alternovateľné regexy.
 \end{lema}
 \begin{proof}
-Dokážeme sporom. Majme regex $\alpha = \beta | \gamma$, kde $\beta,\gamma$ sú všetky členy alternácie a nech $\beta$ nie je alternovateľná. Môžu nastať 3 prípady:
+Ukážeme indukciou na počet alternácií v regexe.
+
+Majme regex $\alpha \in \nle$, ktorý obsahuje alternáciu. Bez újmy na všeobecnosti nech je to práve 1 alternácia (potenciálne zložená z viacerých metaznakov |). Podľa tabuľky priorít vieme, že alternácia má najnižšiu prioritu. Regex $\alpha$ môže byť v takýchto tvaroch:
 \begin{enumerate}
-\setlength{\itemsep}{0cm}%
-\setlength{\parskip}{0cm}%
-\item $\beta$ má na konci $|$. Potom $\beta = \beta'|$ a členy alternácie v $\alpha$ sú $\beta', \gamma$ a prázdny regex. To je spor s predpokladom.
-\item $\beta$ končí lookaroundom, ale lookaround sa nedá alternovať.
-\item $\beta = \beta_1\beta_2$. Alternácia berie posledný ucelený regex, takže $\beta$ nemôže byť členom alternácie.
+\item $\beta_1|\dots|\beta_n$
+\item $\alpha_1(\beta_1|\dots|\beta_n)\alpha_2$
 \end{enumerate}
+Pre $\alpha_1,\alpha_2,\beta_i\in\nle$ $i\in\lbrace 1,\dots,n\rbrace$. Je zrejmé, že $\beta_1$ spĺňa podmienku prvého alternovateľného regexu, $\beta_i$ pre $i\in\lbrace 2,\dots,n-1\rbrace$ spĺňajú podmienku pre stredný alternovateľný regex a $\beta_n$ spĺňa podmienku pre posledný alternovateľný regex.
+
+Nech platí pre regexy obsahujúce $m-1$ alternácií, že tieto alternácie používajú iba alternovateľné regexy. Zoberme teraz regex $\alpha \in \nle$ obsahujúci $m$ alternácií. Opäť vieme $\alpha$ rozdeliť buď spôsobom 1. alebo 2. na validné regexy z $\nle$. Každý z $\beta_1,\dots,\beta_n,\alpha_1,\alpha_2$ obsahuje najviac $m-1$ alternácií, teda alternácie v týchto regexoch používajú iba alternovateľné regexy. Navyše je zrejmé, že aj regexy $\beta_1,\dots,\beta_n$ majú tvar alternovateľných regexov.
 \end{proof}
 
 \TODO: krok výpočtu/krok zhody/posun/...
