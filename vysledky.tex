@@ -4,6 +4,8 @@
 \section[Vlastnosti a sila]{Vlastnosti a sila moderných regulárnych výrazov}
 \label{vsila}
 
+\subsection{Sila negatívneho lookaroundu}
+
 V bakaláskej práci sme zabudli ... \textbf{\textit{negatívny lookaround}} \todo
 
 \begin{lema}\label{nla+R}
@@ -101,6 +103,12 @@ Trieda nad regexami s negatívnym lookaroundom je $\R$.
 Trieda nad regexami s pozitívnym a negatívnym lookaroundom je $\R$.
 \end{dosledok}
 
+\subsection{Vlastnosti}
+
+Pridanie nových operácií medzi regulárne výrazy síce pridalo na sile modelu, ale mohlo pokaziť jeho uzáverové vlastnosti. Vieme, že regulárne jazyky sú uzavreté na všetky možné operácie, ktoré poznáme. Posilnenie modelu spätnými referenciami a následne lookaroundom však ohrozilo uzavretosť na základnú operáciu regulárnych výrazov -- zreťazenie. Pokiaľ zreťazíme 2 regexy obsahujúce lookahead alebo lookbehind, tieto operácie začnú zasahovať do slova z vedľajšieho jazyka. Ak by išlo o zreťazenie so zarážkou (napr. $\alpha\#\beta$), na koniec každého lookaheadu v $\alpha$ by stačilo pripojiť $.*\#$, prípadne znak \$ nahradiť znakom \#. Podobne by sme v regexe $\beta$ pridali na začiatok každého lookbehindu $\#.*$ prípadne by sme vymenili znak $\textasciicircum$  znakom \#. Potom by tieto operácie zostali ,,skrotené'' na území slova, ktoré danému regexu prislúcha.
+
+Otázka nastáva, ako to spraviť, keď zarážku k dispozícii nemáme. Odpoveďou je nasledujúca veta.
+
 \begin{veta}
 Trieda $\lel$ je uzavretá na zreťazenie.
 \end{veta}
@@ -123,6 +131,8 @@ $\beta '$ je $\beta$ prepísaný tak, že pre každý lookbehind:
 
 Preto sme v $\alpha$ prepísali všetky lookaheady. V $\alpha '$ každý z nich musí na konci slova $w$ matchovať $w_2$ (toto zabezpečí spätná referencia $\backslash k+2$ a \$) a teda matchovanie regexu $\alpha$ zostane výlučne na podslove $w_1$. Analogicky to platí pre upravené lookbehindy v $\beta '$.
 \end{proof}
+
+\subsection{Zaradenie do Chomského hierarchie}
 
 \begin{veta}\label{lelcf}
 $\lel$ je neporovnateľná s $ \L_{CF}$.
@@ -174,6 +184,8 @@ Z vety \ref{lelcf} vidíme, že výraz musí obsahovať negatívny lookaround. Z
 \begin{dosledok}
 $\nlel \subsetneq \L_{CS}$
 \end{dosledok}
+
+\subsection{Priestorová zložitosť}
 
 \begin{veta}
 $\lel \subseteq NSPACE(\log n)$, kde $n>1$ je veľkosť vstupu.
@@ -292,7 +304,8 @@ Pre $\alpha_1,\alpha_2,\beta_i\in\nle$ $i\in\lbrace 1,\dots,n\rbrace$. Je zrejm�
 Nech platí pre regexy obsahujúce $m-1$ alternácií, že tieto alternácie používajú iba alternovateľné regexy. Zoberme teraz regex $\alpha \in \nle$ obsahujúci $m$ alternácií. Opäť vieme $\alpha$ rozdeliť buď spôsobom 1. alebo 2. na validné regexy z $\nle$. Každý z $\beta_1,\dots,\beta_n,\alpha_1,\alpha_2$ obsahuje najviac $m-1$ alternácií, teda alternácie v týchto regexoch používajú iba alternovateľné regexy. Navyše je zrejmé, že aj regexy $\beta_1,\dots,\beta_n$ majú tvar alternovateľných regexov.
 \end{proof}
 
-\TODO: krok výpočtu/krok zhody/posun/...
+Na základe definovania pojmu alternovateľnosti vieme jednoznačne určiť, ktoré regexy patria ku ktorej alternácii. Dôležité je, že to vieme naprogramovať do Turingovho stroja -- pre každú alternáciu bude skúmať, či je ohraničená zátvorkami alebo rozdeľuje celý regex na časti (teda či nastáva prípad 1. alebo 2. z dôkazu predchádzajúcej vety).
+
 \begin{df}
 \textbf{Krok výpočtu} je relácia $\vdash$ na konfiguráciách definovaná nasledovne:
 
@@ -305,7 +318,7 @@ Ak za jej uzatváracou zátvorkou nasleduje $*$, t.j. $\alpha$ je tvaru $r_1 \do
 $$(1) \vdash \textit{ďalší prechod v }\alpha_1$$
 $$(2) \vdash (r_1 \dots \alpha_1 | \lceil \alpha_2 | \dots | \alpha_A \dots r_n, w_1\dots \lceil w_j \dots w_m)$$
 $$\dots$$
-$$(a) \vdash (r_1 \dots \alpha_1 | \alpha_2 | \dots | \lceil \alpha_A \dots r_n, w_1\dots \lceil w_j \dots w_m)$$
+$$(A) \vdash (r_1 \dots \alpha_1 | \alpha_2 | \dots | \lceil \alpha_A \dots r_n, w_1\dots \lceil w_j \dots w_m)$$
 \item $\displaystyle{(r_1 \dots \mathop{(}_kr_i \dots r_l\mathop{)}_k\lceil * \dots r_n, w_1 \dots \mathop{w_a}^k \dots \mathop{w_b}^{k'} \dots \lceil w_j \dots w_m)\footnotemark}$
 \footnotetext{Podľa definície spätných referencií platí podsledné podslovo nájdené regexom v $k$-tych zátvorkách. Pri tejto pracovnej pozícii v regexe je zrejmé, že nejde o prvý prechod cez tieto zátvorky a teda existuje také $a,b$, že $k$ je v slove nad $w_a$ a $k'$ nad $w_b$. Ak nastane prechod (2), pôvodné horné indexy $k, k'$ miznú a pridáva sa $k$ nad $w_j$.}
 $$(1) ~\vdash(r_1 \dots \mathop{(}_kr_i \dots r_l\mathop{)}_k *\lceil \dots r_n, w_1 \dots \mathop{w_a}^k \dots \mathop{w_b}^{k'} \dots \lceil w_j \dots w_m)$$
