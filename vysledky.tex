@@ -307,8 +307,30 @@ Nech platí pre regexy obsahujúce $m-1$ alternácií, že tieto alternácie pou
 Na základe definovania pojmu alternovateľnosti vieme jednoznačne určiť, ktoré regexy patria ku ktorej alternácii. Dôležité je, že to vieme naprogramovať do Turingovho stroja -- pre každú alternáciu bude skúmať, či je ohraničená zátvorkami alebo rozdeľuje celý regex na časti (teda či nastáva prípad 1. alebo 2. z dôkazu predchádzajúcej vety).
 
 \begin{df}
-\textbf{Krok výpočtu} je relácia $\vdash$ na konfiguráciách definovaná nasledovne:
+\textbf{Krok výpočtu} je relácia $\vdash$ na konfiguráciách definovaná nasledovne (najprv napíšeme, čoho sa jednotlivé kroky týkajú a potom uvedieme formálny zápis):
 
+\begin{enumerate}[I.]
+\item Prečítame rovnaké písmeko v regexe aj v slove.
+\item V regexe ukazujeme na (, ktorá je $k$-ta indexovateľná. V slove si zaznačíme do poschodového symbolu, že na tejto pozícii začína podslovo ku $k$-tym zátvorkám. V regexe prejdeme za zátvorku.
+\\ Pokiaľ za $k$-tymi zátvorkami nasleduje $*$, môžeme sa rozhodnúť ich celé preskočiť (až za $*$). V tom prípade si na poschodový symbol zaznačíme začiatok aj koniec podslova.
+\item V regexe ukazujeme na ), ktorá je $k$-ta indexovateľná. V slove si zaznačíme do poschodového symbolu, že znak na tejto pozícii už do podslova ku $k$-tym zátvorkám nepatrí. V regexe prejdeme za zátvorku.
+\item Narazili sme na začiatok alternácie (začiatok jej prvého alternovateľného regexu). Musíme si zvoliť jednu z jej možností. Buď budeme plynule pokračovať ďalej a spracovávať prvý alternovateľný regex alebo skočíme na začiatok ľubovoľného ďalšieho alternovateľného regexu z tejto alternácie.
+\item V alternácii sme práve dokončili matchovanie jednej z možností -- ukazujeme na metaznak |. Skočíme v regexe za posledný alternovateľný regex.
+\item Ukazujeme na Kleeneho $*$, ktorej predchádza písmenko. Máme 2 možnosti. Buď sa rozhodneme pokračovať -- preskočíme v regexe $*$ -- alebo spravíme ďalšiu iteráciu -- skočíme pred písmenko.
+\item Ukazujeme na Kleeneho $*$, ktorej predchádzajú $k$-te zátvorky. Možnosti sú rovnaké ako v prípade s písmenkom. Rozdiel je len v tom, ak sa rozhodneme spraviť ďalšiu iteráciu. Potom musíme zmazať predošlý záznam k podslovu ku $k$-tym zátvorkám a zaznačiť si túto pozíciu ako jeho začiatok.
+\item Narazili sme na znak spätných referencií $\backslash k$. Do slova si na túto pozíciu umiestníme pomocný ukazovateľ $\intercal$.
+\item Stále ukazujeme na $\backslash k$ a v slove už máme umiestnený $\intercal$ a písmenko za ním neobsahuje značku konca podslova ku $k$-tym zátvorkám. Porovnávame písmenká v slove na pozíciách s normálnym a pomocným ukazovateľom. Pokiaľ sa zhodujú, posunieme obe pozície o 1 ďalej.
+\item Stále ukazujeme na $\backslash k$, v slove je umiestnený $\intercal$ a ukazuje na písmenko zo značkou konca podslova ku $k$-tym zátvorkám. Odstránime zo slova $\intercal$ a v regexe sa posunieme za $\backslash k$.
+\item Narazili sme na pozitívny lookahead. Zaznačíme si do poschodového symbolu v slove, že na tejto pozícii začína a v regexe skočíme do lookaheadu.
+\item Skončili sme matchovanie lookaheadu, ukazujeme na jeho ). V slove skočíme na zaznačený začiatok a vymažeme túto značku. V regexe skočíme za ).
+\item Narazili sme na pozitívny lookbehind. Zaznačíme si do poschodového symbolu v slove, že na tejto pozícii začína. V slove skočíme o niekoľko symbolov nazad (ľubovoľná pozícia medzi začiatkom slova a súčasnou, vrátane týchto 2) a v regexe skočíme do lookbehindu.
+\item Skončili sme matchovanie lookbehindu, ukazujeme na jeho ). Zároveň v slove ukazujeme na jeho zaznačený začiatok. Zmažeme túto značku a v regexe prejdeme za ).
+\item Narazili sme na negatívny lookahead. Pokiaľ neexistuje postupnosť konfigurácií taká, že regex v negatívnom lookaheade by matchoval nejaký prefix slova začínajúc od súčasnej pozície v slove, potom môžeme lookahead preskočiť.
+\item Narazili sme na negatívny lookbehind. Pokiaľ neexistuje postupnosť konfigurácií taká, že regex v negatívnom lookbehinde by matchoval nejaký sufix slova končiac na súčasnej pozícii v slove, potom môžeme lookahead preskočiť.
+
+\end{enumerate}
+
+Formálny zápis:
 \begin{enumerate}[I.]\label{dfkonfig}
 \item $\forall a \in \Sigma: ~(r_1 \dots \lceil a \dots r_n, w_1 \dots \lceil a \dots w_m) \vdash (r_1 \dots a\lceil \dots r_n, w_1 \dots a \lceil \dots w_m)$
 \item Nech ( je indexovateľná, $k$-ta v poradí: $\displaystyle{ (r_1 \dots \lceil ( \dots r_n, w_1 \dots \lceil w_j \dots w_m)}$ $$(1) \vdash (r_1 \dots (\lceil \dots r_n, w_1 \dots \lceil \mathop{w_j}^k \dots w_m)$$
@@ -319,6 +341,14 @@ $$(1) \vdash \textit{ďalší prechod v }\alpha_1$$
 $$(2) \vdash (r_1 \dots \alpha_1 | \lceil \alpha_2 | \dots | \alpha_A \dots r_n, w_1\dots \lceil w_j \dots w_m)$$
 $$\dots$$
 $$(A) \vdash (r_1 \dots \alpha_1 | \alpha_2 | \dots | \lceil \alpha_A \dots r_n, w_1\dots \lceil w_j \dots w_m)$$
+\item Nech podslová $\alpha_1, \alpha_2,\dots,\alpha_A$ regexu $\alpha$ sú všetkými členmi zobrazenej alternácie, potom pre všetky možnosti:
+\\ $(r_1 \dots \alpha_1 \lceil | \alpha_2 | \dots | \alpha_A \dots r_n, w_1\dots \lceil w_j \dots w_m)$,
+\\ $(r_1 \dots \alpha_1 | \alpha_2 \lceil | \dots | \alpha_A \dots r_n, w_1\dots \lceil w_j \dots w_m)$
+\\ \dots, \\ $(r_1 \dots \alpha_1 | \alpha_2 | \dots | \alpha_{A-1} \lceil | \alpha_A \dots r_n, w_1\dots \lceil w_j \dots w_m)$
+$$\vdash (r_1 \dots \alpha_1 | \alpha_2 | \dots | \alpha_{A-1} | \alpha_A \lceil \dots r_n, w_1\dots \lceil w_j \dots w_m)$$
+\item $(r_1\dots a\lceil *\dots r_n, w_1\dots\lceil w_j\dots w_m)$
+$$(1) \vdash (r_1\dots a *\lceil\dots r_n, w_1\dots\lceil w_j\dots w_m)$$
+$$(2) \vdash (r_1\dots \lceil a *\dots r_n, w_1\dots\lceil w_j\dots w_m)$$
 \item $\displaystyle{(r_1 \dots \mathop{(}_kr_i \dots r_l\mathop{)}_k\lceil * \dots r_n, w_1 \dots \mathop{w_a}^k \dots \mathop{w_b}^{k'} \dots \lceil w_j \dots w_m)\footnotemark}$
 \footnotetext{Podľa definície spätných referencií platí podsledné podslovo nájdené regexom v $k$-tych zátvorkách. Pri tejto pracovnej pozícii v regexe je zrejmé, že nejde o prvý prechod cez tieto zátvorky a teda existuje také $a,b$, že $k$ je v slove nad $w_a$ a $k'$ nad $w_b$. Ak nastane prechod (2), pôvodné horné indexy $k, k'$ miznú a pridáva sa $k$ nad $w_j$.}
 $$(1) ~\vdash(r_1 \dots \mathop{(}_kr_i \dots r_l\mathop{)}_k *\lceil \dots r_n, w_1 \dots \mathop{w_a}^k \dots \mathop{w_b}^{k'} \dots \lceil w_j \dots w_m)$$
@@ -326,11 +356,11 @@ $$(2) ~\vdash(r_1 \dots \mathop{(}_k\lceil r_i \dots r_l\mathop{)}_k * \dots r_n
 \item $\displaystyle{(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots\mathop{w_b}^{k'}\dots \lceil w_j\dots w_m)}$
 $$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\ldots\intercal\mathop{w_a}^k \dots \mathop{w_b}^{k'} \dots \lceil w_j\dots w_m)$$	
 
-\item $\displaystyle{(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\ldots \intercal w_c \dots \mathop{w_b}^{k'} \dots \lceil w_j\dots w_m)}$, kde $a\leq c\leq b$ a zároveň $w_c = w_j$\footnote{$w_c$ a $w_j$ môžu byť poschodové symboly, avšak pri tejto rovnosti poschodia ignorujeme -- chceme porovnať iba písmenká v slove, prislúchajúce týmto pozíciám.}
+\item $\displaystyle{(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\ldots \intercal w_c \dots \mathop{w_b}^{k'} \dots \lceil w_j\dots w_m)}$, kde $a\leq c < b$ a zároveň $w_c = w_j$\footnote{$w_c$ a $w_j$ môžu byť poschodové symboly, avšak pri tejto rovnosti poschodia ignorujeme -- chceme porovnať iba písmenká v slove, prislúchajúce týmto pozíciám.}
 $$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots w_c\intercal \dots \mathop{w_b}^{k'} \dots  w_j\lceil\dots w_m)$$
 \item $\displaystyle{(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\ldots \intercal  \mathop{w_b}^{k'} \dots \lceil w_j\dots w_m)}$
-$$\vdash(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots \mathop{w_b}^{k'} \dots  w_j\lceil\dots w_m)$$
-\item Nech $\lookahead \dots)$ je $k$-ty pozitívny lookahead v poradí: 
+$$\vdash(r_1 \dots  \backslash k \lceil \dots r_n,w_1\dots\mathop{w_a}^k\dots \mathop{w_b}^{k'} \dots  w_j\lceil\dots w_m)$$
+\item Nech $\lookahead \dots$) je $k$-ty pozitívny lookahead v poradí: 
 \\ $\displaystyle{(r_1\dots \lceil \lookahead \dots) \dots r_n, w_1\dots\lceil w_j\dots w_m )}$
 $$ \vdash(r_1\dots \lookahead\lceil\dots) \dots r_n, w_1\dots\lceil \mathop{w_j}^{\mathop{k}^\rightarrow}\dots w_m ) $$
 \item Nech ) patrí ku $k$-temu pozitívnemu lookaheadu v poradí: 
@@ -363,15 +393,15 @@ Postupnosť konfigurácií $(\lceil \alpha, \lceil w)\vdash^* (\alpha\lceil, w\l
 Nech $\alpha \in \lel$ a $w \in L(\alpha)$. Potom existuje akceptačný výpočet, ktorý má najviac $5\cdot|\alpha|\cdot|w|$ konfigurácií.
 \end{lema}
 \begin{proof}
-Pri prechodoch medzi konfiguráciami I., II., III., IV., V.(1), VII., IX., XII., XIII. a XIV. sa ukazovateľ posúva vždy vpred buď v slove alebo v regexe alebo v oboch. Keby sme využívali iba tieto prechody, akceptačný výpočet má najviac $\left\vert{\alpha}\right\vert+|w|$ konfigurácií.
+Pri prechodoch medzi konfiguráciami I., II., III., IV., V., VI.(1), VII.(1), IX., XI., XIV., XV. a XVI. sa ukazovateľ posúva vždy vpred buď v slove alebo v regexe alebo v oboch. Keby sme využívali iba tieto prechody, akceptačný výpočet má najviac $\left\vert{\alpha}\right\vert+|w|$ konfigurácií.
 
-Existujú prechody, pri ktorých sa žiaden ukazovateľ nepohne: VI. a VIII. Tieto prechody nastávajú pri spätných referenciách a jedná sa o objavenie sa alebo zmiznutie pomocného ukazovateľa. Pri každej spätnej referencii nastávajú oba javy práve jedenkrát. Zároveň počet spätných referencií je najviac $|\alpha|$, teda tieto 2 konfigurácie sa objavia dokopy najviac $(2\cdot\left\vert{\alpha}\right\vert)$-krát.
+Existujú prechody, pri ktorých sa žiaden ukazovateľ nepohne: VIII. a X. Tieto prechody nastávajú pri spätných referenciách a jedná sa o objavenie sa alebo zmiznutie pomocného ukazovateľa. Pri každej spätnej referencii nastávajú oba javy práve jedenkrát. Zároveň počet spätných referencií je najviac $|\alpha|$, teda tieto 2 konfigurácie sa objavia dokopy najviac $(2\cdot\left\vert{\alpha}\right\vert)$-krát.
 
 Zostali konfigurácie, v ktorých ukazovateľ skáče dozadu, rozoberme si ich postupne:
 
-V.(2) -- v prípade Kleeneho $*$ nastáva ďalšie opakovanie. Keďže $w\in L(\alpha)$, existuje akceptačný výpočet. Takýchto výpočtov môže byť viac, napríklad ak sa v $\alpha$ vyskytuje regex $(\beta)*$ taký, že $\varepsilon \in \beta$. Potom existuje nekonečne veľa výpočtov, ktoré sa líšia v počte prechodov týmto regexom. Preto si vyberieme najkratší akceptačný výpočet. To znamená, že v každom prechode cez regex opakovaný operáciou $*$ musíme nájsť zhodu aspoň s jedným písmenkom z $w$ (t.j. ukazovateľ v slove $w$ sa pohne aspoň o 1 pozíciu doprava). Regex opakovaný Kleeneho $*$ je dlhý najviac $|\alpha|$-1 znakov a opakujeme ho najviac $w$-krát. Z toho vidíme, že existuje akceptačný výpočet, ktorý má najviac $|\alpha|\cdot|w|$ konfigurácií.
+VI.(2),VII.(2) -- v prípade Kleeneho $*$ nastáva ďalšie opakovanie. Keďže $w\in L(\alpha)$, existuje akceptačný výpočet. Takýchto výpočtov môže byť viac, napríklad ak sa v $\alpha$ vyskytuje regex $(\beta)*$ taký, že $\varepsilon \in \beta$. Potom existuje nekonečne veľa výpočtov, ktoré sa líšia v počte prechodov týmto regexom. Preto si vyberieme najkratší akceptačný výpočet. To znamená, že v každom prechode cez regex opakovaný operáciou $*$ musíme nájsť zhodu aspoň s jedným písmenkom z $w$ (t.j. ukazovateľ v slove $w$ sa pohne aspoň o 1 pozíciu doprava). Regex opakovaný Kleeneho $*$ je dlhý najviac $|\alpha|$-1 znakov a opakujeme ho najviac $w$-krát. Z toho vidíme, že existuje akceptačný výpočet, ktorý má najviac $|\alpha|\cdot|w|$ konfigurácií.
 
-X., XI. -- ukončenie operácie lookahead, začiatok operácie lookbehind. V tomto prípade ukazovateľ skáče dozadu v slove. Podstatné však je, že v regexe sa posúva dopredu. Takýchto prechodov vieme spraviť najviac $|\alpha|$.
+XII., XIII. -- ukončenie operácie lookahead, začiatok operácie lookbehind. V tomto prípade ukazovateľ skáče dozadu v slove. Podstatné však je, že v regexe sa posúva dopredu. Takýchto prechodov vieme spraviť najviac $|\alpha|$.
 
 Spolu je to najviac $|\alpha|+|w|+2\cdot|\alpha|+|\alpha|\cdot|w|+|\alpha| \leq 5\cdot|\alpha|\cdot|w|$ konfigurácií.
 
