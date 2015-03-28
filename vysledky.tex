@@ -382,6 +382,10 @@ $$\vdash (r_1\dots \nlookbehind r_{k}\dots r_{l} ) \lceil\dots r_n, w_1\dots \lc
 
 \end{df}
 
+Prechody XV. a XVI. sa môžu zdať ťažkopádne, ťažko overiteľné. Nie je však šikovný spôsob ako krokmi znázorniť, že sa niečo nedá. Môžeme si to však predstaviť tak, že k vnútornému regexu máme zostrojený deterministický Turingov stroj, ktorý vie postupovať podľa krokov I. -- XIV. a má obrátenú akceptáciu. Teda ak by chcel akceptovať, zamietne, a ak sa zasekne/zamietne, tak akceptuje.
+
+Táto úvaha nezahŕňa vnorené negatívne lookaroundy. Potrebný Turingov stroj sa však dá zostrojiť aj tak. Keďže každý regex musí byť konečnej dĺžky, nejaký z tých negatívnych lookaroundov musí byť najviac vnorený -- bez vnorených negatívnych lookaroundov. Práve k nemu vieme zostrojiť vyššie popísaný Turingov stroj. Potom Turingov stroj pre negatívny lookaround, ktorý ho obaľuje bude spúšťať tento Turingov stroj a tak ďalej, vieme zostrojovať Turingove stroje zvnútra von. Pri výpočte sa potom budú navzájom volať zvonka smerom dnu.
+
 \begin{df}
 \textbf{Jazyk} generovaný regexom $\alpha$ je množina $$L(\alpha) = \lbrace w~|~platí ~ (\lceil \alpha, \lceil w)\vdash^* (\alpha\lceil, w\lceil) \rbrace$$
 \end{df}
