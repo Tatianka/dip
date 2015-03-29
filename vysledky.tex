@@ -186,6 +186,7 @@ $\nlel \subsetneq \L_{CS}$
 \end{dosledok}
 
 \TODO obkec o tom, že doplniť substitúciu nestačí
+\TODO ?? a čo keby sme pridali aj reverz ?? (pozn. obe operácie len upravujú spätné referencie)
 
 \subsection{Priestorová zložitosť}
 
@@ -307,6 +308,12 @@ Nech platí pre regexy obsahujúce $m-1$ alternácií, že tieto alternácie pou
 \end{proof}
 
 Na základe definovania pojmu alternovateľnosti vieme jednoznačne určiť, ktoré regexy patria ku ktorej alternácii. Dôležité je, že to vieme naprogramovať do Turingovho stroja -- pre každú alternáciu bude skúmať, či je ohraničená zátvorkami alebo rozdeľuje celý regex na časti (teda či nastáva prípad 1. alebo 2. z dôkazu predchádzajúcej vety).
+
+V nasledujúcej definícii kroku výpočtu budeme používať v konfiguráciách poschodové symboly. Informáciu o tom, aké písmenko na danej pozícii leží budeme potrebovať neustále -- tá bude aj súčasťou poschodovej varianty písmenka. Špeciálna informácia vo vyšších poschodiach bude patriť k spätným referenciám a lookaroundu. Už z definície spätných referencií vieme, že informácia o tom, aké podslovo predstavuje $\backslash k$ získame až počas výpočtu na konkrétnom slove. Referencia $\backslash k$ predstavuje posledné podslovo matchované $k$-tymi zátvorkami. Preto informácia o jeho pozícii musí byť súčasťou konfigurácie. Zároveň potrebujeme informáciu o každom lookaheade/lookbehinde -- a to pozíciu v slove, kde začal matchovanie, aby sme sa po jeho vykonaní mohli na túto pozíciu vrátiť. Opäť to je informácia, ktorú získame až pri výpočte na konkrétnom vstupe a preto si ju uchováme do poschodového symbolu.
+
+Každý regex má konečný počet operácií, preto aj poschodí v poschodových symboloch bude konečne veľa. Pre každú spätnú referenciu potrebujeme 2 miesta (začiatok a koniec podslova) a pre každý lookaround 1 miesto.
+
+Poschodové symboly sú veľmi prehľadné, čo sa týka zápisu konfigurácií. Z pohľadu výpočtu nejakého Turingovho stroja však môžu byť veľmi nepraktické. Pokiaľ nepoznáme regex dopredu, je to o to ťažšia interpretácia. Preto vo výpočtoch Turingovho stroja necháme vstup nedotknutý a informáciu pre jednotlivé operácie budeme reprezentovať vo forme adries ukazujúcich na konkrétnu pozíciu v slove.
 
 \begin{df}
 \textbf{Krok výpočtu} je relácia $\vdash$ na konfiguráciách definovaná nasledovne (najprv napíšeme, čoho sa jednotlivé kroky týkajú a potom uvedieme formálny zápis):
