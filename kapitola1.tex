@@ -1,31 +1,47 @@
 \chapter[Súčasný stav problematiky]{Úvod do súčasneho stavu problematiky}
 \label{chap:uvod}
 
-Myšlienka regulárnych výrazov bola prvýkrát spomenutá v teórii formálnych jazykov a automatov ako iný spôsob popisu regulárnych jazykov. Vtedy pozostávali z operácií zjednotenia, zreťazenia a Kleeneho uzáveru. Pre ich jednoduchosť boli implementované ako nástroj na vyhľadávanie slov zo špecifikovaného jazyka. Postupom času a s inšpiráciou zo strany užívateľov k nim pribúdali ďalšie operácie. Niektoré boli len skratkou k tomu, čo sa už dalo zapísať -- umožnili zapísať to isté menej znakmi -- ostatné otvárali dvere k popisu dovtedy nedosiahnuteľných jazykov.
+Myšlienka regulárnych výrazov bola prvýkrát spomenutá v teórii formálnych jazykov a automatov ako iný spôsob popisu regulárnych jazykov. Vtedy pozostávali z operácií zjednotenia, zreťazenia a Kleeneho uzáveru. Z takéhoto zápisu bolo ľahšie vidieť, o aký jazyk ide, než z konečných automatov alebo regulárnych gramatík. Vďaka jednoduchosti boli implementované ako nástroj na vyhľadávanie slov zo špecifikovaného jazyka. Postupom času a s inšpiráciou zo strany užívateľov k nim pribúdali ďalšie operácie. Niektoré boli len skratkou k tomu, čo sa už dalo zapísať -- umožnili zapísať to isté, ale menej znakmi -- ostatné otvárali dvere k popisu dovtedy nedosiahnuteľných jazykov.
 
-Zmes týchto operácií nazývame moderné regulárne výrazy a zaujíma nás, kam sa až dostali v popisovaní jazykov v rámci Chomského hierarchie. Túto problematiku sme z väčšej časti rozobrali v bakalárskej práci \cite{mojaBak}. V tejto práci rozbor dokončíme a pozrieme sa na ne aj z hľadiska zložitosti.
+Zmes týchto operácií nazývame moderné regulárne výrazy alebo regexy. Tento model opäť vraciame do teórie jazykov a skúmame jeho vlastnosti, zaradenie v Chomského hierarchii a zložitosť.
 
 \section{Základné definície}
 \label{definicie}
 
-Formálna definícia je uvedená v \cite{mojaBak}, tu si len neformálne uvedieme, s ktorými operáciami pracujeme a ako fungujú. Každý regulárny výraz sa skladá zo znakov a metaznakov. Znaky sú symboly, ktoré charakterizujú samé seba, teda $L(a) = \lbrace a \rbrace$. Metaznaky popisujú operáciu nad regulárnymi výrazmi. Ak potrebujeme použiť metaznak ako znak, stačí pred neho dať $\backslash$, teda $L(\backslash x) = \lbrace x \rbrace$. Ak metaznak vyžaduje vstup, je ním posledný znak/metaznak/uzátvorkovaný podvýraz pred ním. Metaznaky vyzerajú nasledovne:
+Každý regulárny výraz sa skladá zo znakov a metaznakov. Znak je regulárny výraz reprezentujúci sám seba, teda $L(a) = \lbrace a \rbrace$. Metaznaky popisujú operáciu nad regulárnymi výrazmi. Ak potrebujeme použiť metaznak ako znak, stačí pred neho dať $\backslash$, teda $L(\backslash x) = \lbrace x \rbrace$. Ak metaznak vyžaduje vstup, je ním posledný znak/metaznak/uzátvorkovaný výraz naľavo od neho.
 
+Nech $\alpha,\beta$ sú regexy. Základné operácie sú:
 \begin{itemize}
-\item $\backslash$ -- robí z metaznakov obyčajné znaky
-\item $()$ -- okrúhle zátvorky slúžia na oddeľovanie podvýrazov
-\item | -- operácia zjednotenia (alternácia) -- musí vyhovovať ľavý alebo pravý podvýraz
-\item $*$ -- Kleeneho uzáver -- predchádzajúci výraz opakuj ľubovoľný počet krát
-\item $+$ -- opakuj 1 alebo viackrát
+\item zreťazenie $(\alpha)(\beta)$
+\item alternácia $(\alpha)|(\beta)$
+\item Kleeneho uzáver $(\alpha)*$
+\end{itemize}
+Platí $L((\alpha)(\beta)) = L(\alpha)L(\beta)$, $L((\alpha)|(\beta)) = L(\alpha)\cup L(\beta)$ a $L((\alpha)*) = L(\alpha)^*$.
+
+Aby sme špecifikovali pole pôsobnosti operácií, používame v regulárnych výrazoch okrúhle zátvorky (). Je možné ich vynechať, potom sa operácie budú vyhodnocovať podľa priorít -- tie uvedieme po definovaní všetkých operácií.
+
+Regulárny výraz je vykonávaný zľava doprava. Keď sa dostaneme na koniec výrazu aj slova (za posledný znak), hovoríme, že výraz matchuje\footnote{Preklad ,,regex sa zhoduje so slovom'' nevyjadruje presne to, čo je vyjadrené v angličtine. Znie to, akoby regex bol to isté, čo slovo. Preto sme sa rozhodli zostať pri slove match a slovese matchovať.} (z angl. \textit{match} -- zhoda) slovo, výraz vyhovuje slovu, alebo slovo vyhovuje výrazu.
+
+\subsection{Nové konštrukcie}
+
+Najprv si uvedieme konštrukcie, ktoré sú len ,,kozmetickou úpravou"" základných regulárnych výrazov. Všetky sa dajú zapísať pomocou základných operácií, ale ich zápis je stručnejší a prehľadnejší. Pre formálnejšiu definíciu odporúčame siahnuť po \cite{mojaBak}.
+\begin{itemize}
+\item $+$ -- opakuj 1 alebo viackrát: $(\alpha)+=\alpha(\alpha)*$
 \item $\lbrace \rbrace$ -- zložené zátvorky sú používané ako $\{n,m\}$ (opakuj aspoň $n$ a najviac $m$-krát) a $\{n\}=\{n,n\}$ (opakuj $n$-krát)
-\item $[~]$ -- hranaté zátvorky -- znaky vnútri tvoria množinu, z ktorej si vyberáme. Vieme použiť aj intervaly, napr. a--z, A--Z, 0--9, \dots a kombinovať ich. Všetky metaznaky vnútri [~] sa považujú za normálne znaky.
-\item . -- ľubovoľný znak
+\item $[~]$ -- predstavuje ľubovoľný znak, z tých, ktoré má vnútri zapísané. Vieme použiť aj intervaly, napr. a--z, A--Z, 0--9, \dots~a kombinovať ich. Všetky metaznaky vnútri [~] sa považujú za normálne znaky.
+\item $[\textasciicircum~]$ -- predstavuje ľubovoľný znak, ktorý nepatrí medzi zapísané. Ostatné ako [~].
 \item ? -- ak samostatne: opakuj 0 alebo 1-krát \\
-ak za operáciou: namiesto greedy implementácie použi minimalistickú, t.j. zober čo najmenej znakov (platí pre $*,+,?,\lbrace n,m \rbrace$)\footnote{všetky spomenuté operácie ,,žerú'' znaky a na ich implementáciu bol použitý greedy algoritmus}
-\item $\textasciicircum$ -- metaznak označujúci začiatok slova; špeciálnym prípadom je výraz $[\textasciicircum\alpha]$ (kde $\alpha$ je nejaká množina znakov), ktorý špecifikuje ľubovoľný znak, ktorý sa v množine $\alpha$ nenacháza
-\item \$ - metaznak označujúci koniec slova
+ak za operáciou: namiesto greedy implementácie použi minimalistickú, t.j. zober čo najmenej znakov (platí pre $*,+,?,\lbrace n,m \rbrace$)\footnote{Všetky spomenuté operácie ,,žerú'' znaky a na ich implementáciu bol použitý greedy algoritmus.}
 \end{itemize}
 
-Okrem operácií označených metaznakmi vznikli aj zložitejšie operácie, na popis ktorých treba dlhšie konštrukcie. V prvom rade sa zaviedlo \textbf{číslovanie okrúhlych zátvoriek}. Čísluje sa zľava doprava podľa poradia ľavej (otváracej) zátvorky. Toto číslovanie sa deje automaticky pri každom behu algoritmu, teda už pri písaní výrazu ho môžeme využívať. Popíšme si teraz zložitejšie operácie:
+
+\begin{itemize}
+\item . -- ľubovoľný znak
+\item $\textasciicircum$ -- metaznak označujúci začiatok slova
+\item \$ -- metaznak označujúci koniec slova
+\end{itemize}
+
+Okrem operácií označených metaznakmi vznikli aj zložitejšie operácie, na popis ktorých treba dlhšie konštrukcie. V prvom rade sa zaviedlo \textbf{číslovanie okrúhlych zátvoriek}. Čísluje sa zľava doprava podľa poradia ľavej (otváracej) zátvorky, ale konštrukcie tvaru (?\dots) sa vynechávajú. Toto číslovanie sa deje automaticky pri každom behu algoritmu, teda už pri písaní výrazu ho môžeme využívať. Popíšme si teraz zložitejšie operácie:
 
 \begin{itemize}
 \item \textbf{komentár} ozn. (?\#text komentáru) -- klasický komentár, určený čitateľom kódu; nemá vplyv na výraz, algoritmus ho ignoruje
@@ -88,7 +104,7 @@ Máme veľkú množinu operácií a budeme chcieť pracovať aj s jej podmnožin
 \item[$\rel$] -- trieda jazykov nad $\re$ ($= \R$)
 \item[$\el$] -- trieda jazykov nad $\e$
 \item[$\lel$] -- trieda jazykov nad $\le$
-\item[$\nlel$] -- trieda jazykov nad $nle$
+\item[$\nlel$] -- trieda jazykov nad $\nle$
 \end{description}
 
 \section[Vlastnosti a sila]{Vlastnosti a sila moderných regulárnych výrazov}
