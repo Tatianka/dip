@@ -24,7 +24,7 @@ Regulárny výraz je vykonávaný zľava doprava. Keď sa dostaneme na koniec v�
 
 \subsection{Nové konštrukcie}
 
-Najprv si uvedieme konštrukcie, ktoré sú len ,,kozmetickou úpravou"" základných regulárnych výrazov. Všetky sa dajú zapísať pomocou základných operácií, ale ich zápis je stručnejší a prehľadnejší. Pre formálnejšiu definíciu odporúčame siahnuť po \cite{mojaBak}.
+Najprv si uvedieme konštrukcie, ktoré sú len ,,kozmetickou úpravou"" základných regulárnych výrazov. Všetky sa dajú zapísať pomocou základných operácií, ale nový zápis je stručnejší a prehľadnejší. Pre formálnejšiu definíciu odporúčame siahnuť po \cite{mojaBak}.
 \begin{itemize}
 \item $+$ -- opakuj 1 alebo viackrát: $(\alpha)+=\alpha(\alpha)*$
 \item $\lbrace \rbrace$ -- zložené zátvorky sú používané ako $\{n,m\}$ (opakuj aspoň $n$ a najviac $m$-krát) a $\{n\}=\{n,n\}$ (opakuj $n$-krát)
@@ -32,72 +32,85 @@ Najprv si uvedieme konštrukcie, ktoré sú len ,,kozmetickou úpravou"" základ
 \item $[\textasciicircum~]$ -- predstavuje ľubovoľný znak, ktorý nepatrí medzi zapísané. Ostatné ako [~].
 \item ? -- ak samostatne: opakuj 0 alebo 1-krát \\
 ak za operáciou: namiesto greedy implementácie použi minimalistickú, t.j. zober čo najmenej znakov (platí pre $*,+,?,\lbrace n,m \rbrace$)\footnote{Všetky spomenuté operácie ,,žerú'' znaky a na ich implementáciu bol použitý greedy algoritmus.}
-\end{itemize}
-
-
-\begin{itemize}
-\item . -- ľubovoľný znak
+\item . -- predstavuje ľubovoľný znak
 \item $\textasciicircum$ -- metaznak označujúci začiatok slova
 \item \$ -- metaznak označujúci koniec slova
 \end{itemize}
 
-Okrem operácií označených metaznakmi vznikli aj zložitejšie operácie, na popis ktorých treba dlhšie konštrukcie. V prvom rade sa zaviedlo \textbf{číslovanie okrúhlych zátvoriek}. Čísluje sa zľava doprava podľa poradia ľavej (otváracej) zátvorky, ale konštrukcie tvaru (?\dots) sa vynechávajú. Toto číslovanie sa deje automaticky pri každom behu algoritmu, teda už pri písaní výrazu ho môžeme využívať. Popíšme si teraz zložitejšie operácie:
+Okrem operácií označených metaznakmi vznikli aj zložitejšie operácie, na popis ktorých treba dlhšie konštrukcie. V prvom rade sa zaviedlo \textbf{číslovanie okrúhlych zátvoriek}. Čísluje sa zľava doprava podľa poradia ľavej (otváracej) zátvorky, ale konštrukcie tvaru (?\dots) sa vynechávajú. Toto číslovanie sa deje automaticky pri každom matchovaní, teda už pri písaní výrazu ho môžeme využívať. Popíšme si teraz zložitejšie operácie:
 
 \begin{itemize}
-\item \textbf{komentár} ozn. (?\#text komentáru) -- klasický komentár, určený čitateľom kódu; nemá vplyv na výraz, algoritmus ho ignoruje
-\item \textbf{spätné referencie} ozn. $\backslash k$, $k \in\N$ -- môže sa nachádzať na ľubovoľnom mieste vo výraze ZA $k$-tou pravou (zatváracou) zátvorkou. Odkazuje sa na $k$-te zátvorky a presný význam sa určuje až pri hľadaní zhody na konkrétnom vstupe. Algoritmus si zapamätá aké podslovo zo vstupu matchoval výraz vnútri $k$-tych zátvoriek a presne toto podslovo hľadá, keď ďalej vo výraze narazí na $\backslash k$.
-\\ Predpokladáme, že číslo $k$ je zapísané znakmi z inej abecedy ako zvyšok regexu -- t.j. je jednoznačne určiteľné, kde končí zápis $k$.\footnote{V implementovaných regexoch vieme deterministicky určiť, kde končí číslo $k$ -- sú povolené maximálne trojciferné čísla. My chceme všeobecnejší model, bez obmedzení na veľkosť $k$, a práve preto je tento predpoklad oprávnený. Zároveň si to môžeme dovoliť, lebo ak máme $k$ zapísané ako číslo v desiatkovej sústave, v teórii je jednoduché zasubstituovať hľadaný jazyk tak, aby neobsahoval znaky 0,\dots,9.}
-\item \textbf{lookahead} -- tzv. nazeranie dopredu. Keďže anglický výraz je kratší a zvučnejší, rozhodli sme sa ho používať.
+\item \textbf{komentár} ozn. (?\#text komentáru) -- klasický komentár, určený čitateľom kódu; nemá vplyv na výraz, pri matchovaní sa ignoruje
+\item \textbf{spätné referencie} ozn. $\backslash k$, $k \in\N$ -- môže sa nachádzať na ľubovoľnom mieste vo výraze ZA $k$-tou pravou (zatváracou) zátvorkou. Odkazuje sa na $k$-te zátvorky a presný význam sa určuje až pri hľadaní zhody na konkrétnom vstupe. Algoritmus si zapamätá aké podslovo zo vstupu matchoval výraz vnútri $k$-tych zátvoriek a presne toto podslovo matchuje konštrukcia , keď ďalej vo výraze narazí na $\backslash k$. Počas matchovania môžu $k$-te zátvorky matchovať viackrát. V momente, keď ideme vykonávať $\backslash k$ si vyberáme doteraz posledné z nich.
+
+Ukážeme si to na príklade, ako regex $\displaystyle \alpha\mathop{(}_k\beta\mathop{)}_k\gamma\backslash k\delta$ matchuje slovo $w$:
+$$w = \underbrace{x_1\dots x_{i-1}}_\alpha 
+ \overbrace{\underbrace{x_i\dots x_{j-1}}_{ \displaystyle{\mathop(_k\beta \mathop)_k}}}^{w_k} 
+ \underbrace{x_j\dots x_{l-1}}_\gamma 
+ \overbrace{\underbrace{x_l\dots x_{m-1}}_{\backslash k}}^{w_k}
+ \underbrace{x_{m}\dots x_{n}}_\delta$$
+musí platiť $w_k= x_i\dots x_{j-1} = x_l\dots x_{m-1} $ a zároveň $w_k$ je posledné matchované podslovo $k$-tych zátvoriek v momente, keď sme narazili na konštrukciu $\backslash k$.
+
+
+Predpokladáme, že číslo $k$ je zapísané znakmi z inej abecedy ako zvyšok regexu -- t.j. je jednoznačne určiteľné, kde končí zápis $k$.\footnote{V implementovaných regexoch vieme deterministicky určiť, kde končí číslo $k$ -- sú povolené maximálne trojciferné čísla. My chceme všeobecnejší model, bez obmedzení na veľkosť $k$, a práve preto je tento predpoklad oprávnený. Zároveň si to môžeme dovoliť, lebo ak máme $k$ zapísané ako číslo v desiatkovej sústave, v teórii je jednoduché zasubstituovať hľadaný jazyk tak, aby neobsahoval znaky 0,\dots,9.}
+
+\item \textbf{lookahead} -- nazeranie dopredu.
 \begin{itemize}
 \item \textbf{pozitívny} ozn. $\lookahead\alpha)$, kde $\alpha$ je nejaký moderný regulárny výraz 
-\\ V momente, keď na lookahead narazíme si zapamätáme aktuálnu pozíciu v slove. Začneme hľadať zhodu s výrazom $\alpha$. Ak vyhlásil zhodu, vrátime sa naspäť na zapamätané miesto a odtiaľ pokračujeme v slove aj regulárnom výraze akokeby tam lookahead nikdy nebol. Inak povedané lookahead nevyžiera písmenká a robí akýsi prienik. Ak neobsahuje znak pre koniec slova \$, môže skončiť kdekoľvek -- je to v okamihu, keď zistil zhodu.
-\item \textbf{negatívny} ozn. $\nlookahead\alpha)$, kde $\alpha$ je nejaký moderný regulárny výraz \\ Nesmie nájsť slovo z jazyka $L(\alpha)$. Postup je ako pri lookaheade, ale končí úspešne len ak neexistuje žiadne podslovo začínajúce na danom mieste v slove také, že by ho $\alpha$ akceptoval. Inak povedané, toto je pozitívny lookahead s obrátenou akceptáciou.
+
+V momente, keď na lookahead narazíme, zapamätáme si aktuálnu pozíciu v slove. Od tejto pozície začneme hľadať zhodu s výrazom $\alpha$. Akonáhle vyhlási zhodu (nemusí ani dočítať slovo do konca), vrátime sa naspäť na zapamätané miesto a odtiaľ pokračujeme v slove vykonávaním regexu za lookaheadom -- akokeby tam lookahead nikdy nebol. Inak povedané lookahead nevyžiera písmenká a robí akýsi prienik. Ak nenájde zhodu na žiadnom prefixe od zapamätaného miesta, znamená to nezhodu pre celý regex -- ak sa dá, musíme sa vo výpočte vrátiť naspäť a vyskúšať inú možnosť predošlých operácií.\footnote{V praxi je lookahead atomická operácia, ale my opäť chceme model v plnej sile.} Pokiaľ chceme, aby lookahead slovo dočítal do konca, použijeme metaznak \$.
+
+Ukážme si priebeh matchovania regexom $\alpha\lookahead\beta)\gamma$ na slove $w$. Vidíme, že $\beta$ a $\gamma$ začínajú na rovnakom mieste v slove.
+ $$w = \underbrace{x_1\dots x_{i-1}}_\alpha \underbrace{\overbrace{x_i \dots x_j}^\beta x_{j+1} \dots x_n }_\gamma$$ 
+\item \textbf{negatívny} ozn. $\nlookahead\alpha)$, kde $\alpha$ je nejaký moderný regulárny výraz  
+
+Nesmie nájsť slovo z jazyka $L(\alpha)$. Postup je ako pri lookaheade, ale končí úspešne len ak by lookahead zamietol.
 \end{itemize}
-\item \textbf{lookbehind} -- tzv. nazeranie dozadu. Opäť budeme používať anglickú verziu pre jej stručnosť.
+\item \textbf{lookbehind} -- nazeranie dozadu.
 \begin{itemize}
-\item \textbf{pozitívny} ozn. $\lookbehind\alpha)$, kde $\alpha$ je nejaký moderný regulárny výraz \\ Hľadá slovo z $L(\alpha)$ naľavo od aktuálneho miesta v slove (musí končiť na susediacom políčku vľavo od aktuálnej pozície v slove). Opäť nie je určená hranica slova, môže začínať kdekoľvek, ak nie je vynútený začiatok slova znakom $\textasciicircum$. 
+\item \textbf{pozitívny} ozn. $\lookbehind\alpha)$, kde $\alpha$ je nejaký moderný regulárny výraz 
 
-Ak by sme chceli deterministický algoritmus, vyzeral by nasledovne: od teraz do konca vykonávania lookbehindu bude na pozícii, na ktorej v slove sme, bude teraz pre znak pre koniec slova -- endmarker. Najprv vyskúšame 1 susedný symbol naľavo, či patrí do jazyka. Ak nie skúsime čítať o jeden znak viac (2 symboly naľavo), keď neuspejeme, opäť posunieme pomyselný začiatok slova doľava. Ak akceptujeme, môže to byť len na endmarkeri. Ak sme neakceptovali a začiatok slova nejde viac posunúť, zamietneme.
-\item \textbf{negatívny} ozn. $\nlookbehind\alpha)$, kde $\alpha$ je nejaký moderný regulárny výraz \\ Hľadá ako pozivíny lookbehind, ale akceptuje len ak neexistuje slovo z $L(\alpha)$ vyskytujúce sa naľavo od aktuálnej pozície.
+Hľadá slovo z $L(\alpha)$ naľavo od aktuálneho miesta v slove (musí končiť na susediacom políčku vľavo od aktuálnej pozície v slove). Opäť nie je určená hranica slova, môže začínať kdekoľvek, ak nie je vynútený začiatok slova znakom $\textasciicircum$. 
+
+Ak by sme chceli deterministický algoritmus, vyzeral by nasledovne: od teraz do konca vykonávania lookbehindu bude na pozícii, na ktorej v slove sme, špeciálny znak pre koniec slova -- endmarker (nie \$). Najprv vyskúšame 1 susedný symbol naľavo, či patrí do jazyka. Ak nie skúsime čítať o jeden znak viac (2 symboly naľavo), keď neuspejeme, opäť posunieme pomyselný začiatok slova doľava. Ak akceptujeme, môže to byť len na endmarkeri. Ak sme neakceptovali a začiatok slova nejde viac posunúť, zamietneme.
+
+Opäť to bude dobre vidieť na príklade, výpočet regexu $\alpha\lookbehind\beta)\gamma$ na slove $w$. Podslová $\alpha,\beta$ končia na tej istej pozícii.
+
+$$w = \underbrace{x_1\dots x_{i-1} \overbrace{x_i \dots x_j}^\beta}_\alpha \underbrace{x_{j+1} \dots x_n }_\gamma$$
+\item \textbf{negatívny} ozn. $\nlookbehind\alpha)$, kde $\alpha$ je nejaký moderný regulárny výraz 
+
+Hľadá ako pozivíny lookbehind, ale akceptuje len ak neexistuje slovo z~jazyka $L(\alpha)$ vyskytujúce sa naľavo od aktuálnej pozície.
 \end{itemize}
 \end{itemize}
 
-Pre lookahead a lookbehind používame spoločný názov \underline{lookaround}, takisto s prívlastkom pozitívny/negatívny myslíme iba ich pozitívne/negatívne verzie.
+Pre posledné 2 operácie zostaneme pri ich anglických názvoch, pretože sú stručnejšie a zvučnejšie. Existuje pre ne aj spoločný názov \underline{lookaround}, takisto s prívlastkom pozitívny/negatívny, ak myslíme iba ich pozitívne/negatívne verzie.
 
-Keďže sa týmito operáciami budeme zaoberať podrobnejšie, uvedieme pre upresnenie ich definície.
-
-\begin{df}[Pozitívny lookahead]
-$$ L_{1}(?=L_{2})L_{3} = \lbrace uvw ~|~ u \in L_{1} \land v \in L_{2} \land vw \in L_{3} \rbrace $$ Operáciu $(?=\dots)$ nazývame pozitívny lookahead alebo len \underline{lookahead}.
-\end{df}
-
-\begin{df}[Negatívny lookahead]
-$$ L_{1}(?!L_{2})L_{3} = \lbrace uv ~|~ u \in L_{1} \land v \in L_{3} \land neexistuje~také~x,y,~že~v=xy~a~x \in L_2 \rbrace $$ Operáciu $(?!\dots)$ nazývame \underline{negatívny lookahead}.
-\end{df}
-
-\begin{df}[Pozitívny lookbehind]
-$$ L_{1}(?<=L_{2})L_{3} = \lbrace uvw ~|~ uv \in L_{1} \land v \in L_{2} \land w \in L_{3} \rbrace $$ Operáciu $(?<=\dots)$ nazývame pozitívny lookbehind alebo len \underline{lookbehind}.
-\end{df}
-
-\begin{df}[Negatívny lookbehind]
-$$ L_{1}(?<!L_{2})L_{3} = \lbrace uv ~|~ u \in L_{1} \land v \in L_{3} \land neexituje~také~x,y,~že~u=xy~a~y \in L_2 \rbrace $$ Operáciu $(?<!\dots)$ nazývame \underline{negatívny lookbehind}.
-\end{df}
-
+Formálnejšiu definíciu zložitejších konštrukcií nájdete v \cite{mojaBak}.
+\\ \par
 Moderné regulárne výrazy sa skladajú z \textbf{konečného počtu} znakov, metaznakov a zložitejších operácií.
 
-Pre korektné matchovanie regulárnym výrazom potrebujeme vedieť priority operácií. Niektoré sa správajú ako znak: $\left[~\right]$, ., \textasciicircum, \$, $\backslash k$, pozitívny a negatívny lookaround. Ostatné kombinujú znaky s nasledovnými prioritami:
+\subsubsection{Priotity operácií}
+
+Ako sme už spomínali, pre korektné matchovanie regexom potrebujeme vedieť priority operácií. Zároveň nám to umožní niekedy vynechať zátvorky a regex tak bude prehľadnejší.
+
+Nové konštrukcie lookahead a lookbehind neberú zo slova žiadne písmenká. Môžeme si ich predstaviť ako overenie nejakej podmienky, je to taká odbočka od výpočtu. Preto nemá zmysel na ne aplikovať operácie ako $*,+,?,\lbrace\rbrace,|$ a teda taký regex nebude validný. Je možné ich uzavrieť do ďalších lookaroundov, je možné sa odkazovať na zátvorky, ktoré majú vnútri (iba ak sa jedná o pozitívny lookaround, odkazovať sa dovnútra negatívnejho lookaroundu nemá zmysel). Pokiaľ však aplikujeme operáciu na nejaký regex obsahujúci lookaround, prirodzene je lookaround vykonaný zakaždým, keď naň príde rad.
+
+Niektoré operácie sa správajú ako znak -- $\left[~\right]$, [\textasciicircum~] , ., \textasciicircum, \$, $\backslash k$ -- teda je s nimi možné narábať ako s obyčajným znakom (okrem \textasciicircum a \$, tieto nemá zmysel iterovať (napr. $\$*$) -- existuje vždy práve 1 začiatok a 1 koniec slova). Ostatné kombinujú znaky s nasledovnými prioritami:
 \begin{center}
 \begin{tabular}{|c||c|c|c|c|}
 \hline
-priorita &3&2&1& 0  \\
+priorita &najvyššia&<&<& najnižšia  \\
 \hline
 operácia & () & $*$ + ? $\lbrace \rbrace$ & zreťazenie & | \\ \hline
 \end{tabular}
 \end{center}
 
-Máme veľkú množinu operácií a budeme chcieť pracovať aj s jej podmnožinami, preto si zavedieme názvoslovie pre ich jednoznačnejšie a kratšie určenie.
+Máme veľkú množinu operácií a budeme chcieť rozlišovať regexy používajúce rôzne operácie. Preto si zavedieme triedy regexov nad konkrétnymi množinami operácií. Regex z takejto triedy bude obsahovať iba operácie z povolenej množiny, v ľubovoľnom počte (stále však platí, že regex je konečnej dĺžky).
+
+Zároveň chceme pomenovať triedy jazykov nad jednotlivými triedami regexov.
 
 \begin{description}
-\item[$\re$] -- množina operácií, pomocou ktorých vieme popísať iba regulárne jazyky; presnejšie všetky znaky a metaznaky (bez zložitejších operácií)
+\item[$\re$] -- trieda regexov nad množinou operácií, pomocou ktorých vieme popísať iba regulárne jazyky. Množina operácií obsahuje všetky znaky a metaznaky bez zložitejších operácií.
 \item[$\e$] -- $\re$ so spätnými referenciami
 \item[$\le$] -- $\e$ s pozitívnym lookaroundom
 \item[$\nle$] -- $\le$ s negatívnym lookaroundom
@@ -110,23 +123,23 @@ Máme veľkú množinu operácií a budeme chcieť pracovať aj s jej podmnožin
 \section[Vlastnosti a sila]{Vlastnosti a sila moderných regulárnych výrazov}
 \label{usila}
 
-\todo opraviť referencie na vety z bakalárky
+Téme moderných regulárnych výrazov sme sa venovali už v bakalárskej práci \cite{mojaBak}, v tejto práci naviažeme na tieto výsledky. Keď sme hľadali články k tejto téme, našli sme výsledky iba o regulárnych výrazoch schopných generovať iba regulárne jazyky a preštudovaná bola aj trieda $\e$.
 
-Potrebné vety z bakalárskej práce:
+V prvom rade nás zaujímali operácie lookaroundu -- pozitívna aj negatívna forma.
 
-\begin{veta}[Veta 2.2.5.]\label{lookahead+R}
-Regulárne jazyky sú uzavreté na lookaround.
+\begin{veta}[{\cite[Veta 2.2.5.]{mojaBak}}]\label{lookahead+R}
+Regulárne jazyky sú uzavreté na pozitívny lookaround.
 \end{veta}
 
-\begin{veta}[Veta 2.2.10.]\label{lookaround+R}
-Trieda nad regexami s pozitívnym lookaroundom je $\R$.
+\begin{veta}[{\cite[Veta 2.2.10.]{mojaBak}}]\label{lookaround+R}
+Trieda $\re$ s pozitívnym lookaroundom je $\R$.
 \end{veta} 
 
-\begin{veta}[Veta 2.2.14.]\label{le+lcs}
+\begin{veta}[{\cite[Veta 2.2.14.]{mojaBak}}]\label{le+lcs}
 $ \lel \subseteq \L_{CS} $
 \end{veta}
 
-\section[Popisná zložitosť]{Popisná zložitosť moderných regulárnych výrazov}
+\section[Popisná zložitosť]{Popisná zložitosť regulárnych výrazov}
 \label{uzlozitost}
 
 V čase, keď sme hľadali články týkajúce sa popisnej zložitosti moderných regulárnych výrazov, sme nenašli nič týkajúce sa tejto problematiky. Známe boli len výsledky pre regulárne výrazy s operáciami zjednotenia, zreťazenia a Kleeneho $*$ (RE), prípadne ešte prieniku a komplementu (GRE). Navyše mali ešte znak pre prázdny jazyk $\emptyset$ a prázdne slovo $\varepsilon$.

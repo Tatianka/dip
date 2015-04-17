@@ -1,10 +1,7 @@
 \chapter{Naše výsledky}
 \label{chap:vysledky}
 
-\section[Vlastnosti a sila]{Vlastnosti a sila moderných regulárnych výrazov}
-\label{vsila}
-
-\subsection{Sila negatívneho lookaroundu}
+\section{Sila negatívneho lookaroundu}
 
 V bakaláskej práci sme zabudli ... \textbf{\textit{negatívny lookaround}} \todo
 
@@ -103,7 +100,7 @@ Trieda nad regexami s negatívnym lookaroundom je $\R$.
 Trieda nad regexami s pozitívnym a negatívnym lookaroundom je $\R$.
 \end{dosledok}
 
-\subsection{Vlastnosti}
+\section{Vlastnosti triedy $\lel$}
 
 Pridanie nových operácií medzi regulárne výrazy síce pridalo na sile modelu, ale mohlo pokaziť jeho uzáverové vlastnosti. Vieme, že regulárne jazyky sú uzavreté na všetky možné operácie, ktoré poznáme. Posilnenie modelu spätnými referenciami a následne lookaroundom však ohrozilo uzavretosť na základnú operáciu regulárnych výrazov -- zreťazenie. Pokiaľ zreťazíme 2 regexy obsahujúce lookahead alebo lookbehind, tieto operácie začnú zasahovať do slova z vedľajšieho jazyka. Ak by išlo o zreťazenie so zarážkou (napr. $\alpha\#\beta$), na koniec každého lookaheadu v $\alpha$ by stačilo pripojiť $.*\#$, prípadne znak \$ nahradiť znakom \#. Podobne by sme v regexe $\beta$ pridali na začiatok každého lookbehindu $\#.*$ prípadne by sme vymenili znak $\textasciicircum$  znakom \#. Potom by tieto operácie zostali ,,skrotené'' na území slova, ktoré danému regexu prislúcha.
 
@@ -132,7 +129,7 @@ $\beta '$ je $\beta$ prepísaný tak, že pre každý lookbehind:
 Preto sme v $\alpha$ prepísali všetky lookaheady. V $\alpha '$ každý z nich musí na konci slova $w$ matchovať $w_2$ (toto zabezpečí spätná referencia $\backslash k+2$ a \$) a teda matchovanie regexu $\alpha$ zostane výlučne na podslove $w_1$. Analogicky to platí pre upravené lookbehindy v $\beta '$.
 \end{proof}
 
-\subsection{Zaradenie do Chomského hierarchie}
+\section[Chomského hierarchia]{Zaradenie do Chomského hierarchie}
 
 \begin{veta}\label{lelcf}
 $\lel$ je neporovnateľná s $ \L_{CF}$.
@@ -188,7 +185,7 @@ $\nlel \subsetneq \L_{CS}$
 \TODO obkec o tom, že doplniť substitúciu nestačí
 \TODO ?? a čo keby sme pridali aj reverz ?? (pozn. obe operácie len upravujú spätné referencie)
 
-\subsection{Priestorová zložitosť}
+\section{Priestorová zložitosť}
 
 \begin{veta}
 $\lel \subseteq NSPACE(\log n)$, kde $n>1$ je veľkosť vstupu.
