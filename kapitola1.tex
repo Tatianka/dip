@@ -52,7 +52,7 @@ $$w = \underbrace{x_1\dots x_{i-1}}_\alpha
 musí platiť $w_k= x_i\dots x_{j-1} = x_l\dots x_{m-1} $ a zároveň $w_k$ je posledné matchované podslovo $k$-tych zátvoriek v momente, keď sme narazili na konštrukciu $\backslash k$.
 
 
-Predpokladáme, že číslo $k$ je zapísané znakmi z inej abecedy ako zvyšok regexu -- t.j. je jednoznačne určiteľné, kde končí zápis $k$.\footnote{V implementovaných regexoch vieme deterministicky určiť, kde končí číslo $k$ -- sú povolené maximálne trojciferné čísla. My chceme všeobecnejší model, bez obmedzení na veľkosť $k$, a práve preto je tento predpoklad oprávnený. Zároveň si to môžeme dovoliť, lebo ak máme $k$ zapísané ako číslo v desiatkovej sústave, v teórii je jednoduché zasubstituovať hľadaný jazyk tak, aby neobsahoval znaky 0,\dots,9.}
+Predpokladáme, že číslo $k$ je zapísané znakmi z inej abecedy ako zvyšok regexu -- t.j. je jednoznačne určiteľné, kde končí zápis $k$.\footnote{V implementovaných regexoch vieme deterministicky určiť, kde končí číslo $k$ -- sú povolené maximálne trojciferné čísla. My chceme všeobecnejší model, bez obmedzení na veľkosť $k$, a práve preto je tento predpoklad oprávnený. Zároveň si to môžeme dovoliť, lebo ak máme $k$ zapísané ako číslo v desiatkovej sústave, v teórii je jednoduché zasubstituovať hľadaný jazyk tak, aby neobsahoval znaky 0,\dots,9. Viac informácií o obmedzeniach regexov v praxi nájdete v \cite[kapitola Prax]{mojaBak}.}
 
 \item \textbf{lookahead} -- nazeranie dopredu.
 \begin{itemize}
@@ -123,26 +123,39 @@ Zároveň chceme pomenovať triedy jazykov nad jednotlivými triedami regexov.
 \section[Vlastnosti a sila]{Vlastnosti a sila moderných regulárnych výrazov}
 \label{usila}
 
-Téme moderných regulárnych výrazov sme sa venovali už v bakalárskej práci \cite{mojaBak}, v tejto práci naviažeme na tieto výsledky. Keď sme hľadali články k tejto téme, našli sme výsledky len o regulárnych výrazoch schopných generovať iba regulárne jazyky a preštudovaná bola trieda $\e$. Popíšme si teraz poznatky nadobudnuté v oblasti nášho záujmu.
+Keď sme hľadali články k tejto téme, našli sme výsledky len o regulárnych výrazoch schopných generovať iba regulárne jazyky a preštudovaná bola trieda $\e$ \cite{ExtendedRegexPower}, \cite{ExtendedRegexIntersec}. Tému moderných regulárnych výrazov sme rozvinuli v bakalárskej práci \cite{mojaBak}, v tejto práci naviažeme na tieto výsledky. Popíšme si teraz poznatky nadobudnuté v oblasti nášho záujmu.
 
-V prvom rade nás zaujímal samotný lookaround -- v pozitívnej aj negatívnej forme.
-
+Keďže operácie lookahead a lookbehind sú v regexoch nové, na počiatku treba preskúmať ich vlastnosti. Uzáverové vlastnosti tried Chomského hierarchie dopadli nasledovne:
 \begin{veta} \textbf{\emph{\cite[Veta 2.2.5.]{mojaBak}}}\label{lookahead+R} \ \par
 Trieda $\R$ je uzavretá na pozitívny lookaround.
 \end{veta}
+Trieda $\L_{CS}$ je tiež uzavretá a trieda $\L_{CF}$ nie je.
 
+Základnou vlastnosťou pozitívneho lookaheadu je, že do jeho vnútra sa oplatí dávať iba prefixové jazyky. Dôvodom je to, že lookahead matchuje tak skoro, ako len môže -- akonáhle nájde prvé slovo z jazyka, ktorý obsahuje, zvyšok vstupu už neskúma. A tým pádom môžeme z daného jazyka vyhodiť všetky slová, ktorých prefix doň tiež patrí. To isté platí pre pozitívny lookbehind a sufixové jazyky. Z čoho vyplýva, že pokiaľ jazyk v lookarounde obsahuje prázdne slovo ($\varepsilon$), potom je možné celý lookaround vynechať. Dôvodom je to, že lookaround ,,nevyužiera písmenká'', preto si môže zakaždým zvoliť matchovať $\varepsilon$ a vždy akceptovať.
+
+Prejdime teraz k regexom. Pridaním pozitívneho lookaroundu k triede $\re$ získame nový model. Avšak silnejší ako $\re$ nie je:
 \begin{veta} \textbf{\emph{\cite[Veta 2.2.10.]{mojaBak}}}\label{lookaround+R} \ \par
 Trieda jazykov nad $\re$ s pozitívnym lookaroundom je $\R$.
-\end{veta} 
-
-\begin{veta}\textbf{\emph{\cite[Veta 2.2.14.]{mojaBak}}}\label{le+lcs} \ \par
-$ \lel \subseteq \L_{CS} $
 \end{veta}
+
+Skúmaním modelu so spätnými referenciami aj pozitívnym lookaroundom vznikla hierarchia:
+\begin{veta}\textbf{\emph{\cite[Vety 2.2.13 a 2.2.14.]{mojaBak}}}\label{le+lcs} \ \par
+$ \el \subsetneq \lel \subseteq \L_{CS} $
+\end{veta}
+
+Z viet \ref{lookaround+R} a \ref{le+lcs} vyplýva dôležité pozorovanie. A to také, že síce lookaround samostatne nepridáva silu, ale ak ho pridáme k modelu so spätnými referenciami, pridá do triedy nové jazyky. Z tohto hľadiska naberá na význame a vidíme dôvod sa ním zaoberať.
+
+Je to spôsobené tým, že trieda $\el$ nie je uzavretá na prienik \cite{ExtendedRegexIntersec} a pozitívny lookaround je nástroj na zapísanie prieniku 2 jazykov. Pridaním negatívneho lookaroundu je zaručená aj uzavretosť na komplement. Avšak to, či je naň uzavretá aj $\lel$ je otvorený problém.
+
+Zaujímavá vlastnosť triedy $\el$ je, že obsahuje jednoduché jazyky a to v tom zmysle, že pre ňu existuje pumpovacia lema (\cite{ExtendedRegexPower} aj \cite{ExtendedRegexIntersec}). Pridaním look\-aroundu táto vlastnosť mizne -- do triedy $\lel$ patrí jazyk všetkých platných výpočtov Turingovho stroja \cite[Veta 2.2.16.]{mojaBak}. Pre unárne jazyky z $\lel$ bola dokázaná pumpovacia lema, ktorá ale obsahuje podmienku, že regex generujúci daný unárny jazyk nesmie vnútri Kleeneho $*$ obsahovať konštrukciu lookaheadu obsahujúceho metaznak \$ alebo lookbehindu obsahujúceho metaznak \textasciicircum ~(t.j. lookaround spúšťaný niekoľkokrát v iterácii, vždy potenciálne z inej pozície je problém).
+
 
 \section[Popisná zložitosť]{Popisná zložitosť regulárnych výrazov}
 \label{uzlozitost}
 
-V čase, keď sme hľadali články týkajúce sa popisnej zložitosti moderných regulárnych výrazov, sme nenašli nič týkajúce sa tejto problematiky. Známe boli len výsledky pre regulárne výrazy s operáciami zjednotenia, zreťazenia a Kleeneho $*$ (RE), prípadne ešte prieniku a komplementu (GRE). Navyše mali ešte znak pre prázdny jazyk $\emptyset$ a prázdne slovo $\varepsilon$.
+V cieľoch tejto práce aj je skúmať zložitosť moderných regulárnych výrazov. Opäť sa odvolávame na to, že k našej téme sme nenašli články. Je zrejmé, že skúmať NSPACE a DSPACE základných regulárnych výrazov nemá zmysel -- sú konštantné. Preto zostala popisná zložitosť.
+
+Z oblasti popisnej zložitosti sú známe len výsledky pre regulárne výrazy s operáciami zjednotenia, zreťazenia a Kleeneho $*$ (RE), prípadne ešte prieniku a komplementu (GRE). Navyše mali ešte znak pre prázdny jazyk $\emptyset$ a prázdne slovo $\varepsilon$.
 
 Spomeňme si najprv ako možno zadefinovať popisnú zložitosť \cite{newResults} \cite{compMeasures75}:
 
