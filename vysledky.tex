@@ -3,7 +3,7 @@
 
 \section{Sila negatívneho lookaroundu}
 
-V bakaláskej práci sme zabudli ... \textbf{\textit{negatívny lookaround}} \todo
+V bakalárskej práci bol skúmaný hlavne pozitívny lookaround. 
 
 \begin{lema}\label{nla+R}
 Trieda $\R$ je uzavretá na negatívny lookahead.
@@ -512,12 +512,15 @@ Celkovo M na zásobníkovej páske zapíše $O(\log n)\cdot O(n\log n) = O(n\log
 
 V tejto kapitole rozoberieme moderné regulárne výrazy z dvoch hľadísk. Najprv nás bude zaujímať, ako pomohli nové konštrukcie pri popise regulárnych jazykov a potom prejdeme na analýzu dĺžky výrazov pre zložitejšie jazyky.
 
-Lookaround môže výrazne pomôcť pri definovaní konečných jazykov, napríklad le-regex z \cite[Poznámka 1.]{mojaBak}
-$\beta = (\lookahead (a^m)*\mathdollar )a^{m+1})*a \lbrace 1,m-1 \rbrace \mathdollar$. Aké slová obsahuje?
-\begin{itemize}
-\item $a^{m+1+(m-1)}$
-\item $a^{2m+2+(m-2)}$ \\
-	  ~~~~~~~\vdots
-\item $a^{(m-1)(m+1)+1}$
-\end{itemize}
-avšak $a^{m(m+1)} \notin L(\beta )$, lebo nám chýba zvyšok $0$. Zaujímavé je, že le-regex využíva iteráciu $(m-1)$-krát a napriek tomu je konečný.
+Lookaround môže výrazne pomôcť pri definovaní konečných jazykov, napríklad regex 
+$$(\lookahead 
+\underbrace{
+	\underbrace{
+		\lookahead (a^m)*\$ )
+	}_{ \text{\normalsize \parbox{2cm}{generuje $a^{km}$, $k\in\N$} } }
+	\underbrace{
+		(a^{m+1})* a\lbrace 1,m-1\rbrace \$ ~|~ a^m \$ 
+	}_{ \text{\normalsize \parbox{4.5cm}{generuje celé a$*$, okrem: $a^{m+1}$, $a^{m(m+1)l}$, $l\in\N$} } }
+}_{\mathclap{ \text{\normalsize generuje $a^{km}$ také, že nevie $a^{m(m+1)l}$, $l\in\N$ } } }
+) a^m)+$$
+generuje konečný jazyk obsahujúci slová $a^m,\allowbreak a^{2m},\dots,\allowbreak a^{(m-1)(m+1)}$. Hlavný lookahead je spúšťaný každú iteráciu, teda pre slovo $a^{zm}$ musí matchovať všetky $a^{im}$ pre $i\in\lbrace 1,\dots,z\rbrace$.

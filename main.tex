@@ -27,6 +27,7 @@
 \usepackage[shortlabels]{enumitem}
 \usepackage{enumitem}
 \setlist{parsep=0pt,listparindent=\parindent} % aby sa v enumerate robili dobre odseky
+\usepackage{mathtools}
 
 \usepackage{pdfpages}
 \usepackage{listings}
@@ -57,6 +58,16 @@
 \def\nlookahead{\text{(?!~}}
 \def\lookbehind{\text{(?\textless =}}
 \def\nlookbehind{\text{(?\textless !~}}
+
+\newcommand*{\KeepStyleUnderBrace}[1]{%
+  \mathop{%
+    \mathchoice
+    {\underbrace{\displaystyle#1}}%
+    {\underbrace{\textstyle#1}}%
+    {\underbrace{\scriptstyle#1}}%
+    {\underbrace{\scriptscriptstyle#1}}%
+  }\limits
+}
 
 % pekne pokope definujeme potrebne udaje
 \def\mftitle{Sila a zložitosť moderných regulárnych výrazov}
