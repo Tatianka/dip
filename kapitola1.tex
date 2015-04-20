@@ -126,7 +126,7 @@ Zároveň chceme pomenovať triedy jazykov nad jednotlivými triedami regexov.
 Keď sme hľadali články o moderných regulárnych výrazoch, našli sme výsledky prevažne o regulárnych výrazoch schopných generovať iba regulárne jazyky a preštudovaná bola trieda $\e$ \cite{ExtendedRegexPower}, \cite{ExtendedRegexIntersec} (v článkoch pomenovaná EREG). Tému moderných regulárnych výrazov sme rozvinuli v bakalárskej práci \cite{mojaBak}, v tejto práci naviažeme na tieto výsledky. Popíšme si teraz poznatky nadobudnuté v oblasti nášho záujmu.
 
 Keďže operácie lookahead a lookbehind sú v regexoch nové, na počiatku sme skúmali ich vlastnosti. Uzáverové vlastnosti tried Chomského hierarchie dopadli nasledovne:
-\begin{veta} \textbf{\emph{\cite[Veta 2.2.5.]{mojaBak}}}\label{lookahead+R} \ \par
+\begin{veta} \textbf{\emph{\cite[Veta 2.2.5.]{mojaBak}}}\label{lookaround+R} \ \par
 Trieda $\R$ je uzavretá na pozitívny lookaround.
 \end{veta}
 Trieda $\L_{CS}$ je tiež uzavretá a trieda $\L_{CF}$ nie je.
@@ -134,7 +134,7 @@ Trieda $\L_{CS}$ je tiež uzavretá a trieda $\L_{CF}$ nie je.
 Základnou vlastnosťou pozitívneho lookaheadu je, že do jeho vnútra sa oplatí dávať iba prefixové jazyky. Vyplýva to z toho, že lookahead matchuje tak skoro, ako len môže -- akonáhle nájde prvé slovo patriace do jeho jazyka, zvyšok vstupu už neskúma. A tým pádom môžeme z daného jazyka vyhodiť všetky slová, ktorých prefix doň tiež patrí. Analogicky to platí pre pozitívny lookbehind a sufixové jazyky. Dôsledkom je, že pokiaľ jazyk v pozitívnom lookarounde obsahuje prázdne slovo ($\varepsilon$), potom je možné celý lookaround vynechať. Dôvodom je to, že lookaround ,,nevyužiera písmenká'', preto si môže zakaždým zvoliť matchovať $\varepsilon$ a automaticky vždy akceptovať.
 
 Prejdime teraz k regexom. Pridaním pozitívneho lookaroundu k triede $\re$ získame nový model. Avšak silnejší ako $\re$ nie je:
-\begin{veta} \textbf{\emph{\cite[Veta 2.2.10.]{mojaBak}}}\label{lookaround+R} \ \par
+\begin{veta} \textbf{\emph{\cite[Veta 2.2.10.]{mojaBak}}}\label{lookaround+Regex} \ \par
 Trieda jazykov nad $\re$ s pozitívnym lookaroundom je $\R$.
 \end{veta}
 
@@ -143,7 +143,7 @@ Skúmaním modelu so spätnými referenciami aj pozitívnym lookaroundom vznikla
 $ \el \subsetneq \lel \subseteq \L_{CS} $
 \end{veta}
 
-Z viet \ref{lookaround+R} a \ref{le+lcs} vyplýva dôležité pozorovanie, že síce lookaround samostatne regexom silu nepridáva, ale ak ho pridáme k modelu so spätnými referenciami, pridá do triedy nové jazyky. Z tohto hľadiska naberá na význame a vidíme dôvod, prečo sa ním zaoberať.
+Z viet \ref{lookaround+Regex} a \ref{le+lcs} vyplýva dôležité pozorovanie, že síce lookaround samostatne regexom silu nepridáva, ale ak ho pridáme k modelu so spätnými referenciami, pridá do triedy nové jazyky. Z tohto hľadiska naberá na význame a vidíme dôvod, prečo sa ním zaoberať.
 
 Je to spôsobené tým, že trieda $\el$ nie je uzavretá na prienik \cite{ExtendedRegexIntersec} a pozitívny lookaround je nástroj na zapísanie prieniku 2 jazykov. Navyše pridaním negatívneho lookaroundu je zaručená aj uzavretosť na komplement. Avšak to, či je naň uzavretá aj $\lel$ je otvorený problém.
 

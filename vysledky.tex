@@ -52,7 +52,7 @@ $\subseteq :$ Máme akceptačný výpočet pre $A_2''$ na nejakom vstupe. Akcept
 
 $\supseteq :$ Nech $\nlookahead L_2)$ akceptoval, t.j. na $A_2$ bol vykonaný nejaký neakceptujúci výpočet ($A_2$ je deterministický, takže existuje práve jeden pre každé slovo). Rovnakú postupnosť stavov bude mať aj výpočet na $A_2''$ (automat obsahuje všetky stavy aj $\delta$-funkciu z $A_2$, počiatočný stav je ten istý). Ak sa $A_2$ zasekol na neznámom znaku, v $A_2'$ na ten znak pridáme prechod do stavu $q_{ZLE}$ a v ňom zostaneme až do konca slova. Keďže $q_{ZLE}$ nie je v $A_2'$ akceptačný a nedá sa z neho na žiadne slovo dostať do ľubovoľného akceptačného stavu, $q_{ZLE} \in K_2' \setminus H$ a teda $q_{ZLE} \in F_2''$. Ak sa $A_2$ nezasekol, tak dočítal slovo do konca a v postupnosti stavov jeho výpočtu sa nenachádza žiaden z množiny $F_2$. V tom prípade $A_2''$ z posledného stavu prejde na $\varepsilon$ do $q_A$ (2. riadok definície $\delta_2''$) a akceptuje.
 
-Z práve dokázaného tvrdenia a vety \ref{lookahead+R} už vyplýva aj platnosť našej lemy.
+Z práve dokázaného tvrdenia a vety \ref{lookaround+R} už vyplýva aj platnosť našej lemy.
 \end{proof}
 
 \begin{lema}\label{nlb+R}
@@ -86,27 +86,35 @@ Nech $w\in L$, teda $\exists u,v$ také, že $w=uv,~ u \in L_1, v\in L_3$ a $\fo
 Trieda $\R$ je uzavretá na negatívny lookaround.
 \end{veta}
 
-\begin{lema}
+Zjavne konečné automaty si s negatívnym lookaroundom poradia. Pozrime sa teraz na model $\re$ s pridaným negatívnym lookaroundom. Najprv musíme skontrolovať kombinácie operácií ako v \cite[Lema. 2.2.8. a 2.2.9]{mojaBak}. Ukazuje sa, že aj tu dostávame rovnaké výsledky ako pri pozitívnej verzii.
+
+\begin{lema}\label{nla*}
 Nech $L_1,L_2,L_3,L_4 \in \R$, $\alpha = \left( L_1 \left( ?!~ L_2\right) L_3 \right) * L_4$. Potom $L(\alpha) \in \R$.
 \end{lema} 
 \begin{proof}
-Podobne ako v dôkaze vety \ref{nla+R} pretransformujeme $\nlookahead L_2)$ na akýsi $\lookahead L(A_2''))$, kde $A_2''$ bude akceptovať práve vtedy, keď $\nlookahead L_2)$. Potom $\beta = \left( L_1 \lookahead L(A_2'') ) L_3 \right) * L_4$, $L(\beta) = L(\alpha) \in \R$ podľa vety \ref{lookaround+R}.
+Podobne ako v dôkaze vety \ref{nla+R} pretransformujeme $\nlookahead L_2)$ na akýsi $\lookahead L(A_2''))$, kde $A_2''$ bude akceptovať práve vtedy, keď $\nlookahead L_2)$. Potom $\beta = \left( L_1 \lookahead L(A_2'') ) L_3 \right) * L_4$, $L(\beta) = L(\alpha) \in \R$ podľa lemy k vete \ref{lookaround+R}.
 \end{proof}
 
-\begin{lema}
+\begin{lema}\label{nlb*}
 Nech $L_1,L_2,L_3,L_4 \in \R$, $\alpha = L_4 \left( L_1 \left(?<!~ L_2\right) L_3 \right) *$. Potom $L(\alpha)~\in~\R$.
 \end{lema} 
 \begin{proof}
-Použijeme konštrukciu ako v dôkaze vety \ref{nlb+R}, kde pretransformujeme $\nlookbehind L_2)$ na $\lookbehind L(A_2''))$, kde $A_2''$ bude akceptovať práve vtedy, keď $\nlookbehind L_2$. Z toho vznikne $\beta = L_4 \left( L_1 \left(?<=~ L(A_2'')\right) L_3 \right) *$, $L(\beta) = L(\alpha) \in \R$ podľa vety \ref{lookaround+R}.
+Použijeme konštrukciu ako v dôkaze vety \ref{nlb+R}, kde pretransformujeme $\nlookbehind L_2)$ na $\lookbehind L(A_2''))$, kde $A_2''$ bude akceptovať práve vtedy, keď $\nlookbehind L_2$. Z toho vznikne $\beta = L_4 \left( L_1 \left(?<=~ L(A_2'')\right) L_3 \right) *$, $L(\beta) = L(\alpha) \in \R$ podľa lemy k vete \ref{lookaround+R}.
 \end{proof}
 
 \begin{veta}\label{nlookaround+R}
 Trieda nad regexami s negatívnym lookaroundom je $\R$.
 \end{veta}
+\begin{proof}
+Podobne ako v dôkaze vety \ref{lookaround+Regex} je netriviálna iba kombinácia operácií negatívny lookaround a $*$. Podľa liem \ref{nla*} a \ref{nlb*} máme stále regulárne jazyky.
+\end{proof}
 
 \begin{dosledok}
 Trieda nad regexami s pozitívnym a negatívnym lookaroundom je $\R$.
 \end{dosledok}
+\begin{proof}
+Lookaround nevyžiera písmenká, takže neovplyvňuje zvyšok regexu, teda ani iné lookaroundy. Musíme vyriešiť iba prípad, kedy je do seba vnorených niekoľko pozitívnych a negatívnych lookaroundov. V takejto situácii vieme postupovať z najvnútornejšieho regexu s lookaroundom s hĺbou vnorenia 1. Jeho jazyk je regulárny a teda ho vieme prepísať na regex z $\re$. Takýmto spôsobom vieme zvnútra von prepisovať regex, až skončíme s regexom z $\re$, teda matchujúcim regulárny jazyk.
+\end{proof}
 
 \section{Vlastnosti triedy $\lel$}
 
@@ -118,23 +126,24 @@ Otázka nastáva, ako to spraviť, keď zarážku k dispozícii nemáme. Odpove�
 Trieda $\lel$ je uzavretá na zreťazenie.
 \end{veta}
 \begin{proof}
-Nech $\alpha, \beta\in \le$. Chceme ukázať, že jazyk $L(\alpha)L(\beta) \in \lel$. Intuitívne nás to vedie k riešeniu $\alpha\beta$, čo ale nemusí byť vždy správne. Problémom sú operácie lookaround, presnejšie každý lookahead v $\alpha$ môže zasahovať do slova z $L(\beta)$ a takisto každý lookbehind z $\beta$ môže zasahovať do slova z $L(\alpha)$. Navyše, ak lookahead obsahuje $\$$ a lookbehind $\textasciicircum$, potom zasahujú do slova z iného jazyka určite. V takom prípade môže regex $\alpha\beta$ vynechať niektoré slová z $L_1L_2$ a tiež pridať nejaké nevhodné slová naviac. Preto treba nájsť spôsob, ako operácie lookaroundu vhodne 'skrotiť'. Predpokladajme, že $\alpha$ má $k$ označených zátvoriek, potom regex pre jazyk $L(\alpha)L(\beta)$ vyzerá nasledovne:
+Nech $\alpha, \beta\in \le$. Chceme ukázať, že jazyk $L(\alpha)L(\beta) \in \lel$. Intuitívne nás to vedie k riešeniu $\alpha\beta$, čo ale nemusí byť vždy správne. Problémom sú operácie lookaround, presnejšie každý lookahead v $\alpha$ môže zasahovať do slova z $L(\beta)$ a takisto každý lookbehind z $\beta$ môže zasahovať do slova z $L(\alpha)$. Navyše, ak lookahead obsahuje $\$$ a lookbehind $\textasciicircum$, potom zasahujú do slova z iného jazyka určite. V takom prípade môže regex $\alpha\beta$ vynechať niektoré slová z $L_1L_2$ a tiež pridať nejaké nevhodné slová naviac. Preto treba nájsť spôsob, ako operácie lookaroundu vhodne ,,skrotiť''. Predpokladajme, že $\alpha$ má $k$ označených zátvoriek, potom regex pre jazyk $L(\alpha)L(\beta)$ vyzerá nasledovne:
 \begin{equation} \label{zretazenie}
-\lookahead \mathop(_1 \alpha \mathop)_1 \mathop(_{k+2}\beta \mathop)_{k+2} \mathdollar) \alpha ' \backslash k+2 \lookbehind \textasciicircum\backslash 1\beta ')
+\lookahead \mathop(_1 \alpha \mathop)_1 \mathop(_{k+2}\beta \mathop)_{k+2} \mathdollar) \alpha ' \backslash \text{$k$+2} ~\lookbehind \textasciicircum\backslash 1\beta ')
 \end{equation}
-V $\alpha,\beta$ treba vhodne prepísať označenie zátvoriek (po poradí). $\alpha '$ je $\alpha$ prepísaný tak, že pre každý lookahead:
+V $\alpha,\beta$ treba vhodne prepísať spätné referencie podľa nového prečíslovania zátvoriek. $\alpha '$ je $\alpha$ prepísaný tak, že pre každý lookahead:
 \begin{itemize}
-\item bez \$ -- na koniec pridáme $.* \backslash k+2 \mathdollar $
-\item s \$ -- pred \$ pridáme $\backslash k+2$
+\item bez \$ -- na koniec pridáme $.* \backslash \text{$k$+2} ~\mathdollar $
+\item s \$ -- pred \$ pridáme $\backslash \text{$k$+2}$
 \end{itemize}
 $\beta '$ je $\beta$ prepísaný tak, že pre každý lookbehind:
 \begin{itemize}
 \item bez $\textasciicircum$ -- na začiatok pridáme $\textasciicircum \backslash 1.*$
-\item s $\textasciicircum$ -- pred $\textasciicircum$ pridáme $\textasciicircum \backslash 1$
+\item s $\textasciicircum$ -- za $\textasciicircum$ pridáme $ \backslash 1$
 \end{itemize}
 Čo presne robí regex ~\ref{zretazenie}? Nech $w$ je vstupné slovo, ktoré chceme matchovať. Lookahead na začiatku ho nejako rozdelí na $w_1$ a $w_2$, pričom $w=w_1w_2$, tak, že $w_1$ bude patriť do $L(\alpha)$ a podslovo $w_2$ do $L(\beta)$. Ešte musíme overiť, či $\alpha$ matchuje $w_1$ samostatne.
 
-Preto sme v $\alpha$ prepísali všetky lookaheady. V $\alpha '$ každý z nich musí na konci slova $w$ matchovať $w_2$ (toto zabezpečí spätná referencia $\backslash k+2$ a \$) a teda matchovanie regexu $\alpha$ zostane výlučne na podslove $w_1$. Analogicky to platí pre upravené lookbehindy v $\beta '$.
+Preto sme v $\alpha$ prepísali všetky lookaheady. V $\alpha '$ každý z nich musí na konci slova $w$ matchovať $w_2$ (toto zabezpečí spätná referencia $\backslash \text{$k$+2}$ a \$) a teda matchovanie regexu $\alpha$ zostane výlučne na podslove $w_1$. Analogicky to platí pre upravené lookbehindy v~$\beta '$.
+
 \end{proof}
 
 \section[Chomského hierarchia]{Zaradenie do Chomského hierarchie}
@@ -148,7 +157,7 @@ Zrejme $ L(\alpha) = L $, teda $L\in \lel$.
 
 Ukážeme, že jazyk $L=\lbrace a^nb^n~|~n \in \N \rbrace \notin \lel$. Sporom, nech $L \in \lel$. 
 
-Vieme, že $L \notin \el$, preto musí obsahovať nejaký lookaround. Zároveň z $L \notin \R$ a vety \ref{lookaround+R} vyplýva, že musí obsahovať aj spätné referencie.
+Vieme, že $L \notin \el$, preto musí obsahovať nejaký lookaround. Zároveň z $L \notin \R$ a vety \ref{lookaround+Regex} vyplýva, že musí obsahovať aj spätné referencie.
 
 Kam sa môžu spätné referencie odkazovať a kam ich potom môžeme umiestniť?
 \begin{list}{$\bullet$}{Nech výraz, na ktorý ukazujú, vyrobí nejaké:}
