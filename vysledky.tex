@@ -15,17 +15,17 @@ Trieda $\R$ je uzavretá na negatívny lookahead.
 \begin{proof}
 Nech $L_1,L_2,L_3 \in \R$. Ukážeme, že $L=L_1\nlookahead L_2)L_3 \in \R$.
 
-Keďže $ L_{1},L_{2},L_{3} $ sú regulárne, existujú DKA $ A_{i} = (K_{i},\Sigma_{i},\delta_{i},q_{0i},F_{i}) $ také, že $ L(A_{i})=L_{i}, i \in \lbrace 1,2,3\rbrace $. Zostrojíme NKA $A$ pre $L$.
+Jazyky $ L_{1},L_{2},L_{3} $ sú regulárne, teda existujú DKA $ A_{i} = (K_{i},\Sigma_{i},\delta_{i},q_{0i},F_{i}) $ také, že $ L(A_{i})=\nobreak L_{i},\allowbreak~ i \in \lbrace 1,2,3\rbrace $. Zostrojíme NKA $A$ pre $L$.
 
 Konštrukcia bude veľmi podobná ako v obdobnej vete pre pozitívny lookahead v \cite{mojaBak}, keď si správne predpripravíme $A_2$. Negatívny lookahead sa snaží za každú cenu nájsť slovo z $L_2$ (t.j. uspieť s $A_2$) a ak sa mu to nepodarí, akceptuje. Preto musíme zaručiť, že sa $A_2$ buď zasekne alebo prejde až do konca slova\footnote{Ak sa zasekne, slovo z $L_2$ tam určite nebude, lebo $A_2$ je deterministický a teda neexistuje akceptačný výpočet. Ak sa nezasekne, nevieme povedať o tom slove nič, pokiaľ ho neprejdeme celé.}. Akonáhle $A_2$ dosiahne akceptačný stav, negatívny lookahead musí zamietnuť. 
 
 Ďaľšie pozorovanie nám hovorí, že negatívny lookahead akceptuje vždy nejaké slovo z komplementu $L_2$. Ale komplement vzhľadom na akú abecedu? V skutočnosti nekonečnú -- ľubovoľný znak, ktorý nepatrí do $\Sigma_2$, znamená zaseknutie $A_2$, t.j. akceptáciu. Ak sa na to pozrieme z väčšej ďiaľky, uvidíme $L_3$, s ktorým robíme prenik. $A_3$ musí dočítať slovo do konca a na úplne neznámom znaku sa zasekne, takže z pohľadu výslednej akceptácie slova nevadí, ak by kvôli tomu znaku zamietol už negatívny lookahead. Preto stačí urobiť komplement vzhľadom na $\Sigma_2 \cup \Sigma_3$. 
 
 Poďme upravovať $A_2$, začneme vytváraním komplementu. Ak $\Sigma_3 \setminus \Sigma_2 \neq\emptyset$\footnote{Inak $A_2'=A_2$.}, potom vytvoríme $A_2'= (K_2',\Sigma_2',\delta_2',q_{0},F_2')$ tak, že pridáme nové znaky $\Sigma_2'=\Sigma_2 \cup \Sigma_3$,  jeden nový stav\footnote{Pre každý nový stav predpokladáme, že je jedinečný -- t.j. žiaden taký v množine stavov ešte nie je.} $K_2'=K_2 \cup \lbrace q_{ZLE} \rbrace$ a prechody na nové znaky z každého stavu: 
-\begin{alignat*}{2}
- \forall q \in K_2, &~ \forall a \in \Sigma_2 &&:  \delta_2'(q,a)=\delta_2(q,a) \\
- \forall q \in K_2, &~ \forall a \in \Sigma_3 \setminus \Sigma_2 &&: \delta_2'(q,a)=q_{ZLE} \\
- ~&~ \forall a \in \Sigma_2' &&:  \delta_2'(q_{ZLE},a)=q_{ZLE}
+\begin{alignat*}{3}
+& \forall q \in K_2, &&~ \forall a \in \Sigma_2 &&~~:~~  \delta_2'(q,a)=\delta_2(q,a) \\
+& \forall q \in K_2, &&~ \forall a \in \Sigma_3 \setminus \Sigma_2 &&~~:~~ \delta_2'(q,a)=q_{ZLE} \\
+&~&&~ \forall a \in \Sigma_2' &&~~:~~  \delta_2'(q_{ZLE},a)=q_{ZLE}
 \end{alignat*}
  $F_2'=F_2.$ Do všetkých stavov sme pridali prechody na nové znaky a $q_{ZLE}$ má 1 prechod na každý znak, takže $A_2'$ je stále deterministický. Zároveň nové znaky vedú do stavu, z ktorého sa nedá dostať do žiadneho akceptačného, z čoho vyplýva $L(A_2')=L_2$.
 
@@ -37,10 +37,10 @@ $A_2''= (K_2'',\Sigma_2'',\delta_2'',q_{0},F_2'')$: $$K_2'' = K_2' \cup \lbrace 
 
 $\delta''$ je definovaná nasledovne: 
 \begin{alignat*}{4}
- & \forall q \in K_2' \setminus F_2'  &~ \forall a \in \Sigma_2' &:  \delta_2''(q&&,a)=\delta_2'(q,a) \\
- & \forall q \in K_2' \setminus F_2'  &~ \forall a \in \Sigma_2' &:  \delta_2''(q&&,\varepsilon)=q_A \\
- & \forall q \in F_2' &~ \forall a \in \Sigma_2' &: \delta_2''(q&&,a)=q \footnotemark \\
- & ~ & ~\forall a \in \Sigma_2' &: \delta_2''(q_A&&,a)=q_Z 
+ & \forall q \in K_2' \setminus F_2'  &~ \forall a \in \Sigma_2' ~&~:~~  \delta_2''(q&&,a)=\delta_2'(q,a) \\
+ & \forall q \in K_2' \setminus F_2'  &~ \forall a \in \Sigma_2' ~&~:~~  \delta_2''(q&&,\varepsilon)=q_A \\
+ & \forall q \in F_2' &~ \forall a \in \Sigma_2' ~&~:~~ \delta_2''(q&&,a)=q \footnotemark \\
+ & ~ & ~\forall a \in \Sigma_2' ~&~:~~ \delta_2''(q_A&&,a)=q_Z 
 \end{alignat*}
 \footnotetext{Tento riadok v podstate netreba, $A_2''$ sa môže rovno zaseknúť, lebo $A_2'$ práve akceptoval.}
 Je dobré poznamenať, že $A_2''$ je takmer deterministický. Chýbajú mu prechody z $q_Z$ -- môžeme ho nechať cykliť v tomto stave, ale nevadí nám ani keď sa zasekne. Nedeterministické rozhodnutie vykonáva iba jedno -- pri prechode do stavu $q_A$. Vtedy háda, že už je na konci slova. Ak nie je, $\delta$-funkcia ho pošle do stavu $q_Z$. Podľa toho je zrejmé, že ak existuje akceptačný výpočet a dočítal slovo do konca, je práve jeden\footnote{Okrem prípadu, kedy dočíta slovo a je v stave z $(K_2'\setminus H)$ -- vieme ho predĺžiť o krok na $\varepsilon$ a skončiť v $q_A$. Jadro výpočtu ale zostáva rovnaké -- jednoznačné.} \footnote{Zaujímavé je, že aj zamietací výpočet je pre každé slovo jednoznačný.}.
@@ -59,22 +59,24 @@ Z práve dokázaného tvrdenia a vety \ref{lookahead+R} už vyplýva aj platnos�
 Trieda $\R$ je uzavretá na negatívny lookbehind.
 \end{lema}
 \begin{proof}
-Nech $L_1,L_2,L_3 \in \R$, existujú DKA $ A_{i} = (K_{i},\Sigma_{i},\delta_{i},q_{0i},F_{i}) $ také, že $ L(A_{i})=~L_{i},\allowbreak i \in \lbrace 1,2,3\rbrace $. Ukážeme, že $L=L_1\nlookbehind L_2)L_3 \in \R$.
+Nech $L_1,L_2,L_3 \in \R$, existujú DKA $ A_{i} = (K_{i},\Sigma_{i},\delta_{i},q_{0i},F_{i}) $ také, že $ L(A_{i})=\nobreak L_{i},\allowbreak i \in \lbrace 1,2,3\rbrace $. Ukážeme, že $L=L_1\nlookbehind L_2)L_3 \in \R$.
 
-Nemôžme skonštruovať $A_2''$ také, že bude akceptovať práve vte\-dy, keď $\nlookbehind L_2)$, pretože nevieme čítať doľava. Tzn. zaručiť, že miesto, kde začína $A_2''$ výpočet je skutočný začiatok slova. Mechanizmus lookbehindu musí byť riadený zvonku, automatom pre $L$. Skonštruujeme ho. $C=(K,\Sigma, \delta,q_0,F):$ 
-$$K=K_3\cup \lbrace (q,A) ~|~ q \in K_1 \wedge A \subseteq K_2 \rbrace,~\Sigma = \Sigma_1\cup\Sigma_2\cup\Sigma_3,~q_0=(q_{01},\lbrace q_{02}\rbrace),F=F_3~ \delta:$$
-\begin{eqnarray*}
-\forall q \in K_3~ \forall a \in \Sigma_3 &:& \delta(q,a) \ni \delta_3(q,a) \\
-\forall q \in K_1 ~\forall A \subseteq K_2~ \forall a \in \Sigma_1 \cap \Sigma_2 &:& \delta((q,A),a) \ni (p,B\cup \lbrace q_{02}\rbrace), ~\text{kde}~ \delta_1(q,a)=p,\\ &~& B=\lbrace r ~|~ \exists s \in A:~ \delta_2(s,a)=r \rbrace \\
-\forall q \in K_1 ~\forall A \subseteq K_2 ~ \forall a \in \Sigma_1 \setminus \Sigma_2 &:& \delta((q,A),a) \ni (p,\lbrace q_{02}\rbrace), \text{ kde } \delta_1(q,a)=p \\
-\forall q \in F_1~\forall A: ~A \subseteq K_2 \wedge A \cap F_2 = \emptyset &:& \delta((q,A),\varepsilon) \ni q_{03}
-\end{eqnarray*}
-Druhý riadok $\delta$-funkcie hovorí, že $A_1$ a všetky rozbehnuté výpočty $A_2$ prejdú do ďalšieho stavu a zároveň sa rozbehne nový výpočet $A_2$. Ak by sme hľadali jeden akceptačný výpočet $A_2$ stačilo by tipnúť si začiatok a odtiaľ ho simulovať. Lenže simulujeme negatívny lookbehind, teda ak neexistuje akceptačný výpočet, tak my akceptujeme (prejdeme na simulovanie $A_3$, 4. riadok). A to vieme povedať len v prípade, že sme videli všetky možné výpočty. Keďže $A_2$ je deterministický, pre každé slovo existuje práve jeden výpočet a zároveň sa nikdy nezasekne (na svojej abecede), teda nám stačí skontrolovať množinu stavov vtedy, keď sa $C$ rozhodne, že $A_1$ končí výpočet. Ak tam je, nedostane sa k simulovaniu $A_3$ a tým ani k akceptačným stavom.
+Nemôžeme skonštruovať $A_2''$ také, že bude akceptovať práve vte\-dy, keď $\nlookbehind L_2)$, pretože nevieme čítať doľava -- teda nevieme zaručiť, že miesto, kde začína výpočet $A_2''$ je skutočný začiatok slova. Mechanizmus lookbehindu musí byť riadený zvonku, automatom pre $L$. Skonštruujeme ho. $C=(K,\Sigma, \delta,q_0,F):$ 
+$$K=K_3\cup \lbrace (q,A) ~|~ q \in K_1 \wedge A \subseteq K_2 \rbrace,~\Sigma = \Sigma_1\cup\Sigma_2\cup\Sigma_3,~q_0=(q_{01},\lbrace q_{02}\rbrace),F=F_3$$
+$\delta:$
+\begin{alignat*}{5}
+& \forall q \in K_1 ~&& \forall A \subseteq K_2  && ~ \forall a \in \Sigma_1 \cap \Sigma_2 &&~~:~~ \delta((q,A),a) \ni (\delta_1(q,a), B\cup \lbrace q_{02}\rbrace)\\ 
+&                   ~&&                          && &&~~~~~~B=\lbrace r ~|~ \exists s \in A:~ \delta_2(s,a)=r \rbrace \\
+& \forall q \in K_1 ~&& \forall A \subseteq K_2  &&~\forall a \in \Sigma_1 \setminus \Sigma_2 &&~~:~~ \delta((q,A),a) \ni (\delta_1(q,a),\lbrace q_{02}\rbrace) \\
+& \forall q \in F_1 ~&& \forall A \subseteq K_2 \setminus F_2 && &&~~:~~ \delta((q,A),\varepsilon) \ni q_{03} \\
+& \forall q \in K_3 ~&&                          &&~ \forall a \in \Sigma_3 &&~~:~~ \delta(q,a) \ni \delta_3(q,a)
+\end{alignat*}
+Prvý riadok $\delta$-funkcie hovorí, že $A_1$ a všetky rozbehnuté výpočty $A_2$ prejdú do ďalšieho stavu a zároveň sa rozbehne nový výpočet $A_2$. Ak by sme hľadali jeden akceptačný výpočet $A_2$ stačilo by tipnúť si začiatok a odtiaľ ho simulovať. Lenže simulujeme negatívny lookbehind, teda ak neexistuje akceptačný výpočet, tak my akceptujeme (prejdeme na simulovanie $A_3$, 4. riadok). A to vieme povedať len v prípade, že sme videli všetky možné výpočty. Keďže $A_2$ je deterministický, pre každé slovo existuje práve jeden výpočet a zároveň sa nikdy nezasekne (na svojej abecede), teda nám stačí skontrolovať množinu stavov $A$ vtedy, keď sa $C$ rozhodne, že $A_1$ končí výpočet. Ak v $A$ je nejaký akceptačný stav, potom $C$ nevie prejsť do stavu $q_3$. Tým pádom sa nedostane k simulovaniu $A_3$ a ani k svojim akceptačným stavom.
 
 $L(C)=L.$
 
 $\subseteq:$
-Majme akceptačný výpočet $C$ na $w$. Z definície $F$ vyplýva, že $A_3$ akceptoval, teda $\exists u,v$ také, že $w=uv$ a $v \in L_3$. Do $q_{03}$ sa dá dostať len z dvojice $q,A$ takej, že $q\in F_1$, teda $u\in L_1$, a $a \cap F_2 = \emptyset$, teda $\nexists xy$ také, že $u=xy$ a $y \in L_2$. To vyplýva z toho, že v každom znaku $u$ začal jeden výpočet na $A_2$ a žiaden z nich neakceptoval. Teda negatívny lookbehind akceptoval a $w\in L$.
+Majme akceptačný výpočet $C$ na $w$. Z definície $F$ vyplýva, že $A_3$ akceptoval, teda $\exists u,v$ také, že $w=uv$ a $v \in L_3$. Do $q_{03}$ sa dá dostať len z dvojice $(q,A)$ takej, že $q\in F_1$, teda $u\in L_1$, a $A \cap F_2 = \emptyset$, teda $\nexists x,y$ také, že $u=xy$ a $y \in L_2$. To vyplýva z toho, že v každom znaku $u$ začal jeden výpočet na $A_2$ a žiaden z nich neakceptoval. Teda negatívny lookbehind akceptoval a $w\in L$.
 
 $\supseteq:$
 Nech $w\in L$, teda $\exists u,v$ také, že $w=uv,~ u \in L_1, v\in L_3$ a $\forall x,y:~u=xy$ platí $y \notin L_2$. Pre $u,v$ teda existujú akceptačné výpočty na $A_1,A_3$ a pre všetky $y$ neakceptačné na $A_2$. Z toho už vieme vyskladať akceptačný výpočet na $C$.
