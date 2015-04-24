@@ -261,7 +261,7 @@ Ak máme 1 rezervovaný slot pre aktuálnu adresu, $s$ spätných referencií, $
 \end{proof}
 
 
-\begin{veta}[Savitch]
+\begin{veta}[Savitch \cite{Savitch}]
 Nech $S(n)\geq \log n$ je páskovo konštruovateľná, potom 
 $$ NSPACE(S(n)) \subseteq DSPACE(S^2(n)) $$
 \end{veta}
@@ -270,12 +270,11 @@ $$ NSPACE(S(n)) \subseteq DSPACE(S^2(n)) $$
 $\lel \subseteq DSPACE(\log^2 n)$, kde $n>1$ je veľkosť vstupu.
 \end{dosledok}
 
+Keď už máme deterministický model pre pozitívny lookaround, vieme triedu rozšíriť aj o ten negatívny.
 \begin{veta}
 $\nlel \subseteq DSPACE(\log^2 n)$, kde $n>1$ je veľkosť vstupu.
 \end{veta}
-\begin{proof}
-\TODO
-\end{proof}
+Dôkaz tejto vety uvedieme neskôr. Najprv si zavedieme niekoľko nových pojmov. Keďže sa budeme opierať o dôkaz Savitchovej vety \cite{Savitch_skripta}, bude to akási forma konfigurácií, inšpirovaná definíciou Turingovho stroja.
 
 \begin{df}
 \textbf{Konfiguráciou} regexu $\alpha = r_1 \dots r_n$ nazývame dvojicu $(r, w)$, kde $r \in (\lceil\alpha)\cup(\alpha\lceil)\cup(r_1 \dots \lceil r_i \dots r_n)$ $w \in \Gamma^*\lceil~ \Gamma^*$ a sybmol $\lceil$ ukazuje, kde sa nachádzame vo výpočte v regexe a v slove.
@@ -441,7 +440,7 @@ V praxi často regex dopredu nepoznáme. Vstupným údajom je text na vyhľadáv
 kde ${\cal U} \in \lbrace \re ,\e ,\le ,\nle \rbrace$.
 
 \begin{veta}
-$L(regex\#word) \in NSPACE(r \log w)$, kde $r = |regex|,~w = |word|$ a $regex \in \le$.
+$L(regex\#word) \in NSPACE(n \log n)$, kde $regex \in \le$. (Presnejšie $NSPACE(r \log w)$, kde $r = |regex|$ a $w = |word|$.)
 \end{veta}
 \begin{proof}
 \TODO

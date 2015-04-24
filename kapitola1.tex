@@ -22,6 +22,8 @@ Aby sme špecifikovali pole pôsobnosti operácií, používame v regulárnych v
 
 Regulárny výraz je vykonávaný zľava doprava. Keď sa dostaneme na koniec výrazu aj slova (za posledný znak), hovoríme, že výraz matchuje\footnote{Preklad ,,regex sa zhoduje so slovom'' nevyjadruje presne to, čo je vyjadrené v angličtine. Znie to, akoby regex bol to isté, čo slovo. Preto sme sa rozhodli zostať pri slove match a slovese matchovať.} (z angl. \textit{match} -- zhoda) slovo, výraz vyhovuje slovu, alebo slovo vyhovuje výrazu.
 
+Jazyk vyhovujúci regexu $\alpha$ je množina slov matchovaných týmto regexom. Hovoríme aj, že regex generuje tento jazyk.
+
 \subsection{Nové konštrukcie}
 
 Najprv si uvedieme konštrukcie, ktoré sú len ,,kozmetickou úpravou"" základných regulárnych výrazov. Všetky sa dajú zapísať pomocou základných operácií, ale nový zápis je stručnejší a prehľadnejší. Pre formálnejšiu definíciu odporúčame siahnuť po \cite{mojaBak}.
@@ -85,7 +87,7 @@ Hľadá ako pozivíny lookbehind, ale akceptuje len ak neexistuje slovo z~jazyka
 
 Pre posledné 2 operácie zostaneme pri ich anglických názvoch, pretože sú stručnejšie a zvučnejšie. Existuje pre ne aj spoločný názov \underline{lookaround}, takisto s prívlastkom pozitívny/negatívny, ak myslíme iba ich pozitívne/negatívne verzie. Bude našim zvykom ponechávať pozitívny lookaround/lookahead/lookbehind bez prívlastku. Pokiaľ budeme myslieť negatívnu verziu alebo to nebude z kontextu jasné, explicitne to napíšeme.
 
-Formálnejšiu definíciu zložitejších konštrukcií nájdete v \cite{mojaBak}.
+Formálnejšia definícia zložitejších konštrukcií sa nachádza v \cite{mojaBak}.
 \\ \par
 Moderné regulárne výrazy sa skladajú z \textbf{konečného počtu} znakov, metaznakov a zložitejších operácií.
 
