@@ -533,11 +533,6 @@ $$C_a=(r+1,w+1,nedef,\underbrace{nedef,\dots,nedef}_{\substack{\text{adresy pre}
 
 Turingov stroj M rekurzívne volá procedúru $TESTUJ$. Preto na prvej páske bude mať zásobník, kde budú uložené záznamy o jednotlivých volaniach. Druhá páska je pomocná pri vykonávaní konkrétneho volania -- M potrebuje konštantný počet adries, aby mohol realizovať porovnávanie (overovanie rovnosti konfigurácií a adries, overovanie konkrétneho rozdielu medzi adresami), zisťovanie príslušnosti zátvoriek (t.j. ktorá je druhá zátvorka k tejto -- treba počítať zátvorky (,)), zisťovanie poradia zátvorky/lookaheadu/lookbehindu a prislúchajúcej adresy, kontrolu alternovateľnosti (to je v podstate počítanie zátvoriek), čítanie čísla $k$ za metaznakom $\backslash$ a hľadanie adries pre $k$-te zátvorky, \dots
 
-M potrebuje vykonávať nasledovné pomocné operácie:
-\begin{itemize}
-\item overovanie rovnosti -- pri porovnávaní adries zapíšeme 1
-\end{itemize}
-
 Zrejme ak existuje akceptačný výpočet, M ho nájde. Treba ukázať, že sa pri tom na každej páske zmestí do pamäte $O(n\log^2 n)$. Podľa predchádzajúceho odstavca vieme, že na druhej (pomocnej) páske potrebuje $O(\log n)$ políčok, čo spĺňa podmienku. Spočítajme veľkosť potrebnú zásobníka.
 
 Adresy vieme zapísať v logaritmickom priestore závislom od dĺžky slova, kam ukazujú. Pre regex to bude $\log r$ a pre slovo $\log w$, pretože vieme adresovať od oddeľovača \#. Číslo $i$ je najviac $3rw^2$ a tiež ho vieme zapísať v logaritmickom tvare, čo zaberie $\log (3rw^2) = \log 3 + \log r + 2\log w$ políčok. Platí $r\leq n, w\leq n$, lebo $r+w+1=n$.
