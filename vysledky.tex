@@ -414,7 +414,7 @@ Táto úvaha nezahŕňa vnorené negatívne lookaroundy. Potrebný Turingov stro
 \end{df}
 
 \textbf{Poznámka.}
-Postupnosť konfigurácií $(\lceil \alpha, \lceil w)\vdash^* (\alpha\lceil, w\lceil)$ pre daný regex $\alpha$ a slovo $w$ nazývame \textbf{akceptačný výpočet}.
+Postupnosť konfigurácií $(\lceil \alpha, \lceil w)\vdash^* (\alpha\lceil, w\lceil)$\footnote{Bez ohľadu na to, čo obsahujú vyššie poschodia symbolov vo $w$.} pre daný regex $\alpha$ a slovo $w$ nazývame \textbf{akceptačný výpočet}. Konfiguráciu $(\lceil \alpha,\lceil w)$ nazývame počiatočnou a $(\alpha\lceil,w\lceil)$ akceptačnou konfiguráciou.
 
 \begin{lema}\label{dlzka_vypoctu_rw}
 Nech $\alpha \in \el$ a $w \in L(\alpha)$. Potom existuje akceptačný výpočet, ktorý má najviac $3\cdot|\alpha|\cdot|w|^2$ konfigurácií.
@@ -454,9 +454,9 @@ Pre účely dôkazu budeme označovať $w = |word|$ a $r = |regex|$.
 
 Zostrojíme deterministický Turingov stroj M, ktorý bude akceptovať jazyk $L(regex\#word)$ a na každej pracovnej páske použije najviac $O(n\log^2 n)$ políčok. M bude mať vstupnú read-only pásku a 2 pracovné pásky.
 
-Myšlienka je podobná dôkazu Savitchovej vety -- M bude vykonávať funkciu $TESTUJ(C_1,C_2,i)$, ktorá zistí, či sa vieme dostať z konfigurácie $C_1$ do konfigurácie $C_2$ na $i$ krokov. 
+Myšlienka je podobná dôkazu Savitchovej vety \cite{Savitch_skripta} -- M bude vykonávať funkciu $TESTUJ(C_1,C_2,i)$, ktorá zistí, či sa vieme dostať z konfigurácie $C_1$ do konfigurácie $C_2$ na $i$ krokov. 
 
-Podľa lemy \ref{dlzka_vypoctu_rw} vieme, že ak existuje akceptačný výpočet pre $w$, potom existuje aj akceptačný výpočet taký, ktorý má najviac $5rw$ konfigurácií. Na základe tohto výsledku bude M zisťovať, či sa z počiatočnej konfigurácie $C_0$ vieme dostať do akceptačnej konfigurácie $C_a$ na $5rw$ krokov -- $TESTUJ(C_0,C_a,5rw)$.
+Podľa lemy \ref{dlzka_vypoctu_rw} vieme, že ak existuje akceptačný výpočet pre $w$, potom existuje aj akceptačný výpočet taký, ktorý má najviac $3rw^2$ konfigurácií. Na základe tohto výsledku bude M zisťovať, či sa z počiatočnej konfigurácie $C_0$ vieme dostať do akceptačnej konfigurácie $C_a$ na $3rw^2$ krokov -- $TESTUJ(C_0,C_a,3rw^2)$.
 
 Pseudokód procedúry $TESTUJ$:
 \lstset{numbers=left, tabsize=4, morekeywords={if,then,return,true,false}}
@@ -470,51 +470,83 @@ bool $TESTUJ(C_1,C_2,i)$
 	return false
 \end{lstlisting}
 
-Pre podrobnejší popis pseudokódu je nutné, aby sme najprv definovali tvar konfigurácie. Použijeme zápis z definície \ref{dfkonfig}, v tvare $(a_1\dots \lceil a_i \dots a_r, b_1 \dots\lceil b_j \dots b_w)$ respektíve $(a_1\dots \lceil a_i \dots a_r, b_1 \ldots \intercal b_l \dots \lceil b_j \dots b_w)$, kde $a_1\dots a_r = regex$ a $b_1\dots b_w = word$. Reprezentovať ich budeme vo forme 2 resp. 3 adries -- pracovná pozícia v regexe (i), pracovná pozícia v slove (j) a adresa k spätnej referencii (l). Namiesto poschodových symbolov si M bude pre každú konfiguráciu pamätať informáciu, ktoré zátvorky zodpovedajú ktorému podslovu slova $word$. Pre každé zátvorky si uloží 2 adresy -- začiatok podslova a 1 políčko za koncom podslova (použijeme polootvorený interval $\langle z,k)$). Pre každý lookahead a lookbehind bude mať vyhradené 1 adresné miesto aby si zapamätal, kam do slova ukazoval, keď naňho narazil.
+Pre podrobnejší popis pseudokódu je nutné, aby sme najprv definovali tvar konfigurácie. Použijeme zápis z definície \ref{dfkonfig}, v tvare $(a_1\dots \lceil a_i \dots a_r, b_1 \dots\lceil b_j \dots b_w)$ respektíve $(a_1\dots \lceil a_i \dots a_r, b_1 \ldots \intercal b_l \dots \lceil b_j \dots b_w)$, kde $a_1\dots a_r = regex$ a $b_1\dots b_w = word$. Reprezentovať ich budeme vo forme 2 resp. 3 adries -- pracovná pozícia v regexe ($i$), pracovná pozícia v slove ($j$) a adresa k spätnej referencii ($l$). Namiesto poschodových symbolov si M bude pre každú konfiguráciu pamätať informáciu, ktoré zátvorky zodpovedajú ktorému podslovu slova $word$. Pre každé zátvorky si uloží 2 adresy -- začiatok podslova a 1 políčko za koncom podslova (použijeme polootvorený interval $\langle za\v{c},kon)$). Pre každý lookahead a každý lookbehind bude mať vyhradené 1 adresné miesto aby si zapamätal, kam do slova ukazoval, keď naňho narazil.
 
 Popis pseudokódu:
 \begin{description}
 \item[riadok 2] Ak $C_1=C_2$, potom vieme prejsť z $C_1$ do $C_2$ na ľubovoľný počet krokov.
-\item[riadok 3] Platí $C_1 \neq C_2$. Ak $i=0$, nevieme prejsť do žiadnej inej konfigurácie ako $C_1$, teda vrátime \textbf{false}. Nech $i>0$. Skontrolujeme podľa definície \ref{dfkonfig}, či platí $C_1 \vdash C_2$. Konfigurácie sú uložené na páske ako $m$-tice, kde $m = 3+2\cdot (\textit{počet zátvoriek})+(počet lookaheadov)+(počet lookbehindov)$: $C_1 = (d_1,\dots, d_m), ~C_2=(e_1,\dots,e_m)$. Nech $d_1, e_1$ sú pracovné adresy v regexe, $d_2,e_2$ sú pracovné adresy v slove a $d_3,e_3$ pracovné adresy pri spätných referenciách, pričom $d_3,e_3$ môžu byť nedefinované (na prislúchajúcom mieste medzi oddeľovačmi adries nebude nič zapísané). TS M overí, či je splnená nejaká z týchto podmienok (rímske čísla zodpovedajú tým v definícii \ref{dfkonfig}):
+\item[riadok 3] Platí $C_1 \neq C_2$. Ak $i=0$, nevieme prejsť do žiadnej inej konfigurácie ako $C_1$, teda vrátime \textbf{false}. Nech $i>0$. Skontrolujeme podľa definície \ref{dfkonfig}, či platí $C_1 \vdash C_2$. Konfigurácie sú uložené na páske ako $m$-tice, kde $m = 3+2\cdot (\text{počet zátvoriek})+(\text{počet lookaheadov})+(\text{počet lookbehindov})$: $C_1 = (d_1,\dots, d_m)$, $C_2=(e_1,\dots,e_m)$. Nech $d_1, e_1$ sú pracovné pozície v regexe, $d_2,e_2$ sú pracovné pozície v slove a $d_3,e_3$ pracovné pozície ukazovateľa pre spätné referencie, pričom $d_3,e_3$ môžu byť nedefinované (na prislúchajúcom mieste medzi oddeľovačmi adries nebude nič zapísané). TS M overí, či je splnená nejaká z týchto podmienok (rímske čísla zodpovedajú tým v definícii \ref{dfkonfig}):
 \begin{enumerate}[I.]
 \item $regex[d_1]=word[d_2]~\wedge~(e_1,\dots,e_m) = (d_1+1,d_2+1,nedef,d_4, \dots, d_m)$
-\item (1) $regex[d_1]=$'('$ \\ ~\wedge~regex[d_1]$ je indexovateľná \\ $\wedge$ nech $d_k$ prislúcha k $regex[d_1]$, $4\leq k \leq m$: $d_2=d_k$ (sedí začiatok podslova) $ \wedge ~(e_1,\dots, e_m) = (d_1+1,d_2,nedef,d_4,\dots,d_m)$
+\item (1) $regex[d_1]=$'('$ \\ ~\wedge~regex[d_1]$ je indexovateľná 
+\\ $\wedge$ nech $d_k$ prislúcha k $regex[d_1]$, $4\leq k \leq m$: $e_k=d_2$ (sedí začiatok podslova) 
+\\ $ \wedge ~(e_1,\dots, e_m) = (d_1+1,d_2,nedef,d_4,\dots,d_{k-1},d_2,d_{k+1},\dots,d_m)$
 \setcounter{enumi}{1}
-\item (2) $regex[d_1]=$'('$ \\ \wedge$ 2 políčka pred pozíciou $e_2$ je v regexe '$)*$' $ \\ \wedge$ zátvorky $regex[d_1]$ a $regex[e_1-2]$ sú k sebe prislúchajúce\footnote{To M skontroluje tak, že si overí, že medzi nimi ku každej '(' existuje ')' -- teda počet výskytov '(' a ')' musí byť rovnaký.} \\ $\wedge ~(e_1,\dots,e_m)=(d_1+l, d_2,nedef,d_4,\dots,d_k,\dots,d_m)$ pre $l\in\N$
+\item (2) $regex[d_1]=$'('$ \\ \wedge$ 2 políčka pred pozíciou $e_2$ je v regexe '$)*$' $ 
+\\ \wedge$ zátvorky $regex[d_1]$ a $regex[e_1-2]$ sú k sebe prislúchajúce\footnote{To M skontroluje tak, že si overí, že medzi nimi ku každej '(' existuje ')' -- teda počet výskytov '(' a ')' musí byť rovnaký.} 
+\\ $\wedge$ nech $d_k$ prislúcha k $regex[d_1],~4\leq k\leq m$: $e_k=e_{k+1}=d_2$ (začiatok a koniec podslova je nastavený na to isté políčko)
+\\ $\wedge ~(e_1,\dots,e_m)=(d_1+l, d_2,nedef,d_4,\dots,d_{k-1},e_k,e_{k+1},d_{k+2},\dots,d_m)$ pre $l\in\nobreak\N$
 \item podobne ako II.(1) -- kontrola, či sedí koniec podslova
-\item $regex[e_1-1] =$'|' \\ $\wedge$ regex medzi $d_1$ a najbližším metaznakom | je alternovateľný \\ $\wedge$ všetky regexy ohraničené | medzi $d_1$ a $e_1$ sú alternovateľné \\ $\wedge~ (e_1,\dots, e_m)=(d_1+l,d_2,nedef,d_4,\dots,d_m)$ pre $l\in\N$
+\item $regex[e_1-1] =$'|' \\ $\wedge$ regex medzi $d_1$ a najbližším metaznakom | je alternovateľný \\ $\wedge$ všetky regexy ohraničené | medzi $d_1$ a $e_1$ sú alternovateľné 
+\\ $\wedge~ (e_1,\dots, e_m)=(d_1+l,d_2,nedef,d_4,\dots,d_m)$ pre $l\in\N$
+\item $regex[d_1] =$'$|$'
+\\ $\wedge$ všetky regexy ohraničené $|$ medzi $d_1$ a $e_1$ sú alternovateľné
+\\ $\wedge$ regex medzi $e_1$ a najbližším metaznakom $|$ naľavo od neho je alternovateľný
+\\ $\wedge~ (e_1,\dots, e_m)=(d_1+l,d_2,nedef,d_4,\dots,d_m)$ pre $l\in\N$
 \item (1) $regex[d_1]=$'$*$'$~\wedge~(e_1,\dots,e_m)=(d_1+1,d_2,nedef,d_4,\dots,d_m)$
-\setcounter{enumi}{4}
-\item (2) $regex[d_1]=$'$*$'$ \\ \wedge~regex[e_1-1]=($ a prislúcha k $regex[d_1]$ \\ $\wedge$ nech $e_k,e_{k+1}$ prislúchajú k týmto zátvorkám, potom $e_k=e_2$ a $e_k\leq e_{k+1} \\ \wedge ~(e_1,\dots,e_m)=(d_1-l,d_2,nedef,d_4,\dots,d_{k-1},e_k,e_{k+1},d_{k+2},\dots, d_m)$ pre $l\in\N$
-\item na pozícii $d_1$ je podslovo '$\backslash k$' pre nejaké $k\in\N, ~0\leq k \leq$ (počet indexovateľných zátvoriek) \\ $\wedge ~ (e_1,\dots,e_m)= (d_1,d_2,d_{k+3},d_4,\dots,d_m)$ ($d_{k+3}$ je adresa začiatku podslova prislúchajúca ku $k$-tym zátvorkám)
-\item podobne ako I.-- musí platiť $d_3<d_{k+3}$ a správne sa posunú adresy $d_2,d_3$
-\item na pozícii $d_1$ je podslovo '$\backslash k$' \\ $\wedge ~ d_3=d_{k+3} \\ \wedge ~(e_1,\dots, e_m)=(d_1,d_2,nedef,d_4,\dots,d_m)$
-\item na pozícii $d_1$ je podslovo '$\lookahead$' \\ $\wedge$ nech $d_l$ adresa prislúchajúca k tomuto lookaheadu: $e_l=d_2$, teda $(e_1,\dots,e_m)=(d_1+3,d_2,nedef,d_4,\dots,d_{l-1},d_2,d_{l+1},\dots,d_m)$
-\item $regex[d_1]=$')' a prislúcha lookaheadu, ktorému patrí adresa $d_l$ \\ $\wedge ~(e_1,\dots,e_m)=(d_1+1,d_l,nedef,d_4,\dots,d_{l-1},nedef,d_{l+1},\dots,d_m)$
-\item podobne ako IX. -- zapíšeme si aktuálnu adresu v slove
-\item $regex[d_1]=$')' a prislúcha lookbeindu, ktorému patrí adresa $d_l$ \\ $\wedge ~ d_2=d_l \\ \wedge ~(e_1,\dots,e_m)=(d_1+1,d_2,nedef,d_4,\dots,d_{l-1},nedef,d_{l+1},\dots,d_m)$
+\setcounter{enumi}{5}
+\item (2) $regex[d_1]=$'$*$'
+\\ $\wedge~ regex[d_1-1]=a,~a\in\Sigma$
+\\ $\wedge~(e_1,\dots,e_m)=(d_1-1,d_2,nedef,d_4,\dots,d_m)$
+\item (1) $regex[d_1]=$'$*$'$~\wedge~(e_1,\dots,e_m)=(d_1+1,d_2,nedef,d_4,\dots,d_m)$
+\setcounter{enumi}{6}
+\item (2) $regex[d_1]=$'$*$'$ \\ \wedge~regex[e_1-1]=$'(' a prislúcha k $regex[d_1]$ 
+\\ $\wedge$ nech $d_k,d_{k+1}$ prislúchajú k týmto zátvorkám, potom $e_k=d_2$, $e_{k+1}=\nobreak nedef$ 
+\\ $\wedge ~(e_1,\dots,e_m)=(d_1-l,d_2,nedef,d_4,\dots,d_{k-1},e_k,e_{k+1},d_{k+2},\dots, d_m)$ pre $l\in\nobreak\N$
+\item $regex[d_1] =$'$\backslash$' 
+\\ $\wedge$ nasleduje číslo $k$, $0\leq k \leq$ (počet indexovateľných zátvoriek) 
+\\ $\wedge ~ (e_1,\dots,e_m)= (d_1,d_2,d_{2k+2},d_4,\dots,d_m)$ ($d_{2k+2}$ je adresa začiatku podslova prislúchajúca ku $k$-tym zátvorkám)
+\item na pozícii $d_1$ je podslovo '$\backslash k$'
+\\ $\wedge$ podobne ako I.-- musí platiť $d_3<d_{2k+3}$ a správne sa posunú adresy $d_2,d_3$
+\item na pozícii $d_1$ je podslovo '$\backslash k$' 
+\\ $\wedge ~ d_3=d_{2k+3}$ 
+\\ $\wedge ~(e_1,\dots, e_m)=(d_1,d_2,nedef,d_4,\dots,d_m)$
+\item na pozícii $d_1$ je podslovo '$\lookahead$' 
+\\ $\wedge$ nech $d_l$ adresa prislúchajúca k tomuto lookaheadu: $e_l=d_2$, teda 
+\\ $(e_1,\dots,e_m)=(d_1+3,d_2,nedef,d_4,\dots,d_{l-1},d_2,d_{l+1},\dots,d_m)$
+\item $regex[d_1]=$')' a prislúcha lookaheadu, ktorému patrí adresa $d_l$ 
+\\ $\wedge ~(e_1,\dots,e_m)=(d_1+1,d_l,nedef,d_4,\dots,d_{l-1},nedef,d_{l+1},\dots,d_m)$
+\item na pozícii $d_1$ je podslovo '$\lookbehind$' 
+\\ $\wedge$ nech $d_l$ adresa prislúchajúca k tomuto lookbehindu: $e_l=d_2$ 
+\\ $\wedge ~(e_1,\dots,e_m)=(d_1+3,d_2-l,nedef,d_4,\dots,d_{l-1},d_2,d_{l+1},\dots,d_m)$, kde $l\in\N$
+\item $regex[d_1]=$')' a prislúcha lookbehindu, ktorému patrí adresa $d_l$ \\ $\wedge ~ d_2=d_l \\ \wedge ~(e_1,\dots,e_m)=(d_1+1,d_2,nedef,d_4,\dots,d_{l-1},nedef,d_{l+1},\dots,d_m)$
 \end{enumerate}
 Keďže regex neobsahuje negatívny lookbaround, ďalšie riadky z definície netestujeme.
 \item[riadok 4] Po predošlých riadkoch platí $C_1\neq C_2 \wedge C_1 \nvdash C_2$. Ak zároveň $i<=1$, potom sa z $C_1$ do $C_2$ na $i$ krokov dostať nedokážeme. $TESTUJ$ vráti \textbf{false}.
-\item[riadok 5] M začne iterovať cez všetky možné konfigurácie -- t.j. všetky možné kombinácie adries, ktoré ukazujú najďalej 1 políčko za regex/slovo. Vygenerované $C_3$ bude mať M uložené ako lokálnu premennú.
+\item[riadok 5] M začne iterovať cez všetky možné konfigurácie -- t.j. všetky možné kombinácie adries z množiny $\lbrace 1,\dots,d\rbrace$, kde $d=\lceil\log(r+1)\rceil$ pre $d_1$ a $d=\lceil\log(w+1)\rceil$ pre ostatné adresy. Vygenerované $C_3$ bude mať M uložené ako lokálnu premennú.
 \item[riadok 6] M testuje, či je $C_3$ vo výpočte v strede medzi $C_1$ a $C_2$. Ak obe volané procedúry vrátia \textbf{true}, vrátime \textbf{true}. Inak sa M vráti na \textbf{riadok 5} a vygeneruje ďalšie $C_3$.
 \item[riadok 7] Neexistuje vhodná konfigurácia $C_3$, teda sa nevieme dostať z $C_1$ do $C_2$ na $i$ krokov. Vrátime \textbf{false}.
 \end{description}
 
-Podľa vyššie špecifikovaných $m$-tíc pre konfigurácie bude úvodné nastavenie nasledovné: $$C_0=(~~~~~1,~~~~~~1,nedef,0,0,\dots,0,nedef,\dots,nedef)$$
-$$C_a=(r+1,w+1,nedef,\underbrace{0,0,\dots,0}_{\substack{\text{adresy pre}\\\text{spätné}\\\text{ referencie}}},\underbrace{nedef,\dots,nedef}_{\substack{\text{adresy pre}\\\text{lookahead a lookbehind}}})$$
+Podľa vyššie špecifikovaných $m$-tíc pre konfigurácie bude úvodné nastavenie nasledovné: $$C_0=(~~~~~1,~~~~~~1,nedef,nedef,\dots,nedef,nedef,\dots,nedef)$$
+$$C_a=(r+1,w+1,nedef,\underbrace{nedef,\dots,nedef}_{\substack{\text{adresy pre}\\\text{spätné}\\\text{ referencie}}},\underbrace{nedef,\dots,nedef}_{\substack{\text{adresy pre}\\\text{lookahead a lookbehind}}})$$
 
-Turingov stroj M rekurzívne volá procedúru $TESTUJ$. Preto na prvej páske bude mať zásobník, kde budú uložené záznamy o jednotlivých volaniach. Druhá páska je pomocná pri vykonávaní konkrétneho volania -- M potrebuje konštantný počet adries, aby mohol realizovať porovnávanie, zisťovanie príslušnosti zátvoriek, zisťovanie, koľký v poradí je daný lookahead/lookbehind/otváracia zátvorka, \dots
+Turingov stroj M rekurzívne volá procedúru $TESTUJ$. Preto na prvej páske bude mať zásobník, kde budú uložené záznamy o jednotlivých volaniach. Druhá páska je pomocná pri vykonávaní konkrétneho volania -- M potrebuje konštantný počet adries, aby mohol realizovať porovnávanie (overovanie rovnosti konfigurácií a adries, overovanie konkrétneho rozdielu medzi adresami), zisťovanie príslušnosti zátvoriek (t.j. ktorá je druhá zátvorka k tejto -- treba počítať zátvorky (,)), zisťovanie poradia zátvorky/lookaheadu/lookbehindu a prislúchajúcej adresy, kontrolu alternovateľnosti (to je v podstate počítanie zátvoriek), čítanie čísla $k$ za metaznakom $\backslash$ a hľadanie adries pre $k$-te zátvorky, \dots
+
+M potrebuje vykonávať nasledovné pomocné operácie:
+\begin{itemize}
+\item overovanie rovnosti -- pri porovnávaní adries zapíšeme 1
+\end{itemize}
 
 Zrejme ak existuje akceptačný výpočet, M ho nájde. Treba ukázať, že sa pri tom na každej páske zmestí do pamäte $O(n\log^2 n)$. Podľa predchádzajúceho odstavca vieme, že na druhej (pomocnej) páske potrebuje $O(\log n)$ políčok, čo spĺňa podmienku. Spočítajme veľkosť potrebnú zásobníka.
 
-Adresy vieme zapísať v logaritmickom priestore závislom od dĺžky slova, kam ukazujú. Pre regex to bude $\log r$ a pre slovo $\log w$, pretože vieme adresovať od oddeľovača \#. Číslo $i$ je najviac $5rw$ a tiež ho vieme zapísať v logaritmickom tvare, čo zaberie $\log (5rw) = \log 5 + \log r + \log w$ políčok. Platí $r\leq n, w\leq n$.
+Adresy vieme zapísať v logaritmickom priestore závislom od dĺžky slova, kam ukazujú. Pre regex to bude $\log r$ a pre slovo $\log w$, pretože vieme adresovať od oddeľovača \#. Číslo $i$ je najviac $3rw^2$ a tiež ho vieme zapísať v logaritmickom tvare, čo zaberie $\log (3rw^2) = \log 3 + \log r + 2\log w$ políčok. Platí $r\leq n, w\leq n$, lebo $r+w+1=n$.
 
-Počet zátvoriek, lookaheadov a lookbehindov je v regexe najviac $r$, teda jedna konfigurácia bude potrebovať najviac $\log r + 2\log w + 2r\log w$ priestoru.
+Počet zátvoriek, lookaheadov a lookbehindov je v regexe dokopy najviac $r$, teda jedna konfigurácia bude potrebovať najviac $\log r + 2\log w + 2r\log w$ priestoru.
 
-Jeden záznam procedúry $TESTUJ$ obsahuje 3 konfigurácie a číslo $i$, čo spolu zaberá $\log 5+2\log r + 3\log w + 2r\log w = O(r\log w) = O(n\log n)$ priestoru.
+Jeden záznam procedúry $TESTUJ$ obsahuje 3 konfigurácie a číslo $i$, čo spolu zaberá $\log 3+\log r + 2\log w + 3\log r + 6\log w + 6r\log w = O(r\log w) = O(n\log n)$ priestoru.
 
-Počet záznamov na zásobníku závisí od hĺbky rekurzie. Keďže začíname na hodnote $i=5rw$ a pri každom volaní je $i$ zmenšené na polovicu, hĺbka vnorenia bude $\log(5rw)=O(\log n^2) = O(2\log n) = O(\log n)$.
+Počet záznamov na zásobníku závisí od hĺbky rekurzie. Keďže začíname na hodnote $i=3rw^2$ a pri každom volaní je $i$ zmenšené na polovicu, hĺbka vnorenia bude $\log(3rw^2)=O(\log n^3) = O(3\log n) = O(\log n)$.
 
 Celkovo M na zásobníkovej páske zapíše $O(\log n)\cdot O(n\log n) = O(n\log^2 n)$ priestoru.
 \end{proof}
