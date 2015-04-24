@@ -278,6 +278,8 @@ Dôkaz tejto vety uvedieme neskôr. Najprv si zavedieme niekoľko nových pojmov
 
 \subsection{Nový formalizmus}
 
+Nasledujúce definície sa budú týkať zjednodušeného modelu regexov, v ktorom budú prípustné iba základné operácie zreťazenia, alternácie, Kleeneho uzáveru a zložité operácie -- spätné referencie, pozitívny a negatívny lookaround. Ďalej bude obsahovať špeciálne znaky pre ľubovoľný znak . , začiatok slova \textasciicircum~ a koniec slova \$. Inak povedané, nezaujímajú nás tie operácie, ktoré sú len kozmetickou úpravou regexov a dajú sa zapísať pomocou práve spomenutých operácií.
+
 \begin{df}
 \textbf{Konfiguráciou} regexu $\alpha = r_1 \dots r_n$ nazývame dvojicu $(r, w)$, kde $r \in (\lceil\alpha)\cup(\alpha\lceil)\cup(r_1 \dots \lceil r_i \dots r_n)$ $w \in \Gamma^*\lceil~ \Gamma^*$ a sybmol $\lceil$ ukazuje, kde sa nachádzame vo výpočte v regexe a v slove.
 \end{df}
