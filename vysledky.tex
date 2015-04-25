@@ -271,7 +271,7 @@ $\lel \subseteq DSPACE(\log^2 n)$, kde $n>1$ je veľkosť vstupu.
 \end{dosledok}
 
 Keď už máme deterministický model pre pozitívny lookaround, vieme triedu rozšíriť aj o ten negatívny.
-\begin{veta}
+\begin{veta}\label{dspace_log2n}
 $\nlel \subseteq DSPACE(\log^2 n)$, kde $n>1$ je veľkosť vstupu.
 \end{veta}
 Dôkaz tejto vety uvedieme neskôr. Najprv si zavedieme niekoľko nových pojmov. Keďže sa budeme opierať o dôkaz Savitchovej vety \cite{Savitch_skripta}, bude to akási forma konfigurácií, inšpirovaná definíciou Turingovho stroja.
@@ -442,7 +442,7 @@ Spočítajme počet všetkých konfigurácií pre triedu regexov $\le$. Vstupné
 
 Keby sme priamo pokračovali v dôkaze lemy \ref{dlzka_vypoctu_rw}, odhad by nebol lepší ako \ref{pocet_vsetkych_konfig}. Nasledujúca lema to ukazuje všeobecnejšie.
 
-\begin{lema}
+\begin{lema}\label{lema_hlbka_lookaroundov}
 Majme triedu regexov takú, že funkcia $f(r)$ určuje ich maximálnu hĺbku vnorenia lookaroudov, kde $r$ je dĺžka regexu. Potom počet konfigurácií v akceptačnom výpočte pre slovo dĺžky $w$ je najviac $O(rw^2(rw)^{f(r)})$.
 \end{lema}
 \begin{proof}
@@ -592,6 +592,22 @@ Nech $\cal U$ je trieda regexov, pre ktoré platí, že počet konfigurácií v~
 \end{dosledok}
 \begin{proof}
 Vyplýva z dôkazu vety \ref{dspace_nlog2n} -- hĺbka vnorenia funkcie $TESTUJ$ je logaritmus z horného ohraničenia dĺžky akceptačného výpočtu.
+\end{proof}
+
+\begin{dosledok}
+Trieda regexov s konštatnou hĺbkou vnorenia lookaroundov patrí do $DSPACE(n\log^2 n)$.
+\end{dosledok}
+\begin{proof}
+Podľa lemy \ref{lema_hlbka_lookaroundov} je počet konfigurácií v akceptačnom výpočte najviac $O((rw)^O(1))$ -- existujú konštatny $c_1,c_2\in\N$ také, že $c_1(rw)^{c_2}$ je horné ohraničnie tejto funkcie. Potom hĺbka rekurzie funkcie $TESTUJ$ je $\log(c_1(rw)^{c_2}) = \log c_1 + c_2\log r + c_2\log w = O(\log r+\log w)$, čo je ten istý odhad ako v dôkaze vety \ref{dspace_nlog2n}.
+\end{proof}
+
+Teraz nasleduje sľúbený dôkaz vety \ref{dspace_log2n}.
+\begin{proof}
+Konštrukcia Turingovho stroja bude taká, ako v dôkaze vety \ref{dspace_nlog2n}, s malými zmenami. Budeme označovať $r$ ako dĺžku regexu a $w=n$ dĺžku vstupného slova.
+
+Keďže regex poznáme dopredu, vieme si vyrobiť špeciálny znak na zápis všetkých možných polôh ukazovateľa v regexe ($(r+1)$ nových znakov). Takisto vieme počet spätných referencií, lookaheadov a lookbehindov, preto informácie k nim prislúchajúce si vieme zapísať nad seba do niekoľkých stôp na páske. K týmto stopám pridáme ešte 2 ďalšie -- pre ukazovateľ v slove a ukazovateľ pre spätné referencie. Turingov stroj si bude strážiť, aby zápis adries začínal vždy na tom istom políčku. Potom zápis jednej konfigurácie zaberie $\log w$ políčok.
+
+\todo
 \end{proof}
 
 \section[Popisná zložitosť]{Popisná zložitosť moderných regulárnych výrazov}
