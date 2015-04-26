@@ -500,11 +500,18 @@ Informácia zapísaná na páskach zodpovedá počiatočnej konfigurácii pre re
 Podľa popísaných úkonov máme na 4. pracovnej páske zapísaných najviac $O(\log r + \log w)$ políčok. Na 3. páske je adresa s aktuálnou pozíciou v slove zaberajúca $\log w$ políčok. Na 1. páske je regex dĺžky $r$. Počet spätných referencií ($s$), lookaheadov ($l_a$) a lookbehindov ($l_b$) je najviac $r$, preto na 2. páske je $2+2s+l_a+l_b\leq 2r+2$ adries, čo je najviac $(2r+2)\log w = O(r \log w)$ zapísanej pamäte a je to viac ako na zvyšných páskach. Celkovo tak M zapíše najviac $O(r \log w) = O(r \log w) = O(n\log n)$ pamäte.
 \end{proof}
 
+Dôsledkom Savitchovej vety získavame:
+\begin{veta}
+$L(regex\#word) \in DSPACE(n^2 \log^2 n)$, kde $regex \in \le$. 
+\end{veta}
+
+A opäť pre niektoré triedy vieme dokázať lepší výsledok.
+
 \begin{veta}\label{dspace_nlog2n}
-$L(regex\#word) \in DSPACE(n \log^2 n)$, kde $regex \in \e$ a $n$ je dĺžka vstupu.
+$L(regex\#word) \in DSPACE(n \log^2 n)$, kde $regex \in \e$.
 \end{veta}
 \begin{proof}
-Pre účely dôkazu budeme označovať $w = |word|$ a $r = |regex|$.
+Pre účely dôkazu budeme označovať $w = |word|$ a $r = |regex|$, teda $w+r=n$.
 
 Zostrojíme deterministický Turingov stroj M, ktorý bude akceptovať jazyk $L(regex\#word)$ a na každej pracovnej páske použije najviac $O(n\log^2 n)$ políčok. M bude mať vstupnú read-only pásku a 2 pracovné pásky.
 
