@@ -233,7 +233,7 @@ Kvôli prehľadnosti popíšeme len hlavné kroky algoritmu.
 \item $\delta(\beta\blacktriangleright\backslash k \xi, a) = \lbrace (q_{najdi\_zaciatok(k)}, 0) \rbrace$ -- Najprv si zapamätáme aktuálnu pozíciu na vstupe (ďalej označovanú ako 'aktuálna pracovná pozícia'). Stav $q_{najdi\_zaciatok(k)}$ zodpovedá presunu hlavy na vstupnej páske na začiatočnú pozíciu podslova. Tu začneme algoritmus porovnávania podslov podľa definície spätnej referencie -- aké podslovo matchujú $k$-te zátvorky, také isté musí ležať aj na 'aktuálnej pracovnej pozícii'. Algoritmus bude porovnávať vždy postupne po jednom znaku od začiatočnej pozície (ľavá zátvorka) po (koniec - 1) (pravá zátvorka):
 
 \begin{verbatim}
-pokiaľ zaciatok != koniec: 
+pokiaľ začiatok != koniec: 
     zapamätaj si znak 
     začiatok++ 
     presuň hlavu na pozíciu 'aktuálna pracovná pozícia' 
@@ -411,14 +411,25 @@ $$\vdash (r_1\dots \nlookbehind r_{k}\dots r_{l} ) \lceil\dots r_n, w_1\dots \lc
 
 Prechody XV. a XVI. sa môžu zdať ťažkopádne, ťažko overiteľné. Nie je však šikovný spôsob ako krokmi znázorniť, že sa niečo nedá. Môžeme si to však predstaviť tak, že k vnútornému regexu máme zostrojený deterministický Turingov stroj, ktorý vie postupovať podľa krokov I. -- XIV. a má obrátenú akceptáciu. Teda ak by chcel akceptovať, zamietne, a ak sa zasekne/zamietne, tak akceptuje.
 
-Táto úvaha nezahŕňa vnorené negatívne lookaroundy. Potrebný Turingov stroj sa však dá zostrojiť aj tak. Keďže každý regex musí byť konečnej dĺžky, nejaký z tých negatívnych lookaroundov musí byť najviac vnorený -- bez vnorených negatívnych lookaroundov. Práve k nemu vieme zostrojiť vyššie popísaný Turingov stroj. Potom Turingov stroj pre negatívny lookaround, ktorý ho obaľuje bude spúšťať tento Turingov stroj a tak ďalej, vieme zostrojovať Turingove stroje zvnútra von. Pri výpočte sa potom budú navzájom volať zvonka smerom dnu.
+Táto úvaha nezahŕňa vnorené negatívne lookaroundy. Potrebný Turingov stroj sa však dá zostrojiť aj tak. Keďže každý regex musí byť konečnej dĺžky, nejaký z tých negatívnych lookaroundov musí byť najvnútornejší -- bez vnorených negatívnych look\-aroundov. Práve k nemu vieme zostrojiť vyššie popísaný Turingov stroj. Potom Turingov stroj pre negatívny lookaround, ktorý ho obaľuje bude spúšťať tento Turingov stroj a tak ďalej, vieme zostrojovať Turingove stroje zvnútra von. Pri výpočte sa potom budú navzájom volať zvonka smerom dnu.
 
 \begin{df}
 \textbf{Jazyk} generovaný regexom $\alpha$ je množina $$L(\alpha) = \lbrace w~|~platí ~ (\lceil \alpha, \lceil w)\vdash^* (\alpha\lceil, w\lceil) \rbrace$$
 \end{df}
 
-\textbf{Poznámka.}
+\textbf{Poznámka 1.}
 Postupnosť konfigurácií $(\lceil \alpha, \lceil w)\vdash^* (\alpha\lceil, w\lceil)$\footnote{Bez ohľadu na to, čo obsahujú vyššie poschodia symbolov vo $w$.} pre daný regex $\alpha$ a slovo $w$ nazývame \textbf{akceptačný výpočet}. Konfiguráciu $(\lceil \alpha,\lceil w)$ nazývame počiatočnou a $(\alpha\lceil,w\lceil)$ akceptačnou konfiguráciou.
+
+\textbf{Poznámka 2.}
+Definícia je písaná univerzálne pre všetky triedy regexov. Je zrejmé, že ak daná trieda neobsahuje nejakú operáciu, v akceptačných výpočtoch jej regexov sa nebudú nachádzať kroky výpočtu prislúchajúce tejto operácii. Triedy regexov preto budú používať iba tieto body z definície \ref{dfkonfig}:
+\begin{center}
+\begin{tabular}{r|l}
+$\re$ & I.--VII. \\
+$\e$ & I.--X. \\
+$\le$ & I.--XIV. \\
+$\nle$ & I.--XVI.
+\end{tabular}
+\end{center}
 
 \begin{lema}\label{dlzka_vypoctu_rw}
 Nech $\alpha \in \el$ a $w \in L(\alpha)$. Potom existuje akceptačný výpočet, ktorý má najviac $3\cdot|\alpha|\cdot|w|^2$ konfigurácií.
