@@ -281,18 +281,28 @@ Dôkaz tejto vety uvedieme neskôr. Najprv si zavedieme niekoľko nových pojmov
 Nasledujúce definície sa budú týkať zjednodušeného modelu regexov, v ktorom budú prípustné iba základné operácie zreťazenia, alternácie, Kleeneho uzáveru a zložité operácie -- spätné referencie, pozitívny a negatívny lookaround. Ďalej bude obsahovať špeciálne znaky pre ľubovoľný znak . , začiatok slova \textasciicircum~ a koniec slova \$. Inak povedané, nezaujímajú nás tie operácie, ktoré sú len kozmetickou úpravou regexov a dajú sa zapísať pomocou práve spomenutých operácií.
 
 \begin{df}
-\textbf{Konfiguráciou} regexu $\alpha = r_1 \dots r_n$ nazývame dvojicu $(r, w)$, kde $r \in (\lceil\alpha)\cup(\alpha\lceil)\cup(r_1 \dots \lceil r_i \dots r_n)$ $w \in \Gamma^*\lceil~ \Gamma^*$ a sybmol $\lceil$ ukazuje, kde sa nachádzame vo výpočte v regexe a v slove.
+\textbf{Konfiguráciou} regexu $\alpha = r_1 \dots r_n$ nazývame dvojicu $(r, w)$, kde $r \in (\lceil\alpha)\cup(\alpha\lceil)\cup(r_1 \dots \lceil r_i \dots r_n)$, $w \in \Gamma^*\lceil~ \Gamma^*$ a sybmol $\lceil$ ukazuje, kde sa nachádzame vo výpočte v regexe a v slove.
+
+$\Gamma$ je pracovná abeceda obsahujúca poschodové symboly s konečným počtom poschodí a slovo w obsahuje v najspodnejšom poschodí vstupné slovo pre regex $\alpha$.
 \end{df}
 
 \begin{df}
-Konfiguráciu $(r_1 \dots r_n \lceil, w_1\dots w_m \lceil)$ nazývame \textbf{akceptačná}.
+Konfiguráciu $(\lceil r_1 \dots r_n,\lceil w_1\dots w_m)$ nazývame \textbf{počiatočnou} konfiguráciou a $(r_1 \dots r_n \lceil, w_1\dots w_m \lceil)$ nazývame \textbf{akceptačnou}.
 \end{df}
+
+Teraz si zavedieme pojem indexovateľnosti zátvoriek. Od modelu so spätnými referenciami je zavedené číslovanie zátvoriek a potrebujeme odlíšiť, na ktoré zátvorky je možné sa odkazovať.
+
+Je zakázané odkazovať sa na operácie formy $(?\dots )$, preto ich ani nechceme a nebudeme brať do úvahy v poradí zátvoriek. Z týchto operácií sa v našom modeli nachádza iba pozitívny a negatívny lookaround. Je povolené odkazovať sa na zátvorky vnútri lookaroundu, takže sa vieme odvolať na podslovo, čo sa zhoduje s pozitívnou formou (ak lookaround považujeme za neindexovateľné zátvorky, stačí ho prepísať do formy $\lookahead (\dots ))$ a vieme sa referencovať na jeho obsah). Problém nastáva pri jeho negatívnej verzii -- podľa definície nesmie nájsť žiadnu zhodu, inak sa výpočet zastaví. Preto po akceptácii nedefinuje žiadne podslovo, na ktoré by sme sa mohli odvolať. To isté platí o ľubovoľných zátvorkách v jeho vnútri.
+
+Avšak počas výpočtu negatívny lookaround spätné referencie a indexovateľnosť zátvoriek využívať môže. Preto definícia bude závisieť od polohy ukazovateľa v regexe -- bude používať indukciu vzhľadom na počet negatívnych lookaroundov, v ktorých je vnorený.
 
 \begin{df}
 Zátvorka $($ v regexe $\alpha$ je \textbf{indexovateľná}, ak sa bezprostredne za ňou nenachádza metaznak ? a zároveň sa nenachádza vnútri negatívneho lookaroundu.
+
+Nech je ukazovateľ vnorený v 1 negatívnom lookarounde. Potom najprv posúdime vonkajší regex podľa  predošlého kritéria a potom rovnako posudzujeme každú zátvorku ( v regexe vnútri tohto negatívneho look\-aroundu, tak akokeby to bol hlavný regex.
+
+Predpokladajme, že vieme posúdiť indexovateľnosť zátvoriek, pokiaľ je ukazovateľ vnorený v $k-1$ negatívnych lookaroundoch a nech teraz ukazovateľ vnorený v $k$ negatívnych lookaroundoch. Indexovateľnosť zátvoriek posúdime podľa horeuvedeného kritéria akokeby bol najvnútornejší regex hlavný regex. Všetky ostatné zátvorky vo vonkajších negatívnych lookaroundoch máme posúdené.
 \end{df}
-Je zakázané odkazovať sa spätnými referenciami na operácie formy $(?\dots )$, preto ich ani nechceme a nebudeme brať do úvahy v poradí zátvoriek. Z týchto operácií sa v našom modeli nachádza iba pozitívny a negatívny lookaround. Je povolené odkazovať sa na zátvorky vnútri lookaroundu, takže sa vieme odvolať na podslovo, čo sa zhoduje s pozitívnou formou (ak lookaround považujeme za neindexovateľné zátvorky, stačí ho prepísať do formy $\lookahead (\dots ))$ a vieme sa referencovať na jeho obsah). Problém nastáva pri jeho negatívnej verzii -- podľa definície nesmie nájsť žiadnu zhodu, inak sa výpočet zastaví. Potom po akceptácii nedefinuje žiadne podslovo, na ktoré by sme sa mohli odvolať. To isté platí o ľubovoľných zátvorkách v jeho vnútri.
-\TODO ale na samotné matchovanie vnútri potrebuje aj spätné referencie
 
 \begin{df}
 Zátvorka $)$ v regexe $\alpha$ je \textbf{indexovateľná}, ak k nej prislúchajúca otváracia zátvorka je indexovateľná.
@@ -325,11 +335,11 @@ Pre $\alpha_1,\alpha_2,\beta_i\in\nle$ $i\in\lbrace 1,\dots,n\rbrace$. Je zrejm�
 Nech platí pre regexy obsahujúce $m-1$ alternácií, že tieto alternácie používajú iba alternovateľné regexy. Zoberme teraz regex $\alpha \in \nle$ obsahujúci $m$ alternácií. Opäť vieme $\alpha$ rozdeliť buď spôsobom 1. alebo 2. na validné regexy z $\nle$. Každý z $\beta_1,\dots,\beta_n,\alpha_1,\alpha_2$ obsahuje najviac $m-1$ alternácií, teda alternácie v týchto regexoch používajú iba alternovateľné regexy. Navyše je zrejmé, že aj regexy $\beta_1,\dots,\beta_n$ majú tvar alternovateľných regexov.
 \end{proof}
 
-Na základe definovania pojmu alternovateľnosti vieme jednoznačne určiť, ktoré regexy patria ku ktorej alternácii. Dôležité je, že to vieme naprogramovať do Turingovho stroja -- pre každú alternáciu bude skúmať, či je ohraničená zátvorkami alebo rozdeľuje celý regex na časti (teda či nastáva prípad 1. alebo 2. z dôkazu predchádzajúcej vety).
+Na základe definovania pojmu alternovateľnosti vieme jednoznačne určiť, ktoré regexy patria ku ktorej alternácii. Dôležité je, že to vieme naprogramovať do Turingovho stroja -- pre každú alternáciu bude skúmať, či je ohraničená zátvorkami alebo rozdeľuje celý regex na časti (teda či nastáva prípad 1. alebo 2. z dôkazu predchádzajúcej vety). Na základe pojmu indexovateľnosti zase vieme algoritmicky určiť, ktoré zátvorky sú indexovateľné, teda si pre ne potrebujeme zapamätať pomocnú informáciu.
 
-V nasledujúcej definícii kroku výpočtu budeme používať v konfiguráciách poschodové symboly. Informáciu o tom, aké písmenko na danej pozícii leží budeme potrebovať neustále -- tá bude aj súčasťou poschodovej varianty písmenka. Špeciálna informácia vo vyšších poschodiach bude patriť k spätným referenciám a lookaroundu. Už z definície spätných referencií vieme, že informácia o tom, aké podslovo predstavuje $\backslash k$ získame až počas výpočtu na konkrétnom slove. Referencia $\backslash k$ predstavuje posledné podslovo matchované $k$-tymi zátvorkami. Preto informácia o jeho pozícii musí byť súčasťou konfigurácie. Zároveň potrebujeme informáciu o každom lookaheade/lookbehinde -- a to pozíciu v slove, kde začal matchovanie, aby sme sa po jeho vykonaní mohli na túto pozíciu vrátiť. Opäť to je informácia, ktorú získame až pri výpočte na konkrétnom vstupe a preto si ju uchováme do poschodového symbolu.
+V nasledujúcej definícii kroku výpočtu budeme používať v konfiguráciách poschodové symboly. Informáciu o tom, aké písmenko na danej pozícii leží, budeme potrebovať neustále -- tá bude aj súčasťou poschodovej varianty písmenka. Špeciálna informácia vo vyšších poschodiach bude patriť k spätným referenciám a pozitívnemu lookaroundu. Už z definície spätných referencií vieme, že informácia o tom, aké podslovo predstavuje $\backslash k$ získame až počas výpočtu na konkrétnom slove. Referencia $\backslash k$ predstavuje posledné podslovo matchované $k$-tymi zátvorkami. Preto informácia o jeho pozícii musí byť súčasťou konfigurácie. Zároveň potrebujeme informáciu o každom lookaheade/look\-behinde -- a to pozíciu v slove, kde začal matchovanie, aby sme sa po jeho vykonaní mohli na túto pozíciu vrátiť. Opäť to je informácia, ktorú získame až pri výpočte na konkrétnom vstupe a preto si ju uchováme do poschodového symbolu.
 
-Každý regex má konečný počet operácií, preto aj poschodí v poschodových symboloch bude konečne veľa. Pre každú spätnú referenciu potrebujeme 2 miesta (začiatok a koniec podslova) a pre každý lookaround 1 miesto.
+Každý regex má konečný počet operácií, preto aj poschodí v poschodových symboloch bude konečne veľa. Pre každú dvojicu zátvoriek potrebujeme 2 miesta (začiatok a koniec podslova) a pre každý lookaround 1 miesto.
 
 Poschodové symboly sú veľmi prehľadné, čo sa týka zápisu konfigurácií. Z pohľadu výpočtu nejakého Turingovho stroja však môžu byť veľmi nepraktické. Pokiaľ nepoznáme regex dopredu, je to o to ťažšia interpretácia. Preto vo výpočtoch Turingovho stroja necháme vstup nedotknutý a informáciu pre jednotlivé operácie budeme reprezentovať vo forme adries ukazujúcich na konkrétnu pozíciu v slove.
 
