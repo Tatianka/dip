@@ -101,26 +101,13 @@ Niektoré operácie sa správajú ako znak -- $\left[~\right]$, [\textasciicircu
 \begin{center}
 \begin{tabular}{|c||c|c|c|c|}
 \hline
-priorita &najvyššia&<&<& najnižšia  \\
+priorita &najvyššia&&& najnižšia  \\
 \hline
 operácia & () & $*$ + ? $\lbrace \rbrace$ & zreťazenie & | \\ \hline
 \end{tabular}
 \end{center}
 
-Máme veľkú množinu operácií a budeme chcieť rozlišovať regexy používajúce rôzne operácie. Preto si zavedieme triedy regexov nad konkrétnymi množinami operácií. Regex z takejto triedy bude obsahovať iba operácie z povolenej množiny, v ľubovoľnom počte (stále však platí, že regex je konečnej dĺžky).
-
-Zároveň chceme pomenovať triedy jazykov nad jednotlivými triedami regexov.
-
-\begin{description}
-\item[$\re$] -- trieda regexov nad množinou operácií, pomocou ktorých vieme popísať iba regulárne jazyky. Množina operácií obsahuje všetky znaky a metaznaky bez zložitejších operácií.
-\item[$\e$] -- $\re$ so spätnými referenciami
-\item[$\le$] -- $\e$ s pozitívnym lookaroundom
-\item[$\nle$] -- $\le$ s negatívnym lookaroundom
-\item[$\rel$] -- trieda jazykov nad $\re$ ($= \R$)
-\item[$\el$] -- trieda jazykov nad $\e$
-\item[$\lel$] -- trieda jazykov nad $\le$
-\item[$\nlel$] -- trieda jazykov nad $\nle$
-\end{description}
+Máme veľkú množinu operácií a budeme chcieť rozlišovať regexy používajúce rôzne operácie. Preto si zavedieme triedy regexov nad konkrétnymi množinami operácií. Regex z takejto triedy bude obsahovať iba operácie z povolenej množiny, v ľubovoľnom počte (stále však platí, že regex je konečnej dĺžky). Množiny regexov $\re$, $\e$\footnote{E je od anglického \textit{extended}.}, $\le$, $\nle$ sa líšia o pridané operácie, triedy jazykov nad týmito množinami sú $\rel$, $\el$, $\lel$, $\nlel$. Definíciu množín a tried nájdete na strane s pojmami a skratkami.
 
 \section[Vlastnosti a sila]{Vlastnosti a sila moderných regulárnych výrazov}
 \label{usila}
