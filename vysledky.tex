@@ -292,7 +292,7 @@ Je zakázané odkazovať sa na operácie formy $(?\dots )$, preto ich ani nechce
 
 Avšak počas výpočtu negatívny lookaround spätné referencie a indexovateľnosť zátvoriek využívať môže. Preto definícia bude závisieť od polohy ukazovateľa v regexe (t.j. od stavu výpočtu) -- bude používať indukciu vzhľadom na počet negatívnych lookaroundov, v ktorých je vnorený.
 
-\begin{df}
+\begin{df}\label{indexovatelnost_(}
 Zátvorka $($ v regexe $\alpha$ je \textbf{indexovateľná}, ak sa bezprostredne za ňou nenachádza metaznak ? a zároveň sa nenachádza vnútri negatívneho lookaroundu.
 
 Nech je ukazovateľ vnorený v 1 negatívnom lookarounde. Potom najprv posúdime vonkajší regex podľa  predošlého kritéria a potom rovnako posudzujeme každú zátvorku ( v regexe vnútri tohto negatívneho look\-aroundu, tak akokeby to bol samostatný regex.
@@ -302,7 +302,7 @@ Nech je ukazovateľ vnorený v $k$ negatívnych lookaroundoch a predpokladajme, 
 
 Jednoducho povedané, indexujeme zátvorky hlavného regexu a regexov vo všetkých negatívnych lookaroundoch, v ktorých sme práve vnorení (vo výpočte).
 
-\begin{df}
+\begin{df}\label{indexovatelnost_)}
 Zátvorka $)$ v regexe $\alpha$ je \textbf{indexovateľná}, ak k nej prislúchajúca otváracia zátvorka je indexovateľná.
 \end{df}
 
@@ -634,7 +634,10 @@ Trieda regexov s hĺbkou vnorenia lookaroundov zhora ohraničenou konštantou $h
 Podľa lemy \ref{lema_hlbka_lookaroundov} je počet konfigurácií v akceptačnom výpočte najviac $O((rw)^h)$. Potom hĺbka rekurzie funkcie $TESTUJ$ je $\log((rw)^h) = h\log r + h\log w = O(\log r+\log w)$, čo je ten istý odhad ako v dôkaze vety \ref{dspace_nlog2n}.
 \end{proof}
 
-Teraz nasleduje sľúbený dôkaz vety \ref{dspace_log2n}.
+Teraz nasleduje sľúbený dôkaz vety \ref{dspace_log2n}. Použijeme dôkaz predošlej vety a využijeme to, že regex poznáme dopredu -- v takom prípade je jeho dĺžka konštantná, vieme počty jeho operácií a preto sa dá jeho konfigurácia ešte viac skrátiť tak, že adresy zaznačíme do niekoľkých stôp nad sebou, takže zaberá $O(\log n)$ priestoru. Vďaka konštantnej dĺžke regexu sa dá dĺžka akceptačného výpočtu odhadnúť polynómom od dĺžky vstupného slova.
+
+Oproti predošlej vete pribudli aj nové operácie, ktoré je treba zahrnúť do konštrukcie. Pre negatívny lookaround je nutné zistiť, či do neho dané podslovo nepatrí. To urobíme tak, že vezmeme jeho vnútorný regex a spustíme na ňom výpočet na ďalšej páske, akokeby toto bol náš vstupný regex. Jeho výpočet bude ohraničený na nejakom podslove vstupu a niekedy ho bude treba spúšťať viackrát pre rôzne podslová. Pokiaľ pre všetky prípady dostaneme odpoveď, že výpočet neexistuje, negatívny lookaround akceptuje. Treba si uvedomiť, že spúšťanie výpočtu negatívneho lookaroundu nie je úplne separované od zvyšku, nakoľko môže obsahovať spätné referencie odkazujúce sa mimo neho. Takisto môže nastať situácia, kedy sa nachádza niekoľko negatívnych lookaroundov v sebe. Potom je nutné dodržiavať pravidlá indexovateľnosti zátvoriek podľa definícií \ref{indexovatelnost_(} a \ref{indexovatelnost_)}. Tiež je treba správne určovať, ktoré podslová sú správnym vstupom a nedovoliť výpočtu prekročiť tieto hranice.
+
 \begin{proof}
 Nech $\alpha\in\nle$, $r=|\alpha|$. Ak $\alpha$ neobsahuje negatívny lookaround, tvrdenie triviálne vyplýva z vety \ref{le_dspace_log2n}. Nech teda $\alpha$ obsahuje aspoň 1 negatívny lookaround a označíme si $k$ ako najväčšiu hĺbku vnorenia negatívnych lookaroundov v regexe $\alpha$.
 
@@ -659,6 +662,8 @@ Hodnota $i$ je rovnaká ako v hlavnej vetve procedúry $TESTUJ$, pretože horné
 \item pre všetky prefixy od pozície $d_2$ -- To znamená, že T bude skúšať všetky akceptačné konfigurácie s hodnotami $b_2$ z množiny $\lbrace d_2, d_2+1,\dots,\lceil \log(n+1)\rceil\rbrace$.
 \item pre všetky možné ohodnotenia adries $b_{p+5},\dots,b_t$ -- Počas výpočtu sa tieto adresy môžu zmeniť a budú tak mať iné hodnoty ako v počiatočnej konfigurácii. T bude skúšať (tak ako v hlavnom volaní) hodnoty od začiatku po koniec slova, teda od $(d_2,\dots,d_2)$ do $(b_2,\dots,b_2)$ vrátane nedefinovaných hodnôt. Hodnota $b_2$ určuje koniec prefixu, teda aktuálny koniec slova.
 \end{itemize}
+Počas výpočtu ukazovateľ v slove (adresa $d_2$) a ani ostatné adresy nesmú prekročiť hranice podslova, ktoré je vstupom. Preto pri generovaní konfigurácie $C_3$ bude T kontrolovať, či všetky adresy sú väčšie alebo rovné adrese $d_2$ z konfigurácie $C_0$ a menšie alebo rovné adrese $d_2$ z konfigurácie $C_a$.
+
 Pokiaľ nejaké volanie vráti hodnotu \textbf{true}, potom netreba skúšať ďalšie možnosti a negatívny lookahead vráti okamžite \textbf{false}. Ak všetky volania vrátia \textbf{false}, potom odpoveď negatívneho lookaroundu je \textbf{true}. Po skončení sa všetky informácie z výpočtu zahodia, T iba overoval, či platí $C_1\vdash C_2$, preto ich už ďalej nepotrebuje.
 
 Pre negatívny lookbehind je algoritmus iný iba v tom, že treba skúšať sufixy namiesto prefixov. V takom prípade adresa $b_2$ z akceptačnej konfigurácie bude fixná na hodnote $d_2$ a $a_2$ z počiatočnej konfigurácie bude nadobúdať hodnoty $0-d_2$.
