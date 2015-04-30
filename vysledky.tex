@@ -515,7 +515,7 @@ Dôsledkom Savitchovej vety získavame:
 $L(regex\#word) \in DSPACE(n^2 \log^2 n)$, kde $regex \in \le$. 
 \end{veta}
 
-A opäť pre niektoré triedy vieme dokázať lepší výsledok.
+Opäť pre niektoré triedy vieme dokázať lepší výsledok. Upravíme dôkaz Savitchovej vety tak, aby používal kratšie konfigurácie -- namiesto konfigurácií Turingovho stroja použijeme konfigurácie z nového formalizmu, ktoré reprezentujú výpočet regexu na slove. Keďže regex aj slovo máme na vstupe, v skutočnosti nám stačí pamätať si v~oboch pracovné pozície, na to potrebujeme $O(\log r + \log w)$ políčok, a informáciu z poschodových symbolov -- tú si vieme tiež zaznamenať vo forme adries reprezentujúcich pozíciu v slove. Preto celá konfigurácia bude zaberať $O(r\log w)$ políčok. Z odhadov o dĺžke najkratšieho akceptačného výpočtu získame odhad na hĺbku rekurzie testovacej funkcie. Pokiaľ budeme mať zaručné, že dĺžka akceptačného výpočtu je najviac polynomiálna od dĺžky regexu a slova, budeme potrebovať dokopy $O(n\log^2 n)$ políčok.
 
 \begin{veta}\label{dspace_nlog2n}
 $L(regex\#word) \in DSPACE(n \log^2 n)$, kde $regex \in \e$.
