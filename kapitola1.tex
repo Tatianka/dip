@@ -26,7 +26,7 @@ Jazyk vyhovujúci regexu $\alpha$ je množina slov matchovaných týmto regexom.
 
 \subsection{Nové konštrukcie}
 
-Najprv si uvedieme konštrukcie, ktoré sú len ,,kozmetickou úpravou"" základných regulárnych výrazov. Všetky sa dajú zapísať pomocou základných operácií, ale nový zápis je stručnejší a prehľadnejší. Pre formálnejšiu definíciu odporúčame siahnuť po \cite{mojaBak}.
+Najprv si uvedieme konštrukcie, ktoré sú len ,,kozmetickou úpravou'' základných regulárnych výrazov. Všetky sa dajú zapísať pomocou základných operácií, ale nový zápis je stručnejší a prehľadnejší. Pre formálnejšiu definíciu starších aj novších operácií odporúčame siahnuť po \cite{mojaBak}.
 \begin{itemize}
 \item $+$ -- opakuj 1 alebo viackrát: $(\alpha)+=\alpha(\alpha)*$
 \item $\lbrace \rbrace$ -- zložené zátvorky sú používané ako $\{n,m\}$ (opakuj aspoň $n$ a najviac $m$-krát) a $\{n\}=\{n,n\}$ (opakuj $n$-krát)
@@ -86,10 +86,16 @@ Hľadá ako pozivíny lookbehind, ale akceptuje len ak neexistuje slovo z~jazyka
 \end{itemize}
 
 Pre posledné 2 operácie zostaneme pri ich anglických názvoch, pretože sú stručnejšie a zvučnejšie. Existuje pre ne aj spoločný názov \underline{lookaround}, takisto s prívlastkom pozitívny/negatívny, ak myslíme iba ich pozitívne/negatívne verzie. Bude našim zvykom ponechávať pozitívny lookaround/lookahead/lookbehind bez prívlastku. Pokiaľ budeme myslieť negatívnu verziu alebo to nebude z kontextu jasné, explicitne to napíšeme.
-
-Formálnejšia definícia zložitejších konštrukcií sa nachádza v \cite{mojaBak}.
 \\ \par
-Moderné regulárne výrazy sa skladajú z \textbf{konečného počtu} znakov, metaznakov a zložitejších operácií.
+\textbf{Moderné regulárne výrazy sa skladajú z \underline{konečného počtu} znakov, metaznakov a zložitejších operácií.}
+\\ \par
+Chceli by sme čitateľa upozorniť na kombinácie operácií a ich správanie, ktoré nemusia byť z modelu zrejmé:
+
+\textit{Spätné referencie a pozitívny lookaround} -- Je zakázané odkazovať sa na konštrukcie typu (?\dots), čo spĺňa lookaround. Avšak vnútri lookaroundu je regex, ktorého súčasťou môžu byť aj zátvorky. Tieto zátvorky sú číslované a je povolené sa na ne odkazovať.
+
+\textit{Spätné referencie a negatívny lookaround} -- Ak negatívny lookaround uspeje, on ani zátvorky v jeho vnútri nematchujú žiadne podslovo. Preto nemá zmysel sa na ne odkazovať a ani to nie je dovolené. Avšak pokiaľ sa nachádzame vo výpočte niekde v regexe vnútri negatívneho lookaroundu, ten má povolené používať spätné referencie, takže v~tomto momente je možné sa odkazovať na tieto vnútorné zátvorky a takisto je možné odkazovať sa na zátvorky mimo negatívneho lookaroundu, v regexe naľavo od neho (t.j. také, čo už matchovali). Všeobecne povedané pre niekoľko vnorených negatívnych lookaroundov: v danom momente výpočtu je možné odkazovať sa na všetky zátvorky hlavného regexu (nenachádza sa vnútri negatívneho lookaroundu) a všetky zátvorky obsiahnuté v negatívnych lookaroundoch, v ktorých sme vnorení (t.j. ktoré sú v~tomto momente výpočtu aktívne). Stále platí, že tieto zátvorky sa musia nachádzať v regexe naľavo od nás.
+
+\textit{Poz.,neg. lookaround a $*$} -- Je zakázané obaľovať samotný lookaround do zátvoriek (to reprezentuje iba prázdne slovo) a tiež nie je dovolené uplatňovať naň operáciu $*$ -- nemá to zmysel, pretože pokiaľ lookaround uspel, uspeje ľubovoľne veľa krát, lebo jeho výpočet sa bude spúšťať stále z toho istého miesta v slove. Môže však byť skonštruovaný regex, ktorý bude obsahovať lookaround (myslíme ľubovoľnú zo 4 operácií). Tento regex bude obalený zátvorkami, na ktoré je uplatnená operácia $*$. Predstavme si, že $*$ spôsobí niekoľko iterácií. Potom lookaround bude podľa definície spúšťaný každú iteráciu spolu s celým týmto regexom. Bez újmy na všeobecnosti, nech je to pozitívny lookahead. Teraz si predstavme, že obsahuje \$ tak, že zakaždým je nútený matchovať slovo až do~konca. Uvedomme si, že toto začína byť pomerne silnou podmienkou -- v každej iterácii pozitívny lookahead musí matchovať zvyšok slova na vstupe, teda nejaký jeho sufix. Takáto konštrukcia už je na predstavu pomerne náročná.
 
 \subsubsection{Priotity operácií}
 
