@@ -114,6 +114,8 @@ Trieda nad regexami s pozitívnym a negatívnym lookaroundom je $\R$.
 \end{dosledok}
 \begin{proof}
 Lookaround nevyžiera písmenká, takže neovplyvňuje zvyšok regexu, teda ani iné lookaroundy. Musíme vyriešiť iba prípad, kedy je do seba vnorených niekoľko pozitívnych a negatívnych lookaroundov. V takejto situácii vieme postupovať z najvnútornejšieho regexu s lookaroundom s hĺbou vnorenia 1. Jeho jazyk je regulárny a teda ho vieme prepísať na regex z $\re$. Takýmto spôsobom vieme zvnútra von prepisovať regex, až skončíme s regexom z $\re$, teda matchujúcim regulárny jazyk.
+
+Formálne by sme to zapísali ako indukciu vzhľadom na hĺbku vnorenia lookaroundov v regexe (bez ohľadu na to, či sú pozitívne alebo negatívne).
 \end{proof}
 
 \section{Vlastnosti triedy $\lel$}
