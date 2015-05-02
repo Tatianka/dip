@@ -113,7 +113,9 @@ Podobne ako v dôkaze vety \ref{lookaround+Regex} je netriviálna iba kombináci
 Trieda nad regexami s pozitívnym a negatívnym lookaroundom je $\R$.
 \end{dosledok}
 \begin{proof}
-Lookaround nevyžiera písmenká, takže neovplyvňuje zvyšok regexu, teda ani iné lookaroundy. Musíme vyriešiť iba prípad, kedy je do seba vnorených niekoľko pozitívnych a negatívnych lookaroundov. V takejto situácii vieme postupovať z najvnútornejšieho regexu s lookaroundom s hĺbou vnorenia 1. Jeho jazyk je regulárny a teda ho vieme prepísať na regex z $\re$. Takýmto spôsobom vieme zvnútra von prepisovať regex, až skončíme s regexom z $\re$, teda matchujúcim regulárny jazyk.
+Výpočet lookaroundu je z pohľadu vonkajšieho regexu nebadateľný, pretože žiadne písmenká zo vstupu mu nie sú priradené. Pre túto vlastnosť lookaround ne\-ov\-plyv\-ňu\-je zvyšok regexu, teda ani iné lookaroundy. Výnimkou je situácia, kedy look\-around nenájde podslovo zo svojho jazyka resp. negatívna verzia podslovo nájde a zastaví celý výpočet. Avšak pokiaľ akceptuje, zvyšok regexu pokračuje vo výpočte akokeby tam nebol.
+
+Musíme vyriešiť iba prípad, kedy je do seba vnorených niekoľko pozitívnych a negatívnych lookaroundov. V takejto situácii vieme postupovať z najvnútornejšieho regexu s lookaroundom s hĺbou vnorenia 1. Jeho jazyk je regulárny a teda ho vieme prepísať na regex z $\re$. Takýmto spôsobom vieme zvnútra von prepisovať regex, až skončíme s regexom z $\re$, teda matchujúcim regulárny jazyk.
 
 Formálne by sme to zapísali ako indukciu vzhľadom na hĺbku vnorenia lookaroundov v regexe (bez ohľadu na to, či sú pozitívne alebo negatívne).
 \end{proof}
@@ -473,7 +475,7 @@ Majme triedu regexov takú, že funkcia $f(r)$ určuje ich maximálnu hĺbku vno
 \begin{proof}
 Dokážeme si to matematickou indukciou vzhľadom na hĺbku vnorenia lookaroundov $h$.
 
-Báza indukcie: Nech $h=1$. V regexe je $k\leq r$ lookaroundov, ktoré vnútri nemajú žiaden lookaround. Keďže lookaround nevyžiera písmenká, môžeme ho brať ako samostatný regex, ktorý v najhoršom prípade matchuje celé $w$. Vnútri každého lookaroundu je regex z $\e$, pre ktorý podľa lemy \ref{dlzka_vypoctu_rw} existuje akceptačný výpočet s najviac $3rw^2$ konfiguráciami. Mimo všetkých lookaroundov je tiež regex, pre ktorý platí táto lema. V najhoršom prípade sa lookaround nachádza vnútri regexu, ktorý je iterovaný $*$ a môže byť spustený najviac $w$-krát. Každý lookaround teda pridá najviac $3rw^3$ konfigurácií. Spolu $3rw^2+r\cdot 3rw^3 = O(r^2w^3) = O(rw^2(rw)^1)$. 
+Báza indukcie: Nech $h=1$. V regexe je $k\leq r$ lookaroundov, ktoré vnútri nemajú žiaden lookaround. Keďže lookaroundu nie sú priradené žiadne písmenká zo vstupu, môžeme ho brať ako samostatný regex, ktorý v najhoršom prípade matchuje celé $w$. Vnútri každého lookaroundu je regex z $\e$, pre ktorý podľa lemy \ref{dlzka_vypoctu_rw} existuje akceptačný výpočet s najviac $3rw^2$ konfiguráciami. Mimo všetkých lookaroundov je tiež regex, pre ktorý platí táto lema. V najhoršom prípade sa lookaround nachádza vnútri regexu, ktorý je iterovaný $*$ a môže byť spustený najviac $w$-krát. Každý lookaround teda pridá najviac $3rw^3$ konfigurácií. Spolu $3rw^2+r\cdot 3rw^3 = O(r^2w^3) = O(rw^2(rw)^1)$. 
 
 Indukčný krok: Nech tvrdenie platí pre $h-1$, ukážeme, že platí pre $h$. Regex obsahuje $k\leq r$ lookaroundov s hĺbkou vnorenia najviac $h$. Zoberme si ľubovoľný z týchto lookaroundov. Jeho vnútorný regex obsahuje lookaroundy s hĺbkou vnorenia najviac $h-1$ a podľa indukčného predpokladu takýto regex pridáva $O(rw^2(rw)^{h-1})$ konfigurácií. Pozrime sa teraz na celý regex. Keď ignorujeme lookaroundy, akcetačný výpočet má $3rw^2$ konfigurácií. Každý lookaround pridá $O(rw^2(rw)^{h-1})$ konfigurácií a môže byť spustený najviac $w$-krát, pokiaľ sa nachádza v poli pôsobnosti nejakej $*$. Lookaroundov je najviac $r$, teda dohromady má akceptačný výpočet najviac $3rw^2+rw\cdot O(rw^2(rw)^{h-1}) = O(rw^2(rw)^h)$ konfigurácií, čo sme chceli dokázať.
 \end{proof}
