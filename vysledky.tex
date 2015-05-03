@@ -152,29 +152,9 @@ Preto sme v $\alpha$ prepísali všetky lookaheady. V $\alpha '$ každý z nich 
 
 \section[Chomského hierarchia]{Zaradenie do Chomského hierarchie}
 
-\begin{veta}\label{lelcf}
-$\lel$ je neporovnateľná s $ \L_{CF}$.
-\end{veta}
-\begin{proof}
-Majme jazyk $L=\lbrace ww~|~w \in \lbrace a,b \rbrace^* \rbrace \in \L_{CF}$, nech $ \alpha = ([ab]*)\backslash 1 $.
-Zrejme $ L(\alpha) = L $, teda $L\in \lel$.
-
-Ukážeme, že jazyk $L=\lbrace a^nb^n~|~n \in \N \rbrace \notin \lel$. Sporom, nech $L \in \lel$. 
-
-Vieme, že $L \notin \el$, preto musí obsahovať nejaký lookaround. Zároveň z $L \notin \R$ a vety \ref{lookaround+Regex} vyplýva, že musí obsahovať aj spätné referencie.
-
-Kam sa môžu spätné referencie odkazovať a kam ich potom môžeme umiestniť?
-\begin{list}{$\bullet$}{Nech výraz, na ktorý ukazujú, vyrobí nejaké:}
-\item $a^i$, potom $\backslash k$ musí byť v prvej polovičke slova (medzi $a$, inak by pokazil štruktúru slova), takže nevplýva na časť s $b$ a teda sa zaobídeme bez nich.
-\item $a^ib^j$, potom $\backslash k$ by mohol byť len medzi $b$, ale tam by pokazil štruktúru slova $a^nb^n$
-\item $b^j$, potom $\backslash k$ môže byť len medzi $b$ a je tam zbytočný z rovnakých dôvodov, aké má prípad $a^i$
-\end{list}
-Vidíme, že so spätnými referenciami dosiahneme rovnaký výsledok ako bez nich, čo je spor s tým, že sa vo výraze musia nachádzať (bez nich vieme urobiť len regulárny jazyk).
-\end{proof}
-
-\begin{dosledok}
-$\lel \subsetneq \L_{CS}$
-\end{dosledok}
+Známa je doteraz takáto hierarchia:
+$$ \R = \rel \subsetneq \el \subsetneq \lel \subseteq \L_{CS} $$
+a triviálne platí $\lel \subseteq \nlel $. Teraz k tomu doplníme niekoľko výsledkov.
 
 \begin{veta}
 $ \nlel \subseteq \L_{CS} $
@@ -201,6 +181,30 @@ V indukcii sme neriešili prípad, kedy $\alpha$ obsahuje viacero negatívnych l
 
 Ďalej netreba zabúdať, že vnútri negatívneho lookaroundu sa môžeme odvolávať na všetky zátvorky naľavo od nás nachádzajúce sa buď v hlavnom regexe alebo v aktívnom negatívnom lookarounde (t.j. takom, ktorého otváracia zátvorka je naľavo a zatváracia zátvorka sa nachádza napravo od nás).
 \end{proof}
+
+\begin{veta}\label{lelcf}
+$\lel$ je neporovnateľná s $ \L_{CF}$.
+\end{veta}
+\begin{proof}
+Majme jazyk $L=\lbrace ww~|~w \in \lbrace a,b \rbrace^* \rbrace \in \L_{CF}$, nech $ \alpha = ([ab]*)\backslash 1 $.
+Zrejme $ L(\alpha) = L $, teda $L\in \lel$.
+
+Ukážeme, že jazyk $L=\lbrace a^nb^n~|~n \in \N \rbrace \notin \lel$. Sporom, nech $L \in \lel$. 
+
+Vieme, že $L \notin \el$, preto musí obsahovať nejaký lookaround. Zároveň z $L \notin \R$ a vety \ref{lookaround+Regex} vyplýva, že musí obsahovať aj spätné referencie.
+
+Kam sa môžu spätné referencie odkazovať a kam ich potom môžeme umiestniť?
+\begin{list}{$\bullet$}{Nech výraz, na ktorý ukazujú, vyrobí nejaké:}
+\item $a^i$, potom $\backslash k$ musí byť v prvej polovičke slova (medzi $a$, inak by pokazil štruktúru slova), takže nevplýva na časť s $b$ a teda sa zaobídeme bez nich.
+\item $a^ib^j$, potom $\backslash k$ by mohol byť len medzi $b$, ale tam by pokazil štruktúru slova $a^nb^n$
+\item $b^j$, potom $\backslash k$ môže byť len medzi $b$ a je tam zbytočný z rovnakých dôvodov, aké má prípad $a^i$
+\end{list}
+Vidíme, že so spätnými referenciami dosiahneme rovnaký výsledok ako bez nich, čo je spor s tým, že sa vo výraze musia nachádzať (bez nich vieme urobiť len regulárny jazyk).
+\end{proof}
+
+\begin{dosledok}
+$\lel \subsetneq \L_{CS}$
+\end{dosledok}
 
 \TODO check \& rewrite
 \begin{veta}
