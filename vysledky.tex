@@ -186,27 +186,38 @@ V indukcii sme neriešili prípad, kedy $\alpha$ obsahuje viacero negatívnych l
 $\lel$ je neporovnateľná s $ \L_{CF}$.
 \end{veta}
 \begin{proof}
-Majme jazyk $L=\lbrace ww~|~w \in \lbrace a,b \rbrace^* \rbrace \in \L_{CF}$, nech $ \alpha = ([ab]*)\backslash 1 $.
-Zrejme $ L(\alpha) = L $, teda $L\in \lel$.
+Majme jazyk $L_{ww}=\lbrace ww~|~w \in \lbrace a,b \rbrace^* \rbrace \in \L_{CF}$, nech $ \alpha = ([ab]*)\backslash 1 $.
+Zrejme $ L(\alpha) = L_{ww} $, teda $L_{ww}\in \lel$.
 
-Ukážeme, že jazyk $L=\lbrace a^nb^n~|~n \in \N \rbrace \notin \lel$. Sporom, nech $L \in \lel$. 
+Ukážeme, že jazyk $L=\lbrace a^nb^n~|~n \in \N \rbrace \notin \lel$. Sporom, nech $L \in \lel$, teda existuje regex $\beta\in\le$ taký, že $L(\beta) = L$. 
 
-Vieme, že $L \notin \el$, preto musí obsahovať nejaký lookaround. Zároveň z $L \notin \R$ a vety \ref{lookaround+Regex} vyplýva, že musí obsahovať aj spätné referencie.
+Vieme, že $L \notin \el$, preto $\beta$ musí obsahovať nejaký lookaround. Zároveň z $L \notin \R$ a vety \ref{lookaround+Regex} vyplýva, že musí obsahovať aj spätné referencie.
 
-Kam sa môžu spätné referencie odkazovať a kam ich potom môžeme umiestniť?
-\begin{list}{$\bullet$}{Nech výraz, na ktorý ukazujú, vyrobí nejaké:}
-\item $a^i$, potom $\backslash k$ musí byť v prvej polovičke slova (medzi $a$, inak by pokazil štruktúru slova), takže nevplýva na časť s $b$ a teda sa zaobídeme bez nich.
-\item $a^ib^j$, potom $\backslash k$ by mohol byť len medzi $b$, ale tam by pokazil štruktúru slova $a^nb^n$
-\item $b^j$, potom $\backslash k$ môže byť len medzi $b$ a je tam zbytočný z rovnakých dôvodov, aké má prípad $a^i$
+Kam sa môžu spätné referencie odkazovať a kam ich potom môžeme umiestniť? 
+\begin{list}{$\bullet$}{Nech výraz, na ktorý sa odkazujú, vie vyrobiť:}
+\item $a^i$. Môžu nastať 4 prípady:
+\begin{list}{$\circ$}{}
+\item $k$-te zátvorky aj $\backslash k$ sa nachádzajú v hlavnom regexe:
+
+Potom zátvorky s referenciami matchujú dokopy $a^{2i}$. Na to, aby sme vedeli matchovať celé $\lbrace a \rbrace^*$, by sme k tomu navyše museli vedieť matchovať $a^h$, kde $h\in\lbrace 0,\dots, i-1\rbrace$, čo v konečnom dôsledku pre $i$ idúce do nekonečna znamená vedieť $\lbrace a\rbrace^*$ a potom spätné referencie nepotrebujeme. 
+\item $k$-te zátvorky sú v hlavnom regexe a $\backslash k$ je v lookarounde
+
+\item $k$-te zátvorky sú v lookarounde a $\backslash k$ je v hlavnom regexe
+
+\item $k$-te zátvorky aj $\backslash k$ sú v lookaroundoch
 \end{list}
-Vidíme, že so spätnými referenciami dosiahneme rovnaký výsledok ako bez nich, čo je spor s tým, že sa vo výraze musia nachádzať (bez nich vieme urobiť len regulárny jazyk).
+V každom z prípadov platí, že zátvorky aj spätné referencie musia matchovať v prvej polovici slova (časť $a^n$) a neprenášajú žiadnu informáciu do časti $b^n$.
+\item $a^ib^j$. Potom možné prípady umiestnenia sú len 2., 3., a 4. z predošlej možnosti, pretože zátvorky a k nim prislúchajúce referencie musia matchovať to isté pod\-slo\-vo vstupu, inak by nesúhlasili so štruktúrou slova jazyka $L$.
+\item $b^j$. Toto je analogický prípad k $a^i$.
+\end{list}
+Spätné referencie buď matchujú v rovnakej polovičke slova ako k nim prislúchajúce zátvorky alebo musia matchovať to isté podslovo. Z toho vidíme, že jediná informácia, ktorú prenášajú je počet $a$ respektíve $b$ v danej polovičke a táto informácia v tej polovičke aj zostáva. Keďže nič neprenášajú do druhej polovice slova a podľa vety \ref{lookaround+Regex} vieme, že so zvyšnými operáciami jazyk L nevieme matchovať, regex $\beta$ neexistuje.
+
 \end{proof}
 
 \begin{dosledok}
 $\lel \subsetneq \L_{CS}$
 \end{dosledok}
 
-\TODO check \& rewrite
 \begin{veta}
 $\nlel$ je neporovnateľná s $ \L_{CF}$.
 \end{veta}
