@@ -229,10 +229,19 @@ Z vety \ref{lelcf} vidíme, že výraz musí obsahovať negatívny lookaround. Z
 
 \begin{dosledok}
 $\nlel \subsetneq \L_{CS}$
-\end{dosledok}
+\end{dosledok} 
 
-\TODO obkec o tom, že doplniť substitúciu nestačí
-\TODO ?? a čo keby sme pridali aj reverz ?? (pozn. obe operácie len upravujú spätné referencie)
+Posledné výsledky s jazykom $L=\lbrace a^nb^n~|~n\in\N\rbrace$ nabádajú na myšlienky o tom, či je možné doplniť model moderných regulárnych výrazov tak, aby zvládal tento a možno ďalšie bezkontextové jazyky. Pre tento konkrétny jazyk by stačilo, aby bolo možné modifikovať podslovo reprezentované spätnými referenciami nejakým homomorfizmom -- napríklad udať v špeciálnej štruktúre tesne pred referenciou, ako treba ktoré písmenká zameniť.
+Podľa Chomského--Schützenbergerovej vety potrebujeme homomorfizmus, prienik s regulárnym jazykom a Dyckov jazyk a porom vieme vygenerovať všetky bezkontextové jazyky. Prienik máme vďaka pozitívnemu lookaroundu, regulárne jazyky vieme zapísať všetky a homomorfizmus pridáme. Zostáva overiť, či nový model vie zapísať Dyckov jazyk, čo zostáva otvoreným problémom.
+
+Idea zavedenia homomorfizmu už bola skúmaná na menšom modeli -- triede $\e$. Zaoberá sa tým napríklad článok \cite{plus_homomorfizmus}.
+\\ \par
+Po výsledkoch v tejto kapitole vyzerá hierarchia nasledovne:
+$$\R \subsetneq \el \subsetneq \lel \subseteq \nlel \subsetneq \L_{CS}$$
+Vzťah medzi triedami $\le$ a $\nle$ je otvoreným problémom. Naša hypotéza je, že $\lel$ je vlastnou podmnožinou $\nlel$. Dobrým kandidátom na dôkaz by mohol byť jazyk $L=\lbrace a^p~|~p\emph{ je prvočíslo}\rbrace$, ku ktorému existuje regex $\gamma\in\nle$:
+\begin{equation*}
+\gamma = \nlookahead (aaa*)\backslash 1 (\backslash 1)*\$ )
+\end{equation*}
 
 \section{Priestorová zložitosť}
 
