@@ -74,14 +74,14 @@ Nesmie nájsť slovo z jazyka $L(\alpha)$. Postup je ako pri lookaheade, ale kon
 
 Hľadá slovo z $L(\alpha)$ naľavo od aktuálneho miesta v slove (musí končiť na susediacom políčku vľavo od aktuálnej pozície v slove). Opäť nie je určená hranica slova, môže začínať kdekoľvek, ak nie je vynútený začiatok slova znakom $\textasciicircum$. 
 
-Ak by sme chceli deterministický algoritmus, vyzeral by nasledovne: od teraz do konca vykonávania lookbehindu bude na pozícii, na ktorej v slove sme, špeciálny znak pre koniec slova -- endmarker (nie \$). Najprv vyskúšame 1 susedný symbol naľavo, či patrí do jazyka. Ak nie skúsime čítať o jeden znak viac (2 symboly naľavo), keď neuspejeme, opäť posunieme pomyselný začiatok slova doľava. Ak akceptujeme, môže to byť len na endmarkeri. Ak sme neakceptovali a začiatok slova nejde viac posunúť, zamietneme.
+Ak by sme chceli deterministický algoritmus, vyzeral by nasledovne: odteraz do konca vykonávania lookbehindu bude na pozícii, na ktorej v slove sme, špeciálny znak pre koniec slova -- endmarker (nie \$). Najprv vyskúšame 1 susedný symbol naľavo, či patrí do jazyka. Ak nie, skúsime čítať o jeden znak viac (2 symboly naľavo), keď neuspejeme, opäť posunieme pomyselný začiatok slova doľava. Ak akceptujeme, môže to byť len na endmarkeri. Ak sme neakceptovali a začiatok slova nejde viac posunúť, zamietneme.
 
 Opäť to bude dobre vidieť na príklade, výpočet regexu $\alpha\lookbehind\beta)\gamma$ na slove $w$. Podslová $\alpha,\beta$ končia na tej istej pozícii.
 
 $$w = \underbrace{x_1\dots x_{i-1} \overbrace{x_i \dots x_j}^\beta}_\alpha \underbrace{x_{j+1} \dots x_n }_\gamma$$
 \item \textbf{negatívny} ozn. $\nlookbehind\alpha)$, kde $\alpha$ je nejaký moderný regulárny výraz 
 
-Hľadá ako pozivíny lookbehind, ale akceptuje len ak neexistuje slovo z~jazyka $L(\alpha)$ vyskytujúce sa naľavo od aktuálnej pozície.
+Hľadá ako pozitívny lookbehind, ale akceptuje, len ak neexistuje slovo z~jazyka $L(\alpha)$ vyskytujúce sa naľavo od aktuálnej pozície.
 \end{itemize}
 \end{itemize}
 
@@ -95,7 +95,7 @@ Chceli by sme čitateľa upozorniť na kombinácie operácií a ich správanie, 
 
 \textit{Spätné referencie a negatívny lookaround} -- Ak negatívny lookaround uspeje, on ani zátvorky v jeho vnútri nematchujú žiadne podslovo. Preto nemá zmysel sa na ne odkazovať a ani to nie je dovolené. Avšak pokiaľ sa nachádzame vo výpočte niekde v regexe vnútri negatívneho lookaroundu, ten má povolené používať spätné referencie, takže v~tomto momente je možné sa odkazovať na tieto vnútorné zátvorky a takisto je možné odkazovať sa na zátvorky mimo negatívneho lookaroundu, v regexe naľavo od neho (t.j. také, čo už matchovali). Všeobecne povedané pre niekoľko vnorených negatívnych lookaroundov: v danom momente výpočtu je možné odkazovať sa na všetky zátvorky hlavného regexu (nenachádza sa vnútri negatívneho lookaroundu) a všetky zátvorky obsiahnuté v negatívnych lookaroundoch, v ktorých sme vnorení (t.j. ktoré sú v~tomto momente výpočtu aktívne). Stále platí, že tieto zátvorky sa musia nachádzať v regexe naľavo od nás.
 
-\textit{Poz.,neg. lookaround a $*$} -- Je zakázané obaľovať samotný lookaround do zátvoriek (to reprezentuje iba prázdne slovo) a tiež nie je dovolené uplatňovať naň operáciu $*$ -- nemá to zmysel, pretože pokiaľ lookaround uspel, uspeje ľubovoľne veľa krát, lebo jeho výpočet sa bude spúšťať stále z toho istého miesta v slove. Môže však byť skonštruovaný regex, ktorý bude obsahovať lookaround (myslíme ľubovoľnú zo 4 operácií). Tento regex bude obalený zátvorkami, na ktoré je uplatnená operácia $*$. Predstavme si, že $*$ spôsobí niekoľko iterácií. Potom lookaround bude podľa definície spúšťaný každú iteráciu spolu s celým týmto regexom. Bez újmy na všeobecnosti, nech je to pozitívny lookahead. Teraz si predstavme, že obsahuje \$ tak, že zakaždým je nútený matchovať slovo až do~konca. Uvedomme si, že toto začína byť pomerne silnou podmienkou -- v každej iterácii pozitívny lookahead musí matchovať zvyšok slova na vstupe, teda nejaký jeho sufix. Takáto konštrukcia už je na predstavu pomerne náročná.
+\textit{Poz.,neg. lookaround a $*$} -- Je zakázané obaľovať samotný lookaround do zátvoriek (to reprezentuje iba prázdne slovo) a tiež nie je dovolené uplatňovať naň operáciu $*$ -- nemá to zmysel, pretože pokiaľ lookaround uspel, uspeje ľubovoľne veľakrát, lebo jeho výpočet sa bude spúšťať stále z toho istého miesta v slove. Môže však byť skonštruovaný regex, ktorý bude obsahovať lookaround (myslíme ľubovoľnú zo 4 operácií). Tento regex bude obalený zátvorkami, na ktoré je uplatnená operácia $*$. Predstavme si, že $*$ spôsobí niekoľko iterácií. Potom lookaround bude podľa definície spúšťaný každú iteráciu spolu s celým týmto regexom. Bez újmy na všeobecnosti, nech je to pozitívny lookahead. Teraz si predstavme, že obsahuje \$ tak, že zakaždým je nútený matchovať slovo až do~konca. Uvedomme si, že toto začína byť pomerne silnou podmienkou -- v každej iterácii pozitívny lookahead musí matchovať zvyšok slova na vstupe, teda nejaký jeho sufix. Takáto konštrukcia už je na predstavu pomerne náročná.
 
 \subsubsection{Priotity operácií}
 
@@ -126,7 +126,7 @@ Trieda $\R$ je uzavretá na pozitívny lookaround.
 \end{veta}
 Trieda $\L_{CS}$ je tiež uzavretá a trieda $\L_{CF}$ nie je.
 
-Základnou vlastnosťou pozitívneho lookaheadu je, že do jeho vnútra sa oplatí dávať iba prefixové jazyky. Vyplýva to z toho, že lookahead matchuje tak skoro, ako len môže -- akonáhle nájde prvé slovo patriace do jeho jazyka, zvyšok vstupu už neskúma. A tým pádom môžeme z daného jazyka vyhodiť všetky slová, ktorých prefix doň tiež patrí. Analogicky to platí pre pozitívny lookbehind a sufixové jazyky. Dôsledkom je, že pokiaľ jazyk v pozitívnom lookarounde obsahuje prázdne slovo ($\varepsilon$), potom je možné celý lookaround vynechať. Dôvodom je to, že lookaround ,,nevyužiera písmenká'', preto si môže zakaždým zvoliť matchovať $\varepsilon$ a automaticky vždy akceptovať.
+Základnou vlastnosťou pozitívneho lookaheadu je, že do jeho vnútra sa oplatí dávať iba prefixové jazyky. Vyplýva to z toho, že lookahead matchuje tak skoro, ako len môže -- akonáhle nájde prvé slovo patriace do jeho jazyka, zvyšok vstupu už neskúma. A tým pádom môžeme z daného jazyka vyhodiť všetky slová, ktorých prefix doň tiež patrí. Analogicky to platí pre pozitívny lookbehind a sufixové jazyky. Dôsledkom je, že pokiaľ jazyk v pozitívnom lookarounde obsahuje prázdne slovo ($\varepsilon$), potom je možné celý lookaround vynechať. Dôvodom je to, že lookaround neberie zo vstupu písmenká, preto si môže zakaždým zvoliť matchovať $\varepsilon$ a automaticky vždy akceptovať.
 
 Prejdime teraz k regexom. Pridaním pozitívneho lookaroundu k triede $\re$ získame nový model. Avšak silnejší ako $\re$ nie je:
 \begin{veta} \textbf{\emph{\cite[Veta 2.2.10.]{mojaBak}}}\label{lookaround+Regex} \ \par
@@ -208,7 +208,7 @@ potom vravíme, že E je \textbf{neredukovateľný} (irreducible).
 
 Môžeme vyvodiť, že minimálny regulárny výraz pre daný jazyk bude nezmenšiteľný a neredukovateľný, naopak to však nemusí platiť. S takýmto základom možno dokázať napríklad tvrdenie: Ak E je neredukovateľný a $|alph(E)| \geq 1$, potom $|E| \leq 11|alph(E)| - 4$.
 
-Iné spôsoby na ohraničenie regulárnych výrazov poskytujú nasledujúce pozorovanie a veta.
+Iné spôsoby na ohraničenie regulárnych výrazov poskytuje nasledujúce pozorovanie a veta.
 
 \begin{veta}[Proposition 6 \cite{newResults}]
 Nech L je neprázdny regulárny jazyk.
@@ -228,4 +228,4 @@ Rozbehnutých je viacero oblastí skúmania. Regulárne výrazy sú zaujímavé 
 
 Ďalšia oblasť zahŕňa operácie nad regulárnymi výrazmi. Jeden z problémov je napríklad vzťah popisnej zložitosti výrazu pre jazyk $L$ a $L^c$. Pre automaty existuje konštrukcia pre vyrobenie komplementu jazyka. Avšak pre komplementárny regulárny výraz to nie je také jednoznačné.
 
-Ako poslednú by sme spomenuli problém najkratšieho slova nešpecifikovaného re\-gu\-lár\-nym výrazom. Predpokladajme regulárny výraz $E$, kde $|alph(E)|=n$ nad konečnou abecedou $\Sigma$, pričom $L(E)\neq \Sigma^*$. Aké dlhé môže byť najkratšie slovo NEšpecifikované výrazom $E$? Najzaujímavejší výsledok je pre výraz s $|alph(E)| = 75n + 361$, kde naj\-krat\-šie nešpecifikované slovo je dĺžky $3(2 n - 1)(n + 1) + 3$.
+Ako posledný by sme spomenuli problém najkratšieho slova nešpecifikovaného re\-gu\-lár\-nym výrazom. Predpokladajme regulárny výraz $E$, kde $|alph(E)|=n$ nad konečnou abecedou $\Sigma$, pričom $L(E)\neq \Sigma^*$. Aké dlhé môže byť najkratšie slovo NEšpecifikované výrazom $E$? Najzaujímavejší výsledok je pre výraz s $|alph(E)| = 75n + 361$, kde naj\-krat\-šie nešpecifikované slovo je dĺžky $3(2 n - 1)(n + 1) + 3$.

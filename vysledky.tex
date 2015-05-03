@@ -19,7 +19,7 @@ Jazyky $ L_{1},L_{2},L_{3} $ sú regulárne, teda existujú DKA $ A_{i} = (K_{i}
 
 Konštrukcia bude veľmi podobná ako v obdobnej vete pre pozitívny lookahead v \cite{mojaBak}, keď si správne predpripravíme $A_2$. Negatívny lookahead sa snaží za každú cenu nájsť slovo z $L_2$ (t.j. uspieť s $A_2$) a ak sa mu to nepodarí, akceptuje. Preto musíme zaručiť, že sa $A_2$ buď zasekne alebo prejde až do konca slova\footnote{Ak sa zasekne, slovo z $L_2$ tam určite nebude, lebo $A_2$ je deterministický a teda neexistuje akceptačný výpočet. Ak sa nezasekne, nevieme povedať o tom slove nič, pokiaľ ho neprejdeme celé.}. Akonáhle $A_2$ dosiahne akceptačný stav, negatívny lookahead musí zamietnuť. 
 
-Ďaľšie pozorovanie nám hovorí, že negatívny lookahead akceptuje vždy nejaké slovo z komplementu $L_2$. Ale komplement vzhľadom na akú abecedu? V skutočnosti nekonečnú -- ľubovoľný znak, ktorý nepatrí do $\Sigma_2$, znamená zaseknutie $A_2$, t.j. akceptáciu. Ak sa na to pozrieme z väčšej ďiaľky, uvidíme $L_3$, s ktorým robíme prenik. $A_3$ musí dočítať slovo do konca a na úplne neznámom znaku sa zasekne, takže z pohľadu výslednej akceptácie slova nevadí, ak by kvôli tomu znaku zamietol už negatívny lookahead. Preto stačí urobiť komplement vzhľadom na $\Sigma_2 \cup \Sigma_3$. 
+Ďaľšie pozorovanie nám hovorí, že negatívny lookahead akceptuje vždy nejaké slovo z komplementu $L_2$. Ale komplement vzhľadom na akú abecedu? V skutočnosti nekonečnú -- ľubovoľný znak, ktorý nepatrí do $\Sigma_2$, znamená zaseknutie $A_2$, t.j. akceptáciu. Ak sa na to pozrieme z väčšej ďiaľky, uvidíme $L_3$, s ktorým robíme prienik. $A_3$ musí dočítať slovo do konca a na úplne neznámom znaku sa zasekne, takže z pohľadu výslednej akceptácie slova nevadí, ak by kvôli tomu znaku zamietol už negatívny lookahead. Preto stačí urobiť komplement vzhľadom na $\Sigma_2 \cup \Sigma_3$. 
 
 Poďme upravovať $A_2$, začneme vytváraním komplementu. Ak $\Sigma_3 \setminus \Sigma_2 \neq\emptyset$\footnote{Inak $A_2'=A_2$.}, potom vytvoríme $A_2'= (K_2',\Sigma_2',\delta_2',q_{0},F_2')$ tak, že pridáme nové znaky $\Sigma_2'=\Sigma_2 \cup \Sigma_3$,  jeden nový stav\footnote{Pre každý nový stav predpokladáme, že je jedinečný -- t.j. žiaden taký v množine stavov ešte nie je.} $K_2'=K_2 \cup \lbrace q_{ZLE} \rbrace$ a prechody na nové znaky z každého stavu: 
 \begin{alignat*}{3}
@@ -48,7 +48,7 @@ Je dobré poznamenať, že $A_2''$ je takmer deterministický. Chýbajú mu prec
 Tvrdíme $ L_1\lookahead L(A_2''))L_3 =L_1\nlookahead L_2)L_3= L $.
 Keďže $A_1$ a $A_3$ sa pri oboch výpočtoch budú chovať rovnako (sú nezávislé od lookaheadov), nebudeme sa nimi pri dôkaze zaoberať.
 
-$\subseteq :$ Máme akceptačný výpočet pre $A_2''$ na nejakom vstupe. Akceptačný stav mohol byť buď z množiny $K_2'\setminus H$, to znamená, že pôvodný automat $A_2'$ sa dostal do stavu, z ktorého už nemohol nijak akceptovať\footnote{Sem spadá aj prípad, keď $A_2$ prečítal neznámy znak a zasekol sa -- $A_2'$ zostáva až do konca slova v stave $q_{ZLE}$.}. V takom prípade $\nlookahead L_2)$ akceptuje. V druhom prípade mohol $A_2''$ akceptovať pomocou $q_A$, čo znamená, že dočítal slovo do konca (pretože z $q_A$ sa na ľubovoľný znak dostaneme do $q_Z$, v ktorom sa $A_2''$ zasekne a nebude akceptovať) a ani raz sa nedostal do akceptačného stavu automatu $A_2'$. Teda aj $\nlookahead L_2)$ akceptuje.
+$\subseteq :$ Máme akceptačný výpočet pre $A_2''$ na nejakom vstupe. Akceptačný stav mohol byť buď z množiny $K_2'\setminus H$, to znamená, že pôvodný automat $A_2'$ sa dostal do stavu, z ktorého už nemohol nijako akceptovať\footnote{Sem spadá aj prípad, keď $A_2$ prečítal neznámy znak a zasekol sa -- $A_2'$ zostáva až do konca slova v stave $q_{ZLE}$.}. V takom prípade $\nlookahead L_2)$ akceptuje. V druhom prípade mohol $A_2''$ akceptovať pomocou $q_A$, čo znamená, že dočítal slovo do konca (pretože z $q_A$ sa na ľubovoľný znak dostaneme do $q_Z$, v ktorom sa $A_2''$ zasekne a nebude akceptovať) a ani raz sa nedostal do akceptačného stavu automatu $A_2'$. Teda aj $\nlookahead L_2)$ akceptuje.
 
 $\supseteq :$ Nech $\nlookahead L_2)$ akceptoval, t.j. na $A_2$ bol vykonaný nejaký neakceptujúci výpočet ($A_2$ je deterministický, takže existuje práve jeden pre každé slovo). Rovnakú postupnosť stavov bude mať aj výpočet na $A_2''$ (automat obsahuje všetky stavy aj $\delta$-funkciu z $A_2$, počiatočný stav je ten istý). Ak sa $A_2$ zasekol na neznámom znaku, v $A_2'$ na ten znak pridáme prechod do stavu $q_{ZLE}$ a v ňom zostaneme až do konca slova. Keďže $q_{ZLE}$ nie je v $A_2'$ akceptačný a nedá sa z neho na žiadne slovo dostať do ľubovoľného akceptačného stavu, $q_{ZLE} \in K_2' \setminus H$ a teda $q_{ZLE} \in F_2''$. Ak sa $A_2$ nezasekol, tak dočítal slovo do konca a v postupnosti stavov jeho výpočtu sa nenachádza žiaden z množiny $F_2$. V tom prípade $A_2''$ z posledného stavu prejde na $\varepsilon$ do $q_A$ (2. riadok definície $\delta_2''$) a akceptuje.
 
@@ -113,7 +113,7 @@ Podobne ako v dôkaze vety \ref{lookaround+Regex} je netriviálna iba kombináci
 Trieda nad regexami s pozitívnym a negatívnym lookaroundom je $\R$.
 \end{dosledok}
 \begin{proof}
-Výpočet lookaroundu je z pohľadu vonkajšieho regexu nebadateľný, pretože žiadne písmenká zo vstupu mu nie sú priradené. Pre túto vlastnosť lookaround ne\-ov\-plyv\-ňu\-je zvyšok regexu, teda ani iné lookaroundy. Výnimkou je situácia, kedy look\-around nenájde podslovo zo svojho jazyka resp. negatívna verzia podslovo nájde a zastaví celý výpočet. Avšak pokiaľ akceptuje, zvyšok regexu pokračuje vo výpočte akokeby tam nebol.
+Výpočet lookaroundu je z pohľadu vonkajšieho regexu nebadateľný, pretože žiadne písmenká zo vstupu mu nie sú priradené. Pre túto vlastnosť lookaround ne\-ov\-plyv\-ňu\-je zvyšok regexu, teda ani iné lookaroundy. Výnimkou je situácia, kedy look\-around nenájde podslovo zo svojho jazyka resp. negatívna verzia podslovo nájde a zastaví celý výpočet. Avšak pokiaľ akceptuje, zvyšok regexu pokračuje vo výpočte ako keby tam nebol.
 
 Musíme vyriešiť iba prípad, kedy je do seba vnorených niekoľko pozitívnych a negatívnych lookaroundov. V takejto situácii vieme postupovať z najvnútornejšieho regexu s lookaroundom s hĺbou vnorenia 1. Jeho jazyk je regulárny a teda ho vieme prepísať na regex z $\re$. Takýmto spôsobom vieme zvnútra von prepisovať regex, až skončíme s regexom z $\re$, teda matchujúcim regulárny jazyk.
 
@@ -124,7 +124,7 @@ Formálne by sme to zapísali ako indukciu vzhľadom na hĺbku vnorenia lookarou
 
 Pridanie nových operácií medzi regulárne výrazy síce pridalo na sile modelu, ale mohlo pokaziť jeho uzáverové vlastnosti. Vieme, že regulárne jazyky sú uzavreté na všetky možné operácie, ktoré poznáme. Posilnenie modelu spätnými referenciami a následne lookaroundom však ohrozilo uzavretosť na základnú operáciu regulárnych výrazov -- zreťazenie. Pokiaľ zreťazíme 2 regexy obsahujúce lookahead alebo lookbehind, tieto operácie začnú zasahovať do slova z vedľajšieho jazyka. Ak by išlo o zreťazenie so zarážkou (napr. $\alpha\#\beta$), na koniec každého lookaheadu v $\alpha$ by stačilo pripojiť $.*\#$, prípadne znak \$ nahradiť znakom \#. Podobne by sme v regexe $\beta$ pridali na začiatok každého lookbehindu $\#.*$ prípadne by sme vymenili znak $\textasciicircum$  znakom \#. Potom by tieto operácie zostali ,,skrotené'' na území slova, ktoré danému regexu prislúcha.
 
-Otázka nastáva, ako to spraviť, keď zarážku k dispozícii nemáme. Odpoveďou je nasledujúca veta.
+Otázkou zostáva, ako to spraviť, keď zarážku k dispozícii nemáme. Odpoveďou je nasledujúca veta.
 
 \begin{veta}
 Trieda $\lel$ je uzavretá na zreťazenie.
@@ -175,7 +175,7 @@ Teraz zostrojíme T zo strojov A a B. T bude simulovať A, pokým nenarazí na n
 
 \textit{Indukčný krok:} Predpokladajme, že vieme zostrojiť LBA pre regex s $k-1$ vnorenými negatívnymi lookaroundmi. Zostrojíme LBA T pre $\alpha$ s hĺbkou vnorenia negatívnych lookaroundov $k$.
 
-Zoberme negatívny lookaround, ktorý nie je obsiahnutý v žiadnom negatívnom lookarounde (teda je ten vonkajší). Ten obsahuje negatívne lookaroundy s hĺbkou vnorenia najviac $k-1$. Podľa indukčného predpokladu vieme zostrojiť LBA C pre celý regex vnútri tohto negatívneho lookaroundu. K takému vieme zostrojiť ekvivalentný deterministický LBA C'. Tento stroj je analogický k B'' v bází indukcie, preto z neho rovnakým spôsobom vyrobíme B. Pre vonkajší regex zostrojíme LBA A ignorujúci negatívny lookaround ako v bázi indukcie. Na koniec spojíme rovnakým spôsobom A a B do LBA T, ktorý sme chceli zostrojiť.
+Zoberme negatívny lookaround, ktorý nie je obsiahnutý v žiadnom negatívnom look\-arounde (teda je ten vonkajší). Ten obsahuje negatívne lookaroundy s hĺbkou vnorenia najviac $k-1$. Podľa indukčného predpokladu vieme zostrojiť LBA C pre celý regex vnútri tohto negatívneho lookaroundu. K takému vieme zostrojiť ekvivalentný deterministický LBA C'. Tento stroj je analogický k B'' v bází indukcie, preto z neho rovnakým spôsobom vyrobíme B. Pre vonkajší regex zostrojíme LBA A ignorujúci negatívny lookaround ako v báze indukcie. Na koniec spojíme rovnakým spôsobom A a B do LBA T, ktorý sme chceli zostrojiť.
 \\ \par
 V indukcii sme neriešili prípad, kedy $\alpha$ obsahuje viacero negatívnych lookaroundov, ktoré navyše môžu mať rôzne hĺbky vnorenia. Platí, že akonáhle táto operácia akceptuje, jej výpočet je zahodený a celkový výpočet sa vracia na to isté miesto na vstupe, teda negatívny lookaround výpočet buď celkovo zastaví alebo ho nijako neovplyvňuje. Z toho vyplýva, že viaceré výskyty môžeme riešiť samostatne, a to konštrukciou, ktorú sme naznačili v indukcii.
 
@@ -251,7 +251,7 @@ $\lel \subseteq NSPACE(\log n)$, kde $n>1$ je veľkosť vstupu.
 \begin{proof}
 Ukážeme, že ľubovoľný $\alpha \in \le$ vieme simulovať nedeterministickým Turingovým strojom s jednou vstupnou read-only páskou a jednou pracovnou páskou, na ktorej použijeme maximálne logaritmický počet políčok.
 
-Celý regex si budeme uchovávať v stavoch\footnote{Každý regex je má z definície konečnú dĺžku, to znamená aj konečný počet stavov.} a pridáme doňho špeciálny znak $ \blacktriangleright $, ktorým si budeme ukazovať, kam sme sa v regexe dopracovali -- bude to akýsi smerník na znak, ktorý práve spracovávame. Teda stav bude vyzerať takto: $q_{\beta\blacktriangleright\xi}$ (pre lepšiu čitateľnosť budeme uvádzať namiesto stavu iba jeho dolný index: $\beta\blacktriangleright\xi$), kde $\beta\xi = \alpha$, časť $\beta$ sme už namatchovali na vstup a práve sa chystáme pokračovať časťou $\xi$. Ak $\blacktriangleright$ ukazuje na znak, porovnáme ho s aktuálnym znakom na vstupnej páske. Pokiaľ sa nezhodujú, výpočet sa zasekne. Pri zhode pokračujeme až kým sa nám neminie vstup aj regex. Ak $\blacktriangleright$ ukazuje na metaznak, potom zistíme o akú operáciu ide (ak má viac znakov, treba na to niekoľko stavov -- napr. lookahead) a začneme ju vykonávať.
+Celý regex si budeme uchovávať v stavoch\footnote{Každý regex má podľa definície konečnú dĺžku, to znamená aj konečný počet stavov.} a pridáme doňho špeciálny znak $ \blacktriangleright $, ktorým si budeme ukazovať, kam sme sa v regexe dopracovali -- bude to akýsi smerník na znak, ktorý práve spracovávame. Teda stav bude vyzerať takto: $q_{\beta\blacktriangleright\xi}$ (pre lepšiu čitateľnosť budeme uvádzať namiesto stavu iba jeho dolný index: $\beta\blacktriangleright\xi$), kde $\beta\xi = \alpha$, časť $\beta$ sme už namatchovali na vstup a práve sa chystáme pokračovať časťou $\xi$. Ak $\blacktriangleright$ ukazuje na znak, porovnáme ho s aktuálnym znakom na vstupnej páske. Pokiaľ sa nezhodujú, výpočet sa zasekne. Pri zhode pokračujeme až kým sa nám neminie vstup aj regex. Ak $\blacktriangleright$ ukazuje na metaznak, potom zistíme o akú operáciu ide (ak má viac znakov, treba na to niekoľko stavov -- napr. lookahead) a začneme ju vykonávať.
 
 Pracovná páska bude slúžiť ako úložisko smerníkov na rôzne miesta vstupnej pásky. Bude mať formát $A_1\#A_2\#\dots\#A_m$. Adresu nejakého políčka na vstupnej páske vieme zapísať v priestore $\log n$. Ak ukážeme, že $m$ je konštanta, potom $m.\log n \in O(\log n)$. Adresa $A_1$ bude rezervovaná pre prvý adresný slot na aktuálnu pozíciu hlavy na vstupe, nech si ju máme odkiaľ okopírovať, keď treba. Adresy budeme využívať pri operáciách spätná referencia, lookahead a lookbehind.
 
@@ -285,7 +285,7 @@ presuň hlavu na pozíciu 'aktuálna pracovná pozícia'
 \end{verbatim}
 Vidíme, že si dočasne potrebujeme zapamätať adresu 'aktuálna pracovná pozícia', ale po skončení tohto algoritmu ju môžeme zahodiť.
 
-Po úspešnom zbehutí algoritmu TS prejde do stavu $\beta\backslash k \blacktriangleright\xi$.
+Po úspešnom zbehnutí algoritmu TS prejde do stavu $\beta\backslash k \blacktriangleright\xi$.
 \item $\delta(\beta\blacktriangleright\lookahead\gamma)\xi, a) = \lbrace (\blacktriangleright\gamma, 0) \rbrace$ -- Lookahead: zapamätáme si aktuálnu pozíciu na vstupe do zodpovedajúceho slotu na pracovnej páske a spracujeme regex vnútri lookaheadu. Ak uspejeme, presunieme hlavu na vstupnej páske naspäť na zapamätanú pozíciu a pokračujeme v regexe ďalej: $\delta(\gamma\blacktriangleright, a) = \lbrace (\beta\lookahead\gamma)\blacktriangleright\xi, 0) \rbrace $.
 \item $\delta(\beta\blacktriangleright\lookbehind\gamma)\xi, a) = \lbrace (doľava\_ \gamma, 0) \rbrace$
 -- Lookbehind: zapamätáme si aktuálnu pozíciu na vstupe do zodpovedajúceho slotu na pracovnej páske. Toto je zarážka pre lookbehind -- svoje matchovanie musí skončiť na tejto pozícii tak, že tento znak už neberie do úvahy. Nedeterministicky sa vrátime o niekoľko políčok doľava ($\delta(doľava\_ \gamma, a) = \lbrace(doľava\_ \gamma,-1), (\blacktriangleright\gamma, 0)\rbrace$)  a skúsime matchovať regex v lookbehinde. Keď uspejeme, porovnáme aktuálnu pozíciu so zarážkou. Ak sú rôzne, Turingov stroj sa zasekne. Inak pokračuje vo výpočte ďalej, od tejto pozície: $\delta(\gamma\blacktriangleright\_overene, a) = \lbrace (\beta\lookbehind \gamma)\blacktriangleright\xi, 0) \rbrace $.
@@ -295,7 +295,7 @@ Po úspešnom zbehutí algoritmu TS prejde do stavu $\beta\backslash k \blacktri
 
 Pre \textbf{spätné referencie} potrebujeme vždy 2 adresy -- na začiatok a koniec. Ak sa náhodou budú $k$-te zátvorky opakovať, napr. kvôli Kleeneho $*$, v definícii stojí, že sa vždy berie do úvahy posledný výskyt, takže adresy prepisujeme pri každom opakovaní. V prípade, že sa $k$-te zátvorky nachádzajú vnútri lookaheadu/lookbehindu, tiež máme pre ne rezervované 2 sloty. Algoritmus porovnávania potrebuje 1 ďalšiu adresu -- aktuálnu pracovnú pozíciu. Po jeho dokončení adresu môžeme vymazať (tzn. v ďalšom výpočte prepísať niečím iným).
 
-V prípade \textbf{lookaheadu a lookbehindu} spotrebujeme len 1 adresný slot a to tiež len dočasne -- dokým sa operácia celá nevykoná. Potom je nám tento údaj zbytočný. Tieto operácie však môžu byť vnorené a tak v najhoršom prípade zaberú $p.\log n$ priestoru, ak ich počet je $p$.
+V prípade \textbf{lookaheadu a lookbehindu} spotrebujeme len 1 adresný slot a to tiež len dočasne -- dokiaľ sa operácia celá nevykoná. Potom je nám tento údaj zbytočný. Tieto operácie však môžu byť vnorené a tak v najhoršom prípade zaberú $p.\log n$ priestoru, ak ich počet je $p$.
 
 Ak máme 1 rezervovaný slot pre aktuálnu adresu, $s$ spätných referencií, $l_a$ lookaheadov a $l_b$ lookbehindov, najviac spotrebujeme $(1+2s+1+l_a+l_b)\log n$ priestoru. Celý regex $\alpha$ je konečne dlhý, teda počet operácií je konečný. Čo znamená, že $m=1+2s+1+l_a+l_b$ je konštanta a to sme chceli dokázať.
 
@@ -322,7 +322,7 @@ Dôkaz tejto vety uvedieme neskôr. Najprv si zavedieme niekoľko nových pojmov
 Nasledujúce definície sa budú týkať zjednodušeného modelu regexov, v ktorom budú prípustné iba základné operácie zreťazenia, alternácie, Kleeneho uzáveru a zložité operácie -- spätné referencie, pozitívny a negatívny lookaround. Ďalej bude obsahovať špeciálne znaky pre ľubovoľný znak . , začiatok slova \textasciicircum~ a koniec slova \$. Inak povedané, nezaujímajú nás tie operácie, ktoré sú len kozmetickou úpravou regexov a dajú sa zapísať pomocou práve spomenutých operácií.
 
 \begin{df}\label{def_konfiguracia}
-\textbf{Konfiguráciou} regexu $\alpha = r_1 \dots r_n$ nazývame dvojicu $(r, w)$, kde $r \in (\lceil\alpha)\cup(\alpha\lceil)\cup(r_1 \dots \lceil r_i \dots r_n)$, $w \in \Gamma^*\lceil~ \Gamma^*$ a sybmol $\lceil$ ukazuje, kde sa nachádzame vo výpočte v regexe a v slove.
+\textbf{Konfiguráciou} regexu $\alpha = r_1 \dots r_n$ nazývame dvojicu $(r, w)$, kde $r \in (\lceil\alpha)\cup(\alpha\lceil)\cup(r_1 \dots \lceil r_i \dots r_n)$, $w \in \Gamma^*\lceil~ \Gamma^*$ a symbol $\lceil$ ukazuje, kde sa nachádzame vo výpočte v regexe a v slove.
 
 $\Gamma$ je pracovná abeceda obsahujúca poschodové symboly s konečným počtom poschodí a slovo w v najspodnejšom poschodí obsahuje vstupné slovo pre regex $\alpha$.
 \end{df}
@@ -336,9 +336,9 @@ Avšak počas výpočtu negatívny lookaround spätné referencie a indexovateľ
 \begin{df}\label{indexovatelnost_(}
 Zátvorka $($ v regexe $\alpha$ je \textbf{indexovateľná}, ak sa bezprostredne za ňou nenachádza metaznak ? a zároveň sa nenachádza vnútri negatívneho lookaroundu.
 
-Nech je ukazovateľ vnorený v 1 negatívnom lookarounde. Potom najprv posúdime vonkajší regex podľa  predošlého kritéria a potom rovnako posudzujeme každú zátvorku ( v regexe vnútri tohto negatívneho look\-aroundu, tak akokeby to bol samostatný regex.
+Nech je ukazovateľ vnorený v 1 negatívnom lookarounde. Potom najprv posúdime vonkajší regex podľa  predošlého kritéria a potom rovnako posudzujeme každú zátvorku ( v regexe vnútri tohto negatívneho look\-aroundu, tak ako keby to bol samostatný regex.
 
-Nech je ukazovateľ vnorený v $k$ negatívnych lookaroundoch a predpokladajme, že máme určené indexovateľné zátvorky v $k-1$ vonkajších negatívnych lookaroundoch. Indexovateľnosť zátvoriek najvnútornejšieho negatívneho lookaroundu posúdime podľa horeuvedeného kritéria akokeby bol jeho regex samostatným regexom.
+Nech je ukazovateľ vnorený v $k$ negatívnych lookaroundoch a predpokladajme, že máme určené indexovateľné zátvorky v $k-1$ vonkajších negatívnych lookaroundoch. Indexovateľnosť zátvoriek najvnútornejšieho negatívneho lookaroundu posúdime podľa horeuvedeného kritéria ako keby bol jeho regex samostatným regexom.
 \end{df}
 
 Jednoducho povedané, indexujeme zátvorky hlavného regexu a regexov vo všetkých negatívnych lookaroundoch, v ktorých sme práve vnorení (vo výpočte).
@@ -348,7 +348,7 @@ Zátvorka $)$ v regexe $\alpha$ je \textbf{indexovateľná}, ak k nej prislúcha
 \end{df}
 
 \begin{df}
-Nech regex $\alpha \in \nle$ obsahuje alternáciu. Potom jeho podslovo $\beta$ nazývame \textbf{alternovateľným}, ak je validným regexom z $\nle$ a zároveň zodpovedá jednej z týchto podmienok:
+Nech regex $\alpha \in \nle$ obsahuje alternáciu. Potom jeho pod\-slovo $\beta$ nazývame \textbf{alternovateľným}, ak je validným regexom z $\nle$ a zároveň zodpovedá jednej z týchto podmienok:
 \begin{enumerate}[(i)]
 \item \textbf{prvý} \\ $\beta$ je prefix $\alpha$ alebo znak pred $\beta$ je ( \footnote{Z podmienky hovoriacej, že $\beta$ musí byť validný regex, vyplýva, že prislúchajúca ) sa bude nachádzať až za metaznakom |} 
 \\ $\wedge$ za $\beta$ nasleduje metaznak |
@@ -386,7 +386,7 @@ Poschodové symboly sú veľmi prehľadné, čo sa týka zápisu konfigurácií.
 \textbf{Krok výpočtu} je relácia $\vdash$ na konfiguráciách definovaná nasledovne (najprv napíšeme, čoho sa jednotlivé kroky týkajú a potom uvedieme formálny zápis):
 
 \begin{enumerate}[I.]
-\item Prečítame rovnaké písmeko v regexe aj v slove.
+\item Prečítame rovnaké písmenko v regexe aj v slove.
 \item V regexe ukazujeme na (, ktorá je $k$-ta indexovateľná. V slove si zaznačíme do poschodového symbolu, že na tejto pozícii začína podslovo ku $k$-tym zátvorkám. V regexe prejdeme za zátvorku.
 \\ Pokiaľ za $k$-tymi zátvorkami nasleduje $*$, môžeme sa rozhodnúť ich celé preskočiť (až za $*$). V tom prípade si na poschodový symbol zaznačíme začiatok aj koniec podslova.
 \item V regexe ukazujeme na ), ktorá je $k$-ta indexovateľná. V slove si zaznačíme do poschodového symbolu, že znak na tejto pozícii už do podslova ku $k$-tym zátvorkám nepatrí. V regexe prejdeme za zátvorku.
@@ -426,7 +426,7 @@ $$\vdash (r_1 \dots \alpha_1 | \alpha_2 | \dots | \alpha_{A-1} | \alpha_A \lceil
 $$(1) \vdash (r_1\dots a *\lceil\dots r_n, w_1\dots\lceil w_j\dots w_m)$$
 $$(2) \vdash (r_1\dots \lceil a *\dots r_n, w_1\dots\lceil w_j\dots w_m)$$
 \item $\displaystyle{(r_1 \dots \mathop{(}_kr_i \dots r_l\mathop{)}_k\lceil * \dots r_n, w_1 \dots \mathop{w_a}^k \dots \mathop{w_b}^{k'} \dots \lceil w_j \dots w_m)\footnotemark}$
-\footnotetext{Podľa definície spätných referencií platí podsledné podslovo nájdené regexom v $k$-tych zátvorkách. Pri tejto pracovnej pozícii v regexe je zrejmé, že nejde o prvý prechod cez tieto zátvorky a teda existuje také $a,b$, že $k$ je v slove nad $w_a$ a $k'$ nad $w_b$. Ak nastane prechod (2), pôvodné horné indexy $k, k'$ miznú a pridáva sa $k$ nad $w_j$.}
+\footnotetext{Podľa definície spätných referencií platí posledné podslovo nájdené regexom v $k$-tych zátvorkách. Pri tejto pracovnej pozícii v regexe je zrejmé, že nejde o prvý prechod cez tieto zátvorky a teda existuje také $a,b$, že $k$ je v slove nad $w_a$ a $k'$ nad $w_b$. Ak nastane prechod (2), pôvodné horné indexy $k, k'$ miznú a pridáva sa $k$ nad $w_j$.}
 $$(1) ~\vdash(r_1 \dots \mathop{(}_kr_i \dots r_l\mathop{)}_k *\lceil \dots r_n, w_1 \dots \mathop{w_a}^k \dots \mathop{w_b}^{k'} \dots \lceil w_j \dots w_m)$$
 $$(2) ~\vdash(r_1 \dots \mathop{(}_k\lceil r_i \dots r_l\mathop{)}_k * \dots r_n, w_1 \dots w_a \dots w_b \dots \lceil \mathop{w_j}^k \dots w_m)$$
 \item $\displaystyle{(r_1 \dots \lceil \backslash k \dots r_n,w_1\dots\mathop{w_a}^k\dots\mathop{w_b}^{k'}\dots \lceil w_j\dots w_m)}$
@@ -556,7 +556,7 @@ Dôsledkom Savitchovej vety získavame:
 $L(regex\#word) \in DSPACE(n^2 \log^2 n)$, kde $regex \in \le$. 
 \end{veta}
 
-Opäť pre niektoré triedy vieme dokázať lepší výsledok. Upravíme dôkaz Savitchovej vety tak, aby používal kratšie konfigurácie -- namiesto konfigurácií Turingovho stroja použijeme konfigurácie z nového formalizmu, ktoré reprezentujú výpočet regexu na slove. Keďže regex aj slovo máme na vstupe, v skutočnosti nám stačí pamätať si v~oboch pracovné pozície, na to potrebujeme $O(\log r + \log w)$ políčok, a informáciu z poschodových symbolov -- tú si vieme tiež zaznamenať vo forme adries reprezentujúcich pozíciu v slove. Preto celá konfigurácia bude zaberať $O(r\log w)$ políčok. Z odhadov o dĺžke najkratšieho akceptačného výpočtu získame odhad na hĺbku rekurzie testovacej funkcie. Pokiaľ budeme mať zaručné, že dĺžka akceptačného výpočtu je najviac polynomiálna od dĺžky regexu a slova, budeme potrebovať dokopy $O(n\log^2 n)$ políčok.
+Opäť pre niektoré triedy vieme dokázať lepší výsledok. Upravíme dôkaz Savitchovej vety tak, aby používal kratšie konfigurácie -- namiesto konfigurácií Turingovho stroja použijeme konfigurácie z nového formalizmu, ktoré reprezentujú výpočet regexu na slove. Keďže regex aj slovo máme na vstupe, v skutočnosti nám stačí pamätať si v~oboch pracovné pozície, na to potrebujeme $O(\log r + \log w)$ políčok, a informáciu z poschodových symbolov -- tú si vieme tiež zaznamenať vo forme adries reprezentujúcich pozíciu v slove. Preto celá konfigurácia bude zaberať $O(r\log w)$ políčok. Z odhadov o dĺžke naj\-krat\-šie\-ho akceptačného výpočtu získame odhad na hĺbku rekurzie testovacej funkcie. Pokiaľ budeme mať zaručené, že dĺžka akceptačného výpočtu je najviac polynomiálna od dĺžky regexu a slova, budeme potrebovať dokopy $O(n\log^2 n)$ políčok.
 
 \begin{veta}\label{dspace_nlog2n}
 $L(regex\#word) \in DSPACE(n \log^2 n)$, kde $regex \in \e$.
@@ -656,7 +656,7 @@ Počet zátvoriek, lookaheadov a lookbehindov je v regexe dokopy najviac $r$, te
 
 Jeden záznam procedúry $TESTUJ$ obsahuje 3 konfigurácie a číslo $i$, čo spolu zaberá $\log 3+\log r + 2\log w + 3\log r + 6\log w + 6r\log w = O(r\log w) = O(n\log n)$ priestoru.
 
-Počet záznamov na zásobníku závisí od hĺbky rekurzie. Keďže začíname na hodnote $i=3rw^2$ a pri každom volaní je $i$ zmenšené na polovicu, hĺbka vnorenia bude $\log(3rw^2)=O(\log n^3) = O(3\log n) = O(\log n)$.
+Počet záznamov v zásobníku závisí od hĺbky rekurzie. Keďže začíname na hodnote $i=3rw^2$ a pri každom volaní je $i$ zmenšené na polovicu, hĺbka vnorenia bude $\log(3rw^2)=O(\log n^3) = O(3\log n) = O(\log n)$.
 
 Celkovo M na zásobníkovej páske zapíše $O(\log n)\cdot O(n\log n) = O(n\log^2 n)$ priestoru.
 \end{proof}
@@ -677,7 +677,7 @@ Podľa lemy \ref{lema_hlbka_lookaroundov} je počet konfigurácií v akceptačno
 
 Teraz nasleduje sľúbený dôkaz vety \ref{dspace_log2n}. Použijeme dôkaz predošlej vety a využijeme to, že regex poznáme dopredu -- v takom prípade je jeho dĺžka konštantná, vieme počty jeho operácií a preto sa dá jeho konfigurácia ešte viac skrátiť tak, že adresy zaznačíme do niekoľkých stôp nad sebou, takže zaberá $O(\log n)$ priestoru. Vďaka konštantnej dĺžke regexu sa dá dĺžka akceptačného výpočtu odhadnúť polynómom od dĺžky vstupného slova.
 
-Oproti predošlej vete pribudli aj nové operácie, ktoré je treba zahrnúť do konštrukcie. Pre negatívny lookaround je nutné zistiť, či do neho dané podslovo nepatrí. To urobíme tak, že vezmeme jeho vnútorný regex a spustíme na ňom výpočet na ďalšej páske, akokeby toto bol náš vstupný regex. Jeho výpočet bude ohraničený na nejakom podslove vstupu a niekedy ho bude treba spúšťať viackrát pre rôzne podslová. Pokiaľ pre všetky prípady dostaneme odpoveď, že výpočet neexistuje, negatívny lookaround akceptuje. Treba si uvedomiť, že spúšťanie výpočtu negatívneho lookaroundu nie je úplne separované od zvyšku, nakoľko môže obsahovať spätné referencie odkazujúce sa mimo neho. Takisto môže nastať situácia, kedy sa nachádza niekoľko negatívnych lookaroundov v sebe. Potom je nutné dodržiavať pravidlá indexovateľnosti zátvoriek podľa definícií \ref{indexovatelnost_(} a \ref{indexovatelnost_)}. Tiež je treba správne určovať, ktoré podslová sú správnym vstupom a nedovoliť výpočtu prekročiť tieto hranice.
+Oproti predošlej vete pribudli aj nové operácie, ktoré je treba zahrnúť do konštrukcie. Pre negatívny lookaround je nutné zistiť, či do neho dané podslovo nepatrí. To urobíme tak, že vezmeme jeho vnútorný regex a spustíme na ňom výpočet na ďalšej páske, ako keby toto bol náš vstupný regex. Jeho výpočet bude ohraničený na nejakom podslove vstupu a niekedy ho bude treba spúšťať viackrát pre rôzne podslová. Pokiaľ pre všetky prípady dostaneme odpoveď, že výpočet neexistuje, negatívny lookaround akceptuje. Treba si uvedomiť, že spúšťanie výpočtu negatívneho lookaroundu nie je úplne separované od zvyšku, nakoľko môže obsahovať spätné referencie odkazujúce sa mimo neho. Takisto môže nastať situácia, kedy sa nachádza niekoľko negatívnych lookaroundov v sebe. Potom je nutné dodržiavať pravidlá indexovateľnosti zátvoriek podľa definícií \ref{indexovatelnost_(} a \ref{indexovatelnost_)}. Tiež je treba správne určovať, ktoré podslová sú správnym vstupom a nedovoliť výpočtu prekročiť tieto hranice.
 
 \begin{proof}
 Nech $\alpha\in\nle$, $r=|\alpha|$. Ak $\alpha$ neobsahuje negatívny lookaround, tvrdenie triviálne vyplýva z vety \ref{le_dspace_log2n}. Nech teda $\alpha$ obsahuje aspoň 1 negatívny lookaround a označíme si $k$ ako najväčšiu hĺbku vnorenia negatívnych lookaroundov v regexe $\alpha$.
@@ -709,7 +709,7 @@ Pokiaľ nejaké volanie vráti hodnotu \textbf{true}, potom netreba skúšať ď
 
 Pre negatívny lookbehind je algoritmus iný iba v tom, že treba skúšať sufixy namiesto prefixov. V takom prípade adresa $b_2$ z akceptačnej konfigurácie bude fixná na hodnote $d_2$ a $a_2$ z počiatočnej konfigurácie bude nadobúdať hodnoty $0-d_2$.
 
-Popísali sme volanie negatívneho lookaroundu z hlavného regexu. $\alpha$ však má v sebe niekoľko vnorených negatívnych lookaroundov a najväčšia hĺbka vnorenia je $k$. T má na 1. páske rozpracovanú vetvu hlavného regexu a teraz pracuje na 2. páske na negatívnom lookarounde a narazí na ďalší. Pre T je to obdobná situácia, akokeby pracoval stále na 1. páske. Zopakuje postup popísaný vyššie a vykoná príslušné volania procedúry $TESTUJ$ na 3. páske. Keď je hĺbka vnorenia $k$, v najvnútornejšom regexe bude mať na $k+1$ páskach rozpracované výpočty. Keď ukončí výpočet na $l$-tej páske, vráti sa s výsledkom na $(l-1)$-vú pásku. M skonštruovaný v dôkaze \ref{dspace_nlog2n} mal na vykonávanie 1 vetvy procedúry $TESTUJ$ 2 pásky. Preto T bude potrebovať $2(k+1)$ pások. $k$ je konštanta, preto je to v súlade s definíciou TS.
+Popísali sme volanie negatívneho lookaroundu z hlavného regexu. $\alpha$ však má v sebe niekoľko vnorených negatívnych lookaroundov a najväčšia hĺbka vnorenia je $k$. T má na 1. páske rozpracovanú vetvu hlavného regexu a teraz pracuje na 2. páske na negatívnom lookarounde a narazí na ďalší. Pre T je to obdobná situácia, ako keby pracoval stále na 1. páske. Zopakuje postup popísaný vyššie a vykoná príslušné volania procedúry $TESTUJ$ na 3. páske. Keď je hĺbka vnorenia $k$, v najvnútornejšom regexe bude mať na $k+1$ páskach rozpracované výpočty. Keď ukončí výpočet na $l$-tej páske, vráti sa s výsledkom na $(l-1)$-vú pásku. M skonštruovaný v dôkaze \ref{dspace_nlog2n} mal na vykonávanie 1 vetvy procedúry $TESTUJ$ 2 pásky. Preto T bude potrebovať $2(k+1)$ pások. $k$ je konštanta, preto je to v súlade s definíciou TS.
 
 Čo sa týka pamäťových nárokov, na $(k+1)$ páskach je v každom kroku výpočtu spúšťaná najviac 1 vetva procedúry $TESTUJ$. Takto definovaná a spúšťaná procedúra pri každom spustení zaberie $O(\log n\cdot\log n) = O(\log ^2 n)$ priestoru, pretože hĺbka rekurzie je $$\log i = \log ((r+1)(n+2)^{2r+2}) = \log (r+1) + (2r+2)\log (n+2) = O(\log n)$$ a každá inštancia procedúry potrebuje $O(\log n)$ pamäte pre zapamätanie 3 konfigurácií a čísla $i$. O zvyšných $(k+1)$ páskach vieme z konštrukcie stroja M z dôkazu \ref{dspace_nlog2n}, že sú iba pomocné a na každej je zapísaných $O(\log (r+n)) = O(\log n) = O(\log^2 n)$ políčok. Ukázali sme, že vieme zostrojiť požadovaný Turingov stroj T, ktorý na každej páske zapíše najviac $O(\log^2 n)$ políčok.
 \end{proof}
