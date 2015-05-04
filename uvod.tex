@@ -4,4 +4,10 @@
 \phantomsection
 \addcontentsline{toc}{chapter}{Úvod}
 
-Pár slov na úvod...
+Regulárne výrazy vznikli v 60-tych rokoch 20. storočia a ukázalo sa, že sú ďalším modelom na vyjadrenie regulárnych jazykov. Vďaka ich jednoduchosti boli implementované ako nástroj na vyhľadávanie v textovom editore a neskôr pribudli aj do programovacích jazykov. S postupom času ako sa produkty vyvíjali, do výrazov pribúdali konštrukcie, ktoré prax považovala za užitočné. My teraz tento model vraciame naspäť do teórie formálnych jazykov pod názvom moderné regulárne výrazy alebo aj regexy.
+
+Väčšina nových operácií umožňuje kratší zápis niektorých regexov, ale novú fun\-kcio\-na\-li\-tu neprináša, pretože ich vieme rozpísať pomocou klasických regulárnych výrazov. Nové jazyky vieme zapísať vďaka zopár zložitejším konštrukciám, menovite sú to spätné referencie, pozitívny a negatívny lookaround.
+
+Koncept spätných referencií už bol skúmaný, v práci sa odvolávame na viaceré články. My sme sa zamerali na operácie pozitívny a negatívny lookaround, o ktorých sme doposiaľ výsledky nenašli. Touto témou sme sa začali zaoberať v bakalárskej práci \cite{mojaBak}, kde sa ukázalo, že model so spätnými referenciami rozširujú. Dôraz bol kladený na pozitívny lookahead a lookbehind, štúdium vlastností týchto operácií a vlastností a zaradenia rozšírenej triedy regexov.
+
+V tejto práci doplníme výsledky o negatívnom lookarounde, doplníme hierarchiu tried regexov o nové výsledky a definujeme nový formálny model pre moderné regulárne výrazy. Budeme sa venovať aj novej oblasti -- priestorovej zložitosti. V tomto smere sa priblížime praxi tým, že zistíme, koľko pamäte treba, ak dostávame na vstup zároveň regex aj slovo.
