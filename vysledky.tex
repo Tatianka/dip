@@ -719,40 +719,35 @@ Popísali sme volanie negatívneho lookaroundu z hlavného regexu. $\alpha$ vša
 
 Nové konštrukcie moderných regulárnych výrazov podstatne ovplyvňujú popisnú zložitosť. Ako sme spomínali, mnohé z nich neposilňujú model, ale sprostredkovávajú kratší zápis niektorých regexov. Zložitejšie konštrukcie tiež prispievajú svojou troškou, ako uvidíme ďalej v príklade. Výskum v tejto oblasti je bohatý na výsledky o regulárnych jazykoch ako sme videli v kapitole \ref{uzlozitost}. Pokračovať je možné porovnávaním so známymi výsledkami o klasických regulárnych výrazoch alebo skúmaním zložitosti nových jazykov, ktoré sme dosiahli až silnejším modelom.
 
-Ochutnávkou z tejto oblasti je regex, ktorý ukazuje, že nové konštrukcie môžu výrazne pomôcť pri zápise niektorých konečných jazykov:
-$$\alpha = (\lookahead 
+Ochutnávkou z tejto oblasti je regex, ktorý ukazuje, že nové konštrukcie môžu pomôcť pri zápise niektorých konečných jazykov:
+$$\alpha = 
+\overbrace{(}^{II.}
+\lookahead 
+\underbrace{
+	(a^{m+1})* a\lbrace 1,m-1\rbrace \$ ~|~ a^m \$ 
+}_{ I. }
+) 
 \overbrace{
-	\underbrace{
-		\lookahead (a^m)*\$ )
-	}_{I.}
-	\underbrace{
-		(a^{m+1})* a\lbrace 1,m-1\rbrace \$ ~|~ a^m \$ 
-	}_{ II. }
-}^{ III. }
-) a^m)+$$
+a^m)+
+}^{ II. }
+$$
 
-$$\text{platí: } a^x = \underbrace{aa\dots a}_x = a\lbrace x \rbrace$$
-
-
+$$\text{platí: } a^x = \underbrace{aa\dots a}_x$$
 
 Podrobnejšie si popíšme, čo jednotlivé časti matchujú a ako prebieha výpočet:
 \begin{enumerate}[I.]
-\item matchuje $a^{km}$, kde $k\in\N_0$
 \item matchuje $a^m$ alebo $a^l$, kde 
 $$l\in\lbrace j(m+1)+1,j(m+1)+2,\dots,j(m+1)+m-1 ~|~j\in\N_0\rbrace$$
 To znamená, že matchuje celé $\lbrace a\rbrace$* okrem: $a^{m+1}$, $a^{m(m+1)l}$, $l\in\N$
-\item je prienik I. a II. V oboch vidíme na konci znak \$, teda matchujú až do konca slova. Výsledný regex matchuje $a^{km}$ také, že nevie $a^{m(m+1)l}$, $l\in\N$.
+\item Vonkajší regex matchuje $a^{km}$, kde $k\in\N$
+\item je prienik I. a II. V lookaheade vidíme na konci znak \$, teda matchuje až do konca slova. Výsledný regex matchuje $a^{km}$ také, že nie je tvaru $a^{m(m+1)l}$, $l\in\N$.
 \end{enumerate}
-Lookahead III. je nútený každú iteráciu matchovať $a^{im}$, kde $i\in\N$. Najkratšie slovo, ktoré je tvaru $a^{im}$ a regex III. ho zamietne je $a^{m(m+1)}$. Pokiaľ sa operácia $+$ dostane k $(m+1)$-vej iterácii, v tomto momente regex zamietne kvôli lookaheadu. Nie je možné sa vrátiť a zmeniť výpočet, pretože mimo lookaheadu sa neudiali žiadne nedeterministické rozhodnutia. Z tohto dôvodu bude ľubovoľné slovo dlhšie ako $a^{m(m+1)-1}$ zamietnuté. Regex $\alpha$ preto zodpovedá konečnému jazyku $$L = \lbrace a^m, a^{2m},\dots, a^{m^2} \rbrace$$
+Lookahead je nútený každú iteráciu matchovať $a^{im}$, kde $i\in\N$. Najkratšie slovo, ktoré je tvaru $a^{im}$ a regex I. ho zamietne je $a^{m(m+1)}$. Pokiaľ sa operácia $+$ dostane k $(m+\nobreak 1)$-vej iterácii, v tomto momente regex zamietne kvôli lookaheadu. Nie je možné vrátiť sa a zmeniť výpočet, pretože mimo lookaheadu sa neudiali žiadne nedeterministické rozhodnutia. Z tohto dôvodu bude ľubovoľné slovo dlhšie ako $a^{m(m+1)-1}$ zamietnuté. Regex $\alpha$ preto zodpovedá konečnému jazyku $$L = \lbrace a^m, a^{2m},\dots, a^{m^2} \rbrace$$
 
 Počet znakov potrebných na zápis $\alpha$ za predpokladu, že nemôžeme používať operáciu $\{n,m\}$\footnote{V takom prípade by bol najkratší regex triviálne $(a\{m\})\{1,m\}$ s potrebným počtom znakov $9+\nobreak 2\log m$.} 
 $$\alpha = 
 \underbrace{
-(\lookahead 	\lookahead (
-}_{8}
- a^m
-\underbrace{ 
- )*\$ ) (
+(\lookahead (
 }_{5}
 a^{m+1}
 \underbrace{
@@ -771,10 +766,19 @@ a^m
  )+
 }_{2}
 $$
-$$21+m+ (m+1)+\sum_{i=1}^{m-1} i+ m + m= \frac{m(m-1)}{2} + 4 m + 22\leq m^2 + 5m + 12$$
+$$14+ (m+1)+\left(\sum_{i=1}^{m-1} i+ (m-2)\right)+ m + m= \frac{m(m-1)}{2} + 4 m + 13 =\frac{ m^2 + 7m + 26}{2}$$
 
 Ten istý jazyk vieme zapísať aj s pomocou negatívneho lookaheadu nasledovne:
 $$\beta = \nlookahead a^{m^2+1})(a^m)+$$
 A ten potrebuje na zápis $7+(m^2+1)+m = m^2 + m + 8$ znakov.
 
-Porovnajme teraz tieto výsledky so starým modelom. 
+Porovnajme teraz tieto výsledky so starým modelom. Nebudeme to dokazovať, ale naša hypotéza je, že najlepší regulárny výraz matchujúci jazyk L je:
+$$a^m
+\underbrace{
+(a^m|\varepsilon)(a^m|\varepsilon)\dots(a^m|\varepsilon)
+}_{(m-1)\times}
+$$
+
+Počet jeho znakov je $m+(m-1)(4+m) = m^2+4m-4$. Zápis s pozitívnym lookaheadom je efektívnejší od $m\geq 3$.
+
+Pokiaľ by sme použili model bez $\varepsilon$, potom zápis regulárneho výrazu bude mať až kubický počet znakov od $m$.
