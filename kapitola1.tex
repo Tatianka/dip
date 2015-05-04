@@ -33,7 +33,7 @@ Najprv si uvedieme konštrukcie, ktoré sú len ,,kozmetickou úpravou'' základ
 \item $[~]$ -- predstavuje ľubovoľný znak, z tých, ktoré má vnútri zapísané. Vieme použiť aj intervaly, napr. a--z, A--Z, 0--9, \dots~a kombinovať ich. Všetky metaznaky vnútri [~] sa považujú za normálne znaky.
 \item $[\textasciicircum~]$ -- predstavuje ľubovoľný znak, ktorý nepatrí medzi zapísané. Ostatné ako [~].
 \item ? -- ak samostatne: opakuj 0 alebo 1-krát \\
-ak za operáciou: namiesto greedy implementácie použi minimalistickú, t.j. zober čo najmenej znakov (platí pre $*,+,?,\lbrace n,m \rbrace$)\footnote{Všetky spomenuté operácie ,,žerú'' znaky a na ich implementáciu bol použitý greedy algoritmus.}
+ak za operáciou: namiesto greedy implementácie použi minimalistickú, t.j. zober čo najmenej znakov (platí pre $*,+,?,\lbrace n,m \rbrace$)\footnote{Všetky spomenuté operácie berú všetky znaky, čo môžu, a na ich implementáciu bol použitý greedy algoritmus.}
 \item . -- predstavuje ľubovoľný znak
 \item $\textasciicircum$ -- metaznak označujúci začiatok slova
 \item \$ -- metaznak označujúci koniec slova

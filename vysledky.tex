@@ -497,7 +497,7 @@ VIII., X. -- prechody, pri ktorých sa žiaden ukazovateľ nepohne. Tieto precho
 Z toho vyplýva, že pre regex $|\alpha|$ a slovo $w$ existuje akceptačný výpočet, ktorý obsahuje najviac $|w|\cdot(|w|+|\alpha|)+|w|\cdot|\alpha| \leq 3\cdot |w|^2 \cdot |\alpha| $ konfigurácií.
 \end{proof}
 
-Spočítajme počet všetkých konfigurácií pre triedu regexov $\le$. Vstupné slovo a regex máme, menia sa iba polohy ukazovateľov a informácií. Ukazovateľ v regexe môže mať $(r+1)$ pozícií a pre ukazovateľ v slove existuje $(w+1)$ rôznych pozícií. Čo sa týka ukazovateľa pre spätné referencie a informácií v poschodových symboloch, každý prvok z tejto množny môže mať $(w+1)$ pozícií alebo sa v slove nenachádzať. Mohutnosť tejto množiny je $m = 1+2\cdot(\text{počet spätných ref.})+(\text{počet lookaroundov})\leq 2r+1$. Počet všetkých možných konfigurácií je dohromady: 
+Spočítajme počet všetkých konfigurácií pre triedu regexov $\le$. Vstupné slovo a regex máme, menia sa iba polohy ukazovateľov a informácií. Ukazovateľ v regexe môže mať $(r+1)$ pozícií a pre ukazovateľ v slove existuje $(w+1)$ rôznych pozícií. Čo sa týka ukazovateľa pre spätné referencie a informácií v poschodových symboloch, každý prvok z tejto množiny môže mať $(w+1)$ pozícií alebo sa v slove nenachádzať. Mohutnosť tejto množiny je $m = 1+2\cdot(\text{počet spätných ref.})+(\text{počet lookaroundov})\leq 2r+1$. Počet všetkých možných konfigurácií je dohromady: 
 \begin{equation}\label{pocet_vsetkych_konfig}
 (r+1)(w+1)(w+2)^m \leq (r+1)(w+2)^{2r+2} = O(rw^{2r+2})
 \end{equation}
@@ -714,20 +714,67 @@ Popísali sme volanie negatívneho lookaroundu z hlavného regexu. $\alpha$ vša
 Čo sa týka pamäťových nárokov, na $(k+1)$ páskach je v každom kroku výpočtu spúšťaná najviac 1 vetva procedúry $TESTUJ$. Takto definovaná a spúšťaná procedúra pri každom spustení zaberie $O(\log n\cdot\log n) = O(\log ^2 n)$ priestoru, pretože hĺbka rekurzie je $$\log i = \log ((r+1)(n+2)^{2r+2}) = \log (r+1) + (2r+2)\log (n+2) = O(\log n)$$ a každá inštancia procedúry potrebuje $O(\log n)$ pamäte pre zapamätanie 3 konfigurácií a čísla $i$. O zvyšných $(k+1)$ páskach vieme z konštrukcie stroja M z dôkazu \ref{dspace_nlog2n}, že sú iba pomocné a na každej je zapísaných $O(\log (r+n)) = O(\log n) = O(\log^2 n)$ políčok. Ukázali sme, že vieme zostrojiť požadovaný Turingov stroj T, ktorý na každej páske zapíše najviac $O(\log^2 n)$ políčok.
 \end{proof}
 
-\section[Popisná zložitosť]{Popisná zložitosť moderných regulárnych výrazov}
+\section[Ukážka k popisnej zložitosti]{Ukážka zlepšenia popisnej zložitosti}
 \label{vzlozitost}
 
-V tejto kapitole rozoberieme moderné regulárne výrazy z dvoch hľadísk. Najprv nás bude zaujímať, ako pomohli nové konštrukcie pri popise regulárnych jazykov a potom prejdeme na analýzu dĺžky výrazov pre zložitejšie jazyky.
+Nové konštrukcie moderných regulárnych výrazov podstatne ovplyvňujú popisnú zložitosť. Ako sme spomínali, mnohé z nich neposilňujú model, ale sprostredkovávajú kratší zápis niektorých regexov. Zložitejšie konštrukcie tiež prispievajú svojou troškou, ako uvidíme ďalej v príklade. Výskum v tejto oblasti je bohatý na výsledky o regulárnych jazykoch ako sme videli v kapitole \ref{uzlozitost}. Pokračovať je možné porovnávaním so známymi výsledkami o klasických regulárnych výrazoch alebo skúmaním zložitosti nových jazykov, ktoré sme dosiahli až silnejším modelom.
 
-Lookaround môže výrazne pomôcť pri definovaní konečných jazykov, napríklad regex 
-$$(\lookahead 
-\underbrace{
+Ochutnávkou z tejto oblasti je regex, ktorý ukazuje, že nové konštrukcie môžu výrazne pomôcť pri zápise niektorých konečných jazykov:
+$$\alpha = (\lookahead 
+\overbrace{
 	\underbrace{
 		\lookahead (a^m)*\$ )
-	}_{ \text{\normalsize \parbox{2cm}{generuje $a^{km}$, $k\in\N$} } }
+	}_{I.}
 	\underbrace{
 		(a^{m+1})* a\lbrace 1,m-1\rbrace \$ ~|~ a^m \$ 
-	}_{ \text{\normalsize \parbox{4.5cm}{generuje celé a$*$, okrem: $a^{m+1}$, $a^{m(m+1)l}$, $l\in\N$} } }
-}_{\mathclap{ \text{\normalsize generuje $a^{km}$ také, že nevie $a^{m(m+1)l}$, $l\in\N$ } } }
+	}_{ II. }
+}^{ III. }
 ) a^m)+$$
-generuje konečný jazyk obsahujúci slová $a^m,\allowbreak a^{2m},\dots,\allowbreak a^{(m-1)(m+1)}$. Hlavný lookahead je spúšťaný každú iteráciu, teda pre slovo $a^{zm}$ musí matchovať všetky $a^{im}$ pre $i\in\lbrace 1,\dots,z\rbrace$.
+
+$$\text{platí: } a^x = \underbrace{aa\dots a}_x = a\lbrace x \rbrace$$
+
+
+
+Podrobnejšie si popíšme, čo jednotlivé časti matchujú a ako prebieha výpočet:
+\begin{enumerate}[I.]
+\item matchuje $a^{km}$, kde $k\in\N_0$
+\item matchuje $a^m$ alebo $a^l$, kde 
+$$l\in\lbrace j(m+1)+1,j(m+1)+2,\dots,j(m+1)+m-1 ~|~j\in\N_0\rbrace$$
+To znamená, že matchuje celé $\lbrace a\rbrace$* okrem: $a^{m+1}$, $a^{m(m+1)l}$, $l\in\N$
+\item je prienik I. a II. V oboch vidíme na konci znak \$, teda matchujú až do konca slova. Výsledný regex matchuje $a^{km}$ také, že nevie $a^{m(m+1)l}$, $l\in\N$.
+\end{enumerate}
+Lookahead III. je nútený každú iteráciu matchovať $a^{im}$, kde $i\in\N$. Najkratšie slovo, ktoré je tvaru $a^{im}$ a regex III. ho zamietne je $a^{m(m+1)}$. Pokiaľ sa operácia $+$ dostane k $(m+1)$-vej iterácii, v tomto momente regex zamietne kvôli lookaheadu. Nie je možné sa vrátiť a zmeniť výpočet, pretože mimo lookaheadu sa neudiali žiadne nedeterministické rozhodnutia. Z tohto dôvodu bude ľubovoľné slovo dlhšie ako $a^{m(m+1)-1}$ zamietnuté. Regex $\alpha$ preto zodpovedá konečnému jazyku $$L = \lbrace a^m, a^{2m},\dots, a^{m^2} \rbrace$$
+
+Počet znakov potrebných na zápis $\alpha$ za predpokladu, že nemôžeme používať operáciu $\{n,m\}$\footnote{V takom prípade by bol najkratší regex triviálne $(a\{m\})\{1,m\}$ s potrebným počtom znakov $9+\nobreak 2\log m$.} 
+$$\alpha = 
+\underbrace{
+(\lookahead 	\lookahead (
+}_{8}
+ a^m
+\underbrace{ 
+ )*\$ ) (
+}_{5}
+a^{m+1}
+\underbrace{
+)* 
+}_{2}
+a\{1,m-1\}
+\underbrace{ 
+ \$ ~|~  
+}_{2}
+a^m
+\underbrace{ 
+\$ ) 
+}_{2}
+a^m
+\underbrace{ 
+ )+
+}_{2}
+$$
+$$21+m+ (m+1)+\sum_{i=1}^{m-1} i+ m + m= \frac{m(m-1)}{2} + 4 m + 22\leq m^2 + 5m + 12$$
+
+Ten istý jazyk vieme zapísať aj s pomocou negatívneho lookaheadu nasledovne:
+$$\beta = \nlookahead a^{m^2+1})(a^m)+$$
+A ten potrebuje na zápis $7+(m^2+1)+m = m^2 + m + 8$ znakov.
+
+Porovnajme teraz tieto výsledky so starým modelom. 
