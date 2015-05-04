@@ -242,6 +242,7 @@ Vzťah medzi triedami $\le$ a $\nle$ je otvoreným problémom. Naša hypotéza j
 \begin{equation*}
 \gamma = \nlookahead (aaa*)\backslash 1 (\backslash 1)*\$ )
 \end{equation*}
+Dôsledkom nerovnosti by potom bolo, že trieda $\lel$ nie je uzavretá na komplement, lebo túto vlastnosť zaručuje práve negatívny lookaround.
 
 \section{Priestorová zložitosť}
 
@@ -662,7 +663,7 @@ Celkovo M na zásobníkovej páske zapíše $O(\log n)\cdot O(n\log n) = O(n\log
 \end{proof}
 
 \begin{dosledok}
-Nech $\cal U$ je trieda regexov, pre ktoré platí, že počet konfigurácií v~akceptačnom výpočte pre regex $\alpha$ a slovo $w$ je najviac $f(n)$, kde $n=|\alpha|+|w|+1$. Potom $L(regex\#word)\in NSPACE(n\cdot\log n\cdot \log (f(n)))$, kde $regex \in \cal U$.
+Nech $\cal U$ je trieda regexov, pre ktoré platí, že počet konfigurácií v~akceptačnom výpočte pre regex $\alpha$ a slovo $w$ je najviac $f(n)$, kde $n=|\alpha|+|w|+1$. Potom $L(regex\#word)\in DSPACE(n\cdot\log n\cdot \log (f(n)))$, kde $regex \in \cal U$.
 \end{dosledok}
 \begin{proof}
 Vyplýva z dôkazu vety \ref{dspace_nlog2n} -- hĺbka vnorenia funkcie $TESTUJ$ je logaritmus z horného ohraničenia dĺžky akceptačného výpočtu.
@@ -672,7 +673,9 @@ Vyplýva z dôkazu vety \ref{dspace_nlog2n} -- hĺbka vnorenia funkcie $TESTUJ$ 
 Trieda regexov s hĺbkou vnorenia lookaroundov zhora ohraničenou konštantou $h$ patrí do $DSPACE(n\log^2 n)$.
 \end{dosledok}
 \begin{proof}
-Podľa lemy \ref{lema_hlbka_lookaroundov} je počet konfigurácií v akceptačnom výpočte najviac $O((rw)^h)$. Potom hĺbka rekurzie funkcie $TESTUJ$ je $\log((rw)^h) = h\log r + h\log w = O(\log r+\log w)$, čo je ten istý odhad ako v dôkaze vety \ref{dspace_nlog2n}.
+Podľa lemy \ref{lema_hlbka_lookaroundov} je počet konfigurácií v akceptačnom výpočte najviac $O((rw)^h)$. Potom hĺbka rekurzie funkcie $TESTUJ$ je 
+$$\log((rw)^h) = h\log r + h\log w = O(\log r+\log w)$$ 
+A to je ten istý odhad ako v dôkaze vety \ref{dspace_nlog2n}.
 \end{proof}
 
 Teraz nasleduje sľúbený dôkaz vety \ref{dspace_log2n}. Použijeme dôkaz predošlej vety a využijeme to, že regex poznáme dopredu -- v takom prípade je jeho dĺžka konštantná, vieme počty jeho operácií a preto sa dá jeho konfigurácia ešte viac skrátiť tak, že adresy zaznačíme do niekoľkých stôp nad sebou, takže zaberá $O(\log n)$ priestoru. Vďaka konštantnej dĺžke regexu sa dá dĺžka akceptačného výpočtu odhadnúť polynómom od dĺžky vstupného slova.
@@ -692,7 +695,7 @@ Spomínaný počet všetkých konfigurácií je spočítaný pre triedu regexov 
 
 Úprava algoritmu $TESTUJ$, aby zahŕňal spracovanie negatívneho lookaroundu je nasledovná. Budeme aplikovať kroky výpočtu XV. alebo XVI. To znamená, že celý negatívny lookahead/lookbehind môže byť preskočený na 1 krok. Kontrola, či je tento krok prípustný, sa udeje v riadku 2 funkcie $TESTUJ$, kedy sa testuje podmienka $C_1\vdash C_2$. Pokiaľ tento krok zodpovedá kroku výpočtu XV. alebo XVI., udeje sa nasledovné (Bez újmy na všeobecnosti, nech je to negatívny lookahead -- krok XV.):
 
-Nech $C_1=(d_1,\dots,d_m)$, $C_2=(e_1,\dots,e_m)$, pričom musí platiť $(d_2,\dots,d_m)=(e_2,\dots,e_m)$. 
+Nech $C_1=(d_1,\dots,d_m)$, $C_2=(e_1,\dots,e_m)$, pričom musí platiť $(d_2,\dots,d_m)=(e_2,\dots,\allowbreak e_m)$. 
 
 M zoberie regex vnútri negatívneho lookaroundu a na ďalšej páske bude spúšťať funkciu $TESTUJ$:
 \begin{itemize}

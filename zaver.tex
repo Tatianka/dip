@@ -5,4 +5,14 @@
 \phantomsection
 \addcontentsline{toc}{chapter}{Záver}
 
-Zhrnutie na záver...
+Doplnili sme výsledky o negatívnom lookarounde. Ukázalo sa, že má podobné vlastnosti ako pozitívna verzia, pretože na prekročenie hranice regulárnych jazykov musia byť v modeli aj spätné referencie.
+
+Ďalší doplňujúci výsledok k bakalárskej práci bol o uzavretosti triedy s pozitívnym lookaroundom na zreťazenie -- základnú operáciu klasických regulárnych výrazov. Netriviálnosť spočívala v usmernení lookaheadov a lookbehindov tak, aby ich výpočet zostal v časti slova, ktorá ich regexu prislúcha. V tomto smere zostalo otvoreným problémom, či platí aj uzavretosť na Kleeneho $*$.
+
+Do hierarchie tried regexov bola zaradená trieda $\nlel$ a ukázali sme, že moderné regulárne výrazy síce vedia zapísať kontextové jazyky, ale nepokrývajú ani celú triedu bezkontextových jazykov. Načrtli sme ideu doplnenia homomorfizmu, ktorá už bola skúmaná v triede $\el$. Prirodzeným pokračovaním výskumu by mohlo byť hľadanie operácií, ktoré treba do modelu pridať, aby vedel popísať aspoň celú triedu bezkontextových jazykov. Otvoreným problémom zostal vzťah tried $\lel$ a $\nlel$.
+
+Väčšia časť práce bola venovaná priestorovej zložitosti. Ukázali sme, že trieda $\lel$ patrí do logaritmického nedeterministického priestoru a $\nlel$ potrebuje $O(\log ^2 n)$ deterministickej pamäte. Keď sme dostali na vstup spolu regex aj slovo, pre $\lel$ v~nedeterministickom modeli stačilo $O(n\log n)$ pamäte. Veľkosť deterministického priestoru závisela od horného ohraničenia najkratšieho akceptačného výpočtu, ktorý ak bol polynomiálny od dĺžky slova a regexu, potrebovali sme $O(n\log^2 n)$ pamäte. Dôkazy týkajúce sa deterministickej pamäte používali upravený dôkaz Savitchovej vety, kde sme redukovali počet zapísaných políčok na páske tým, že sme používali kratšie konfigurácie. Spolu s týmito konfiguráciami bol definovaný kompletný výpočtový model pre regulárne výrazy so spätnými referenciami, pozitívnym a negatívnym lookaroundom, ktorý pracuje v krokoch podobne ako Turingov stroj. Vďaka tomuto formalizmu sme boli schopní urobiť spomínaný odhad dĺžky najkratšieho akceptačného výpočtu. Ukázalo sa však, že niektoré regexy z tried $\le$ a $\nle$ sú natoľko zložité, že dĺžka ich akceptačného výpočtu je exponenciálna od dĺžky vstupu a regexu -- takmer dosahuje počet všetkých konfigurácií.
+
+Na záver sme načrtli výsledok z popisnej zložitosti, táto oblasť však zostáva neprebádaná. Výskum môže pokračovať predovšetkým dvoma smermi -- v skúmaní regulárnych jazykov a porovnávaním s klasickým modelom alebo tvorením nových výsledkov v oblasti bezkontextových a kontextových jazykov popísateľných modernými regulárnymi jazykmi.
+
+Spomenuli sme mnoho otvorených problémov a možností pokračovať v problematike, na záver by sme doplnili už iba oblasť časovej zložitosti rozpoznávania.
